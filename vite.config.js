@@ -32,4 +32,15 @@ export default defineConfig({
     // 添加 extensions 配置
     extensions: ['.js', '.vue', '.json', '.ts'],
   },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        // additionalData: `@import "@/assets/scss/variables.scss";`,
+        additionalData: `
+          @use "sass:math";
+          @use "@/assets/scss/variables.scss" as *;
+        `,
+      },
+    },
+  },
 })

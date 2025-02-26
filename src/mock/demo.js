@@ -1,19 +1,23 @@
-import { mock } from 'mockjs'
-
 export default [
   {
-    url: '/api/list',
+    url: '/api/paged-list',
     method: 'get',
-    response: () => {
-      return mock({
+    response: ({ query }) => ({
+      code: 0,
+      data: {
         'list|10': [
           {
             'id|+1': 1,
-            name: '@cname',
-            email: '@email',
+            title: '@ctitle(5,10)',
+            'views|100-999': 1,
+            'status|1': ['published', 'draft', 'deleted'],
+            createTime: '@datetime',
           },
         ],
-      })
-    },
+        total: 100,
+        page: Number(query.page) || 1,
+        pageSize: Number(query.pageSize) || 10,
+      },
+    }),
   },
 ]
