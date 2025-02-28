@@ -1,5 +1,4 @@
 # Vue 3 + Vite
 
-`pnpm install` 安装依赖
-`pnpm dev` 运行
-jdsfhdifdsfe
+`pnpm dev`哈哈哈哈哈
+hello
