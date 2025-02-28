@@ -11,6 +11,8 @@ const count = ref(0)
 </script>
 
 <template>
+  <!-- 测试element以及图标 -->
+  <el-button type="primary" icon="Search">搜索</el-button>
   <h1>{{ msg }}</h1>
   <h1>{{ counterStore.count }}</h1>
   <button @click="counterStore.increment()">count++</button>
