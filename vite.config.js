@@ -38,7 +38,7 @@ export default defineConfig({
         // additionalData: `@import "@/assets/scss/variables.scss";`,
         additionalData: `
           @use "sass:math";
-          @use "@/assets/scss/variables.scss" as *;
+          @use "@/styles/variables.scss" as *;
         `,
       },
     },
