@@ -1,6 +1,9 @@
 <template>
-  <main></main>
- </template>
+  <main>
+    <!-- 占位 -->
+    <slot></slot>
+  </main>
+</template>
 
 <script setup>
 import {reactive} from "vue";
@@ -14,7 +17,7 @@ const userInfo = reactive({
 
 <style lang="scss" scoped>
 main {
-  width: 1200px;
+  width: $main-width;
   // 高度根据子盒子自适应
   height: auto;
   margin: 0 auto;
