@@ -3,9 +3,13 @@
     <div class="logo">C语言教学平台</div>
     <nav>
       <ul>
-        <li @click="()=>router.push('/')">首页</li>
-        <li @click="()=>router.push('/question')">课程</li>
-        <li @click="()=>router.push('/my')">个人中心</li>
+        <li
+          :class="{ active: r.path === $route.path }"
+          v-for="(r, i) in routers"
+          :key="i"
+        >
+          <router-link :to="r.path">{{ r.name }}</router-link>
+        </li>
       </ul>
     </nav>
     <div class="user">
@@ -18,8 +22,20 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
-const router = useRouter()
+const routers = [
+  {
+    path: '/',
+    name: '首页',
+  },
+  {
+    path: '/cources',
+    name: '课程',
+  },
+  {
+    path: '/personal',
+    name: '个人中心',
+  },
+]
 </script>
 
 <style lang="scss" scoped>
@@ -54,10 +70,13 @@ nav {
     justify-content: start;
     gap: 2 * $margin-xl;
     li {
-      font-size: 1.25 * $font-size-xl;
+      font-size: $font-size-xl;
       cursor: pointer;
       transition: all 0.3s ease;
       &:hover {
+        color: $primary-color;
+      }
+      &.active {
         color: $primary-color;
       }
     }
@@ -69,7 +88,7 @@ nav {
   justify-content: center;
   gap: $margin-xl;
   span {
-    font-size: 1.25 * $font-size-xl;
+    font-size: $font-size-xl;
   }
   img {
     width: 2.5 * $font-size-xl;

@@ -21,7 +21,6 @@ main {
   // 高度根据子盒子自适应
   height: auto;
   margin: 0 auto;
-  background-color: $base-bg-color;
-  padding: 150px 30px 30px;
+  margin-top: $margin-xxl;
 }
 </style>

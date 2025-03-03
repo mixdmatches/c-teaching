@@ -6,7 +6,6 @@
   outline: none;
   margin: 0px;
   padding: 0px;
-  color: $text-color;
 }
 
 html {
@@ -17,7 +16,11 @@ html {
   // 高度
   height: 100%;
 }
-
+a {
+  // 去除下划线
+  text-decoration: none;
+  color: inherit;
+}
 body,
 div,
 span,
