@@ -17,6 +17,16 @@ const routes = [
     component: () => import('@/views/question/QuestionPage.vue'),
   },
   {
+    path: '/result',
+    name: 'result',
+    component: () => import('@/views/result/ResultPage.vue'),
+  },
+  {
+    path: '/my',
+    name: 'my',
+    component: () => import('@/views/my/myPage.vue'),
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: '404',
     component: () => import('@/views/404/NotFind.vue'),

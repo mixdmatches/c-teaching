@@ -3,9 +3,9 @@
     <div class="logo">C语言教学平台</div>
     <nav>
       <ul>
-        <li>首页</li>
-        <li>课程</li>
-        <li>个人中心</li>
+        <li @click="()=>router.push('/')">首页</li>
+        <li @click="()=>router.push('/question')">课程</li>
+        <li @click="()=>router.push('/my')">个人中心</li>
       </ul>
     </nav>
     <div class="user">
@@ -17,7 +17,10 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { useRouter } from 'vue-router'
+const router = useRouter()
+</script>
 
 <style lang="scss" scoped>
 @font-face {

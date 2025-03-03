@@ -1,8 +1,16 @@
 <template>
-  <main>主体高度根据子盒子自适应</main>
-</template>
+  <main></main>
+ </template>
 
-<script setup></script>
+<script setup>
+import {reactive} from "vue";
+const userInfo = reactive({
+  clazz: '',
+  number: '',
+  mobile: '',
+  email: '' 
+})
+</script>
 
 <style lang="scss" scoped>
 main {
@@ -10,7 +18,7 @@ main {
   // 高度根据子盒子自适应
   height: auto;
   margin: 0 auto;
-  border: 1px solid red;
-  margin-top: $margin-xxl;
+  background-color: $base-bg-color;
+  padding: 150px 30px 30px;
 }
 </style>
