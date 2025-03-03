@@ -1,0 +1,60 @@
+// 恢复浏览器默认样式（px版本）
+*,
+*::before,
+*::after {
+  margin: initial;
+  padding: initial;
+  box-sizing: content-box;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+ol,
+ul {
+  list-style: decimal;
+  margin-left: 32px; // 2em → 32px
+}
+
+h1 {
+  font-size: 32px;
+  margin: 16px 0;
+} // 2em → 32px, 0.67em → 16px
+h2 {
+  font-size: 24px;
+  margin: 16px 0;
+} // 1.5em → 24px
+h3 {
+  font-size: 19px;
+  margin: 16px 0;
+} // 1.17em ≈ 19px
+h4 {
+  font-size: 16px;
+  margin: 16px 0;
+} // 1em → 16px
+h5 {
+  font-size: 13px;
+  margin: 16px 0;
+} // 0.83em ≈ 13px
+h6 {
+  font-size: 11px;
+  margin: 16px 0;
+} // 0.67em ≈ 11px
+
+p {
+  margin: 16px 0; // 1em → 16px
+}
+
+blockquote {
+  margin: 16px 40px; // 1em → 16px
+}
+
+// pre和table的样式保持不变
+pre {
+  white-space: pre-wrap;
+  font-family: monospace;
+}
+
+table {
+  border-collapse: separate;
+  border-spacing: 2px;
+}

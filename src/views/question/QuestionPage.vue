@@ -1,6 +1,5 @@
 <template>
-  <HeaderCm />
-  答题
+  答题页
 </template>
 
 <script setup></script>
