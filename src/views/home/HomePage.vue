@@ -34,8 +34,9 @@
   <MainCm v-else>
     <div class="top-todo">
       <h2>等待测试</h2>
-      <el-button type="primary">进入测试</el-button>
-      <el-button @click="userStore.changeCeshi()">假如测完后返回首页</el-button>
+      <el-button type="primary" @click="$router.push('/question')"
+        >进入测试</el-button
+      >
     </div>
     <div class="data-todo">
       <el-empty description="测试后再查看数据" />

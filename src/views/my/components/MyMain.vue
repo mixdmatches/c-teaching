@@ -2,19 +2,19 @@
   <main>
     <div class="filed">
       <div class="label">班级</div>
-      <input v-model="userInfo.clazz">
+      <input v-model="userInfo.clazz" />
     </div>
     <div class="filed">
       <div class="label">学号</div>
-      <input v-model="userInfo.number">
+      <input v-model="userInfo.number" />
     </div>
     <div class="filed">
       <div class="label">电话</div>
-      <input v-model="userInfo.mobile">
+      <input v-model="userInfo.mobile" />
     </div>
     <div class="filed">
       <div class="label">邮箱</div>
-      <input v-model="userInfo.email">
+      <input v-model="userInfo.email" />
     </div>
 
     <div class="buttonDiv">
@@ -24,13 +24,13 @@
 </template>
 
 <script setup>
-import {reactive} from "vue";
+import { reactive } from 'vue'
 
 const userInfo = reactive({
   clazz: '',
   number: '',
   mobile: '',
-  email: ''
+  email: '',
 })
 </script>
 
@@ -45,14 +45,14 @@ main {
   display: flex;
   flex-direction: column;
   gap: 2 * $padding-xl;
-  .filed{
+  .filed {
     display: flex;
     gap: $padding-xl;
     align-items: center;
-    .label{
-      font-size: $font-size-xxxl;
+    .label {
+      font-size: $font-size-xxl;
     }
-    input{
+    input {
       border: none;
       background-color: $main-bg-color;
       font-size: $font-size-xxl;
@@ -60,13 +60,13 @@ main {
       min-width: 300px;
     }
   }
-  .buttonDiv{
+  .buttonDiv {
     text-align: right;
-    button{
+    button {
       border: none;
       background-color: $primary-color;
       color: white;
-      font-size: $font-size-xxxl;
+      font-size: $font-size-xxl;
       border-radius: 5px;
       padding: $padding-s;
       cursor: pointer;
