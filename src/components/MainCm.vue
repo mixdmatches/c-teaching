@@ -5,7 +5,15 @@
   </main>
 </template>
 
-<script setup></script>
+<script setup>
+import {reactive} from "vue";
+const userInfo = reactive({
+  clazz: '',
+  number: '',
+  mobile: '',
+  email: '' 
+})
+</script>
 
 <style lang="scss" scoped>
 main {

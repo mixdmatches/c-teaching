@@ -35,7 +35,8 @@
     "sass": "^1.85.1",
     "terser": "^5.39.0",
     "vite": "^6.2.0",
-    "vite-plugin-mock": "^3.0.2"
+    "vite-plugin-mock": "^3.0.2",
+    "vite-plugin-style-import": "^2.0.0"
   },
   "compilerOptions": {
     "baseUrl": ".",
