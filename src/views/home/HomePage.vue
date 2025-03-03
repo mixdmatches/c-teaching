@@ -33,10 +33,23 @@
   </MainCm>
   <MainCm v-else>
     <div class="top-todo">
-      <h2>等待测试</h2>
-      <el-button type="primary" @click="$router.push('/question')"
-        >进入测试</el-button
-      >
+      <h2>请先选择章节测试，测试后可选择课程学习</h2>
+      <span>
+        <el-select
+          v-model="chapterId"
+          placeholder="请选择章节"
+          style="width: 150px; margin-right: 5px"
+        >
+          <el-option
+            v-for="chapter in chapters"
+            :key="chapter.id"
+            :label="chapter.name"
+            :value="chapter.id"
+          />
+        </el-select>
+        <el-button type="primary" @click="handleTest">进入测试</el-button>
+      </span>
+      <!-- <el-button @click="userStore.changeCeshi">假如测试完后返回页面</el-button> -->
     </div>
     <div class="data-todo">
       <el-empty description="测试后再查看数据" />
@@ -45,38 +58,71 @@
 </template>
 
 <script setup>
-import { ElMessage, ElMessageBox } from 'element-plus'
 import MainCm from '../../components/MainCm.vue'
 import OneCom from './components/OneCom.vue'
 import TowCom from './components/TowCom.vue'
-import { onMounted } from 'vue'
+import { ElMessage } from 'element-plus'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/index.js'
 const router = useRouter()
 const userStore = useUserStore()
-// 页面加载完弹出提示框
-onMounted(() => {
-  if (!userStore.isCeshi) {
-    ElMessageBox.confirm(
-      '首次进入先测试一下你对c语言的掌握情况，然后为你安排合理的学习课程和题目',
-      {
-        confirmButtonText: '去测试',
-        cancelButtonText: '不了',
-        type: 'warning',
-      }
-    )
-      .then(() => {
-        // 跳转测试/答题页，测完后请把user仓库中的isCeshi改为true
-        router.push('/question')
-      })
-      .catch(() => {
-        ElMessage({
-          type: 'info',
-          message: '测试后有更多操作噢',
-        })
-      })
+const chapterId = ref('')
+const chapters = ref([
+  {
+    id: 1,
+    name: '第一章',
+  },
+  {
+    id: 2,
+    name: '第二章',
+  },
+  {
+    id: 3,
+    name: '第三章',
+  },
+  {
+    id: 4,
+    name: '第四章',
+  },
+  {
+    id: 5,
+    name: '第五章',
+  },
+  {
+    id: 6,
+    name: '第六章',
+  },
+  {
+    id: 7,
+    name: '第七章',
+  },
+  {
+    id: 8,
+    name: '第八章',
+  },
+  {
+    id: 9,
+    name: '第九章',
+  },
+  {
+    id: 10,
+    name: '第十章',
+  },
+])
+// 进入测试按钮
+const handleTest = () => {
+  if (!chapterId.value) {
+    ElMessage.error('请选择章节')
+    return
   }
-})
+  router.push({
+    path: '/question',
+    query: {
+      id: chapterId.value,
+    },
+  })
+}
 </script>
 
 <style lang="scss" scoped>
@@ -104,8 +150,8 @@ onMounted(() => {
 }
 .top-todo {
   @include top-flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  justify-content: center;
 }
 .top {
   @include top-flex;
@@ -177,6 +223,20 @@ onMounted(() => {
       color: $primary-color;
       font-family: DingTalk;
     }
+  }
+}
+.dialog-body {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: $margin-xxl;
+  .dialog-text {
+    font-size: 1.4rem;
+    color: $text-color;
+    line-height: 1.5;
   }
 }
 </style>
