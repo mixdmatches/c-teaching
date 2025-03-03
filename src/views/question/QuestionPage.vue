@@ -19,7 +19,6 @@
   <footer>
     <div class="footerBox">
       <div class="left">
-        <!--        <Pagination :total="questionList.length" class="pagination" />-->
         <div class="viewDotBox">
           <ProblemViewDot
             v-for="(item, index) in questionList"
@@ -39,11 +38,10 @@
           </div>
         </div>
       </div>
-      <LButton @click="() => router.push('/result')">提交</LButton>
+      <LButton @click="submitTest">提交</LButton>
     </div>
   </footer>
 </template>
-
 <script setup>
 import SubHeader from '@/components/SubHeader.vue'
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
@@ -55,6 +53,10 @@ import ProblemViewDot from '@/components/problemViewDot.vue'
 
 const router = useRouter()
 
+// 定义状态变量
+const status = ref(false)
+
+// 题目列表
 const questionList = reactive(
   [...new Array(15)].map((item, index) => {
     return {
@@ -63,43 +65,24 @@ const questionList = reactive(
       difficulty: 3,
       emphasis: 4,
       tags: [
-        {
-          tagName: '循环',
-        },
-        {
-          tagName: '数组',
-        },
+        { tagName: '循环' },
+        { tagName: '数组' },
       ],
       title: '1.题目描述',
       options: [
-        {
-          id: 'A',
-          text: '选项一',
-        },
-        {
-          id: 'B',
-          text: '选项一',
-        },
-        {
-          id: 'C',
-          text: '选项一',
-        },
-        {
-          id: 'D',
-          text: '选项一',
-        },
+        { id: 'A', text: '选项一' },
+        { id: 'B', text: '选项二' },
+        { id: 'C', text: '选项三' },
+        { id: 'D', text: '选项四' },
       ],
       selectId: '',
     }
   })
 )
 
-const status = ref()
-
-const time = ref(1)
-const showTimeString = computed(() => {
-  return formatTime(time.value)
-})
+// 时间相关逻辑
+const time = ref(0)
+const showTimeString = computed(() => formatTime(time.value))
 const timeInterval = ref()
 const startTiming = () => {
   timeInterval.value = setInterval(() => {
@@ -112,6 +95,25 @@ onMounted(() => {
 onUnmounted(() => {
   clearInterval(timeInterval.value)
 })
+
+// 提交测试
+const submitTest = () => {
+  // 检查是否有未完成的题目
+  // const hasUnfinishedQuestions = questionList.some(item => !item.selectId)
+  // if (hasUnfinishedQuestions) {
+  //   alert('请完成所有题目后再提交！')
+  //   return
+  // }
+
+  // 更新状态为 true
+  status.value = true
+
+  // 将状态传递到其他页面
+  router.push({
+    path: '/result',
+    query: { testCompleted: status.value },
+  })
+}
 </script>
 
 <style lang="scss" scoped>
