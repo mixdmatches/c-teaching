@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 export const useUserStore = defineStore('user', () => {
-  const isCeshi = ref(true || localStorage.getItem('isCeshi'))
+  const isCeshi = ref(false || localStorage.getItem('isCeshi'))
   const changeCeshi = () => {
     isCeshi.value = true
     localStorage.setItem('isCeshi', isCeshi.value)
