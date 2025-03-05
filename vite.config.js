@@ -7,13 +7,15 @@ export default defineConfig({
   plugins: [
     vue(),
     viteMockServe({
-      mockPath: './src/mock', // mock 文件存放目录
-      localEnabled: process.env.NODE_ENV === 'development', // 开发环境启用
-      prodEnabled: false, // 生产环境永远禁用
+      // 配置是否启用Mock服务
+      enable: true,
+      // 配置Mock文件的目录
+      mockPath: 'mock',
+      // 配置是否在开发环境启动时自动注入Mock服务
       injectCode: `
-          import { setupProdMockServer } from './mockProd';
-          setupProdMockServer();
-        `,
+        import { setupProdMockServer } from '../mock/_createProdMockServer';
+        setupProdMockServer();
+      `,
     }),
   ],
   build: {
