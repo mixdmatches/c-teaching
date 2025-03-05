@@ -10,7 +10,7 @@
       </div>
       <div class="content">{{ summaryText }}</div>
     </div>
-    <section v-html="markdownToHtml"></section>
+    <section class="markdown-container" v-html="markdownToHtml"></section>
     <footer>
       <span
         >关联知识：<el-button>循环</el-button><el-button>数组</el-button></span
@@ -33,12 +33,38 @@ const index = route.query.index
 console.log(index, 'index')
 
 const markdonwText = ref(
-  '# Markdown 标题\n\n' +
-    '这是一个 Markdown 示例。\n\n' +
-    '## 二级标题\n\n' +
-    '这是一个二级标题。\n\n' +
-    '### 三级标题\n\n' +
-    '这是一个三级标题。\n\n'
+  '# Markdown 演示\n\n' +
+    '## 标题演示\n' +
+    '### 三级标题\n' +
+    '#### 四级标题\n\n' +
+    '## 列表样式\n' +
+    '- 无序列表项1\n' +
+    '- 无序列表项2\n' +
+    '  - 嵌套列表项\n\n' +
+    '1. 有序列表1\n' +
+    '2. 有序列表2\n\n' +
+    '## 代码块\n' +
+    '行内代码 `console.log("Hello")`\n\n' +
+    '```javascript\n' +
+    'function demo() {\n' +
+    '  // 代码块演示\n' +
+    '  const arr = [1, 2, 3];\n' +
+    '  return arr.map(x => x * 2);\n' +
+    '}\n' +
+    '```\n\n' +
+    '## 强调文本\n' +
+    '*斜体文本*  **加粗文本**  ~~删除线~~\n\n' +
+    '## 链接与图片\n' +
+    '[示例链接](https://example.com)\n\n' +
+    '![占位图片](https://via.placeholder.com/150)\n\n' +
+    '## 表格\n' +
+    '| 姓名   | 年龄 | 职业      |\n' +
+    '|--------|------|-----------|\n' +
+    '| 张三   | 28   | 工程师    |\n' +
+    '| 李四   | 32   | 设计师    |\n\n' +
+    '## 引用块\n' +
+    '> 这是引用文本\n' +
+    '>> 嵌套引用文本\n'
 )
 const markdownToHtml = ref(marked(markdonwText.value))
 const summaryText = ref(
@@ -103,12 +129,8 @@ const handleCopy = async () => {
     overflow-y: auto;
   }
 }
-section {
-  @import './reset-override.scss';
-  :deep(*) {
-    @extend *;
-  }
-  width: 100%;
+.markdown-container {
+  // width: 100%;
   height: auto;
   background-color: #ffffff;
   margin: $margin-xl 0;

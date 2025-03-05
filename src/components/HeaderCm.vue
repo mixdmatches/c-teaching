@@ -48,10 +48,10 @@ const routers = [
 
 .header {
   // // 固定在页面顶部
-  // position: fixed;
-  // top: 0;
-  // left: 0;
-  // z-index: 999;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 999;
   width: 100%;
   height: $header-height;
   background-color: $base-bg-color;

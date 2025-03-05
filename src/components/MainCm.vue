@@ -6,12 +6,12 @@
 </template>
 
 <script setup>
-import {reactive} from "vue";
+import { reactive } from 'vue'
 const userInfo = reactive({
   clazz: '',
   number: '',
   mobile: '',
-  email: '' 
+  email: '',
 })
 </script>
 
@@ -21,6 +21,6 @@ main {
   // 高度根据子盒子自适应
   height: auto;
   margin: 0 auto;
-  margin-top: $margin-xxl;
+  margin-top: calc($margin-xxl + $header-height);
 }
 </style>
