@@ -3,8 +3,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import * as echarts from 'echarts'
+const props = defineProps({
+  points: Array,
+})
+
 const tow = ref()
 onMounted(() => {
   const myChart = echarts.init(tow.value)
@@ -17,7 +21,7 @@ onMounted(() => {
     },
     series: [
       {
-        name: 'Access From',
+        name: '难度分布',
         type: 'pie',
         radius: ['40%', '70%'],
         avoidLabelOverlap: false,
@@ -41,11 +45,11 @@ onMounted(() => {
           show: false,
         },
         data: [
-          { value: 1048, name: 'Search Engine' },
-          { value: 735, name: 'Direct' },
-          { value: 580, name: 'Email' },
-          { value: 484, name: 'Union Ads' },
-          { value: 300, name: 'Video Ads' },
+          { value: 20, name: '简单' },
+          { value: 20, name: '中等' },
+          { value: 20, name: '困难' },
+          { value: 20, name: '地狱' },
+          { value: 20, name: '无敌' },
         ],
       },
     ],

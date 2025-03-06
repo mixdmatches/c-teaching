@@ -14,7 +14,7 @@ import zhCn from 'element-plus/es/locale/lang/zh-cn'
 
 // 获取当前环境变量
 const baseURL = import.meta.env.VITE_API_BASE
-const isMock = import.meta.env.VITE_MOCK_ENABLED === 'true'
+const isMock = import.meta.env.VITE_MOCK_ENABLED
 console.log('当前环境变量：', baseURL, '是否启用mock:', isMock)
 const app = createApp(App)
 

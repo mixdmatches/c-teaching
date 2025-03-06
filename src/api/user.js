@@ -3,6 +3,7 @@ import service from '../utils/request'
 // 所有接口函数都要以api开头，请求类型，后面跟接口名称，命名最好语义化，统一用箭头函数
 export const apiPostLogin = data => service.post('/api/login', data)
 export const apiGetUserInfo = () => service.get('/api/user')
+export const apiPostAiTopic = data => service.post('/api/ai/topic', data)
 // export const apiUpdateUserInfo = data => service.post('/user/info', data)
 // export const apiPostLogin...
 // export const apiAddUser...

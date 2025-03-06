@@ -4,10 +4,10 @@
     <div class="top">
       <h2>上次学到</h2>
       <span class="study">
-        <p>第XXX章XXXXXX</p>
+        <p>{{ studentStatus.pointName }}</p>
         <el-button type="primary">继续学习</el-button>
       </span>
-      <p class="next-study">下一个知识点：第XX章XXXXXX</p>
+      <p class="next-study">下一个知识点：{{ studentStatus.nextPointName }}</p>
     </div>
     <div class="four-data">
       <div class="item">
@@ -16,15 +16,14 @@
       </div>
       <div class="item">
         <span class="title">进度</span>
-        <span class="num">60%</span>
+        <span class="num">{{ plan }}%</span>
       </div>
       <div class="item">
         <span class="title">知识点</span>
-        <span class="num">45/300</span>
+        <span class="num">{{ studyPoints.length }}/{{ points.length }}</span>
       </div>
     </div>
     <div class="data">
-      <!-- 日期，在线时长，进度，学过知识/总知识数目 引入ai模型 -->
       <!-- 折线图 -->
       <OneCom />
       <!-- 圆环 进度-->
@@ -38,18 +37,18 @@
         <el-select
           v-model="chapterId"
           placeholder="请选择章节"
-          style="width: 150px; margin-right: 5px"
+          style="width: 250px; margin-right: 5px"
         >
           <el-option
             v-for="chapter in chapters"
-            :key="chapter.id"
-            :label="chapter.name"
-            :value="chapter.id"
+            :key="chapter.sectionId"
+            :label="chapter.sectionName"
+            :value="chapter.sectionId"
           />
         </el-select>
         <el-button type="primary" @click="handleTest">进入测试</el-button>
       </span>
-      <!-- <el-button @click="userStore.changeCeshi">假如测试完后返回页面</el-button> -->
+      <el-button @click="userStore.changeCeshi">假如测试完后返回页面</el-button>
     </div>
     <div class="data-todo">
       <el-empty description="测试后再查看数据" />
@@ -62,54 +61,19 @@ import MainCm from '../../components/MainCm.vue'
 import OneCom from './components/OneCom.vue'
 import TowCom from './components/TowCom.vue'
 import { ElMessage } from 'element-plus'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/index.js'
+// api
+import { apiGetStudyStatus } from '@/api/home.js'
+import {
+  apiGetAllChapters,
+  apiGetAllPoints,
+  apiGetStudyPoints,
+} from '@/api/chapters.js'
 const router = useRouter()
 const userStore = useUserStore()
-const chapterId = ref('')
-const chapters = ref([
-  {
-    id: 1,
-    name: '第一章',
-  },
-  {
-    id: 2,
-    name: '第二章',
-  },
-  {
-    id: 3,
-    name: '第三章',
-  },
-  {
-    id: 4,
-    name: '第四章',
-  },
-  {
-    id: 5,
-    name: '第五章',
-  },
-  {
-    id: 6,
-    name: '第六章',
-  },
-  {
-    id: 7,
-    name: '第七章',
-  },
-  {
-    id: 8,
-    name: '第八章',
-  },
-  {
-    id: 9,
-    name: '第九章',
-  },
-  {
-    id: 10,
-    name: '第十章',
-  },
-])
+
 // 进入测试按钮
 const handleTest = () => {
   if (!chapterId.value) {
@@ -123,6 +87,43 @@ const handleTest = () => {
     },
   })
 }
+
+const studentStatus = ref({})
+// 1.获取学生学习情况
+const getStudyStatus = async () => {
+  const res = await apiGetStudyStatus()
+  studentStatus.value = res
+}
+getStudyStatus()
+
+const chapters = ref([])
+const chapterId = ref('')
+// 2.获取章节列表
+const getChapters = async () => {
+  const res = await apiGetAllChapters()
+  chapters.value = res.chapters
+}
+getChapters()
+
+// 3.获取所有知识点列表
+const points = ref([])
+const getAllPoints = async () => {
+  const res = await apiGetAllPoints()
+  points.value = res.points
+}
+getAllPoints()
+
+// 4.获取已学知识点列表
+const studyPoints = ref([])
+const getStudyPoints = async () => {
+  const res = await apiGetStudyPoints()
+  studyPoints.value = res.points
+}
+getStudyPoints()
+
+const plan = computed(() =>
+  Math.ceil((studyPoints.value.length / points.value.length) * 100)
+)
 </script>
 
 <style lang="scss" scoped>

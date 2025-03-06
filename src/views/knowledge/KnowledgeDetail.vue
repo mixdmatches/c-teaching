@@ -13,7 +13,8 @@
     <section class="markdown-container" v-html="markdownToHtml"></section>
     <footer>
       <span
-        >关联知识：<el-button>循环</el-button><el-button>数组</el-button></span
+        >关联知识：<el-tag style="margin-right: 5px">循环</el-tag
+        ><el-tag>数组</el-tag></span
       >
       <el-button type="primary">去测试</el-button>
     </footer>

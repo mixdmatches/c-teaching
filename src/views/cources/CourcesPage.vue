@@ -7,7 +7,7 @@
         round
         v-for="(item, i) in sections"
         :key="item"
-        >{{ item }}</el-button
+        >第{{ item.sectionId }}章</el-button
       >
     </ul>
     <ul class="status">
@@ -32,9 +32,9 @@
       </div>
     </div>
     <el-pagination
-      :current-page="currentPage4"
-      :page-size="pageSize4"
-      :page-sizes="[100, 200, 300, 400]"
+      :current-page="courcesReq.pageNo"
+      :page-size="courcesReq.pageSize"
+      :page-sizes="[4, 6, 8, 10]"
       :background="background"
       layout="total, sizes, prev, pager, next, jumper"
       :total="400"
@@ -50,22 +50,62 @@ import MainCm from '@/components/MainCm.vue'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
+
+// 请求参数
+const courcesReq = ref({
+  pageNo: 1,
+  pageSize: 6,
+  currentISec: 0,
+  currentISta: 0,
+})
+
 const sections = ref([
-  '全部',
-  '第一章',
-  '第二章',
-  '第三章',
-  '第四章',
-  '第五章',
-  '第六章',
-  '第七章',
-  '第八章',
-  '第九章',
-  '第十章',
+  {
+    sectionId: 1,
+    sectionName: 'C语言概述',
+  },
+  {
+    sectionId: 2,
+    sectionName: 'C语言基本语法',
+  },
+  {
+    sectionId: 3,
+    sectionName: 'C语言数据类型',
+  },
+  {
+    sectionId: 4,
+    sectionName: 'C语言运算符',
+  },
+  {
+    sectionId: 5,
+    sectionName: 'C语言流程控制',
+  },
+  {
+    sectionId: 6,
+    sectionName: 'C语言函数',
+  },
+  {
+    sectionId: 7,
+    sectionName: 'C语言数组',
+  },
+  {
+    sectionId: 8,
+    sectionName: 'C语言指针',
+  },
+  {
+    sectionId: 9,
+    sectionName: 'C语言结构体',
+  },
+  {
+    sectionId: 10,
+    sectionName: 'C语言文件操作',
+  },
 ])
+
 const status = ref(['全部', '学习过', '待学习', '未解锁'])
 const currentISec = ref(0)
 const currentISta = ref(0)
+
 const knowledges = ref([
   {
     name: '知识点名称',
@@ -152,7 +192,12 @@ const knowledges = ref([
     typeof: '第一章',
   },
 ])
+
+
 const activeColor = ref(['#67c23a', '#409eff', '#f56c6c'])
+
+
+// 跳转到知识点详情页
 const goToDetail = index => {
   router.push({ path: '/knowledgeDetail', query: { index } })
 }
