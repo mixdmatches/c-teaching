@@ -25,6 +25,7 @@ const routes = [
     name: 'question',
     component: () => import('@/views/question/QuestionPage.vue'),
   },
+  
   {
     path: '/result',
     name: 'result',
