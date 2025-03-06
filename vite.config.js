@@ -8,9 +8,11 @@ export default defineConfig({
     vue(),
     viteMockServe({
       // 配置是否启用Mock服务
-      enable: true,
+      localEnable: true,
+      // 配置是否在生产环境启用Mock服务
+      prodEnable: false,
       // 配置Mock文件的目录
-      mockPath: 'mock',
+      mockPath: 'src/mock',
       // 配置是否在开发环境启动时自动注入Mock服务
       injectCode: `
         import { setupProdMockServer } from '../mock/_createProdMockServer';
