@@ -25,11 +25,7 @@ const routes = [
     name: 'question',
     component: () => import('@/views/question/QuestionPage.vue'),
   },
-  {
-    path: '/personal',
-    name: 'personal',
-    component: () => import('@/views/personal/PersonalPage.vue'),
-  },
+  
   {
     path: '/result',
     name: 'result',
