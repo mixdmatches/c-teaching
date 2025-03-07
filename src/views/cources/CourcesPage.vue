@@ -23,6 +23,7 @@
       <div
         class="knowledge-card"
         v-for="(item, index) in knowledges"
+        :key="item"
         @click="goToDetail(index)"
       >
         <h5 :style="{ color: activeColor[item.status] }">{{ item.name }}</h5>
@@ -193,9 +194,7 @@ const knowledges = ref([
   },
 ])
 
-
 const activeColor = ref(['#67c23a', '#409eff', '#f56c6c'])
-
 
 // 跳转到知识点详情页
 const goToDetail = index => {

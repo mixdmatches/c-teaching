@@ -1,9 +1,7 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
 const service = axios.create({
-  baseURL: import.meta.env.VITE_MOCK_ENABLED
-    ? ''
-    : import.meta.env.VITE_API_BASE_URL,
+  baseURL: 'http://127.0.0.1:3007',
   timeout: 5000,
 })
 

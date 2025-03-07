@@ -32,9 +32,9 @@
   </MainCm>
   <MainCm v-else>
     <div class="top-todo">
-      <h2>请先选择章节测试，测试后可选择课程学习</h2>
+      <h2>请先测试，测试后可选择课程学习</h2>
       <span>
-        <el-select
+        <!-- <el-select
           v-model="chapterId"
           placeholder="请选择章节"
           style="width: 250px; margin-right: 5px"
@@ -45,7 +45,7 @@
             :label="chapter.sectionName"
             :value="chapter.sectionId"
           />
-        </el-select>
+        </el-select> -->
         <el-button type="primary" @click="handleTest">进入测试</el-button>
       </span>
       <el-button @click="userStore.changeCeshi">假如测试完后返回页面</el-button>
@@ -76,15 +76,8 @@ const userStore = useUserStore()
 
 // 进入测试按钮
 const handleTest = () => {
-  if (!chapterId.value) {
-    ElMessage.error('请选择章节')
-    return
-  }
   router.push({
     path: '/question',
-    query: {
-      id: chapterId.value,
-    },
   })
 }
 
@@ -96,14 +89,14 @@ const getStudyStatus = async () => {
 }
 getStudyStatus()
 
-const chapters = ref([])
-const chapterId = ref('')
-// 2.获取章节列表
-const getChapters = async () => {
-  const res = await apiGetAllChapters()
-  chapters.value = res.chapters
-}
-getChapters()
+// const chapters = ref([])
+// const chapterId = ref('')
+// // 2.获取章节列表
+// const getChapters = async () => {
+//   const res = await apiGetAllChapters()
+//   chapters.value = res.chapters
+// }
+// getChapters()
 
 // 3.获取所有知识点列表
 const points = ref([])
