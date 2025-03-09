@@ -22,5 +22,6 @@ main {
   height: auto;
   margin: 0 auto;
   margin-top: calc($margin-xxl + $header-height);
+  margin-bottom: $header-height;
 }
 </style>

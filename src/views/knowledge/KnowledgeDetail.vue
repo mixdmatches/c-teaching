@@ -8,15 +8,19 @@
           ><el-icon size="20"><CopyDocument /></el-icon> 复制</span
         >
       </div>
-      <div class="content">{{ summaryText }}</div>
+      <div class="content">{{ pointDetail.aiSummary }}</div>
     </div>
     <section class="markdown-container" v-html="markdownToHtml"></section>
     <footer>
       <span
-        >关联知识：<el-tag style="margin-right: 5px">循环</el-tag
-        ><el-tag>数组</el-tag></span
+        >关联知识：<el-tag
+          style="margin-right: 5px"
+          v-for="tag in pointDetail.relationName"
+          :key="tag"
+          >{{ tag }}</el-tag
+        ></span
       >
-      <el-button type="primary">去测试</el-button>
+      <el-button type="primary" @click="handleTest">去测试</el-button>
     </footer>
   </MainCm>
 </template>
@@ -24,17 +28,94 @@
 <script setup>
 import HeaderCm from '../../components/HeaderCm.vue'
 import MainCm from '../../components/MainCm.vue'
-import { ref } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useUserStore } from '@/stores/index'
 import { ElMessage } from 'element-plus'
-import { useRoute } from 'vue-router'
+// 引入api
+import { apiGetPointDetail } from '@/api/chapters'
+import { useRoute, useRouter } from 'vue-router'
 import { marked } from 'marked'
+import hljs from 'highlight.js'
+// 引入高亮样式
+import 'highlight.js/styles/monokai-sublime.css'
+// 配置marked高亮
+marked.setOptions({
+  highlight: function (code, lang) {
+    return hljs.highlightAuto(code).value
+  },
+})
 // 获取路由参数
 const route = useRoute()
-const index = route.query.index
-console.log(index, 'index')
+const router = useRouter()
+// 从路由参数中解析出章节id和知识点id
+const { pointId, sectionId } = route.query
+console.log(pointId, sectionId)
 
-const markdonwText = ref(
+// 获取user仓库
+const userStore = useUserStore()
+// 定义在线学习时间
+const studyTime = ref(0)
+let timer = null
+
+// 在组件挂载后启动计时器
+onMounted(() => {
+  timer = setInterval(() => {
+    studyTime.value++
+  }, 1000)
+})
+
+// 在组件卸载前清除计时器
+onUnmounted(() => {
+  const studyTimeValue = parseInt(studyTime.value) // 确保 studyTime 是数字类型
+  userStore.changeTotalTime(studyTimeValue)
+  if (timer) {
+    clearInterval(timer)
+  }
+})
+
+// 定义知识点详情
+const pointDetail = ref({
+  context: '',
+  aiSummary: '',
+  relationName: [],
+})
+
+// 获取知识点详情教程
+const getPointDetail = async () => {
+  const res = await apiGetPointDetail({ pointId, sectionId })
+  pointDetail.value = res.data
+  console.log(pointDetail.value)
+}
+getPointDetail()
+
+// markdown转html
+const markdownToHtml = computed(() => {
+  return marked.parse(pointDetail.value.context)
+})
+
+// 复制按钮回调
+const handleCopy = async () => {
+  try {
+    await navigator.clipboard.writeText(pointDetail.value.aiSummary)
+    ElMessage.success('复制成功')
+  } catch (err) {
+    ElMessage.error('复制失败，请手动选择文本复制')
+  }
+}
+
+// 去测试按钮回调
+const handleTest = () => {
+  router.push({ path: '/question', query: { pointId, sectionId } })
+}
+
+// markdown文本
+const markdownText = ref(
   '# Markdown 演示\n\n' +
+    '```javascript\n' +
+    'function test() {\n' +
+    '  console.log("代码高亮演示");\n' +
+    '}\n' +
+    '```\n\n' +
     '## 标题演示\n' +
     '### 三级标题\n' +
     '#### 四级标题\n\n' +
@@ -67,18 +148,6 @@ const markdonwText = ref(
     '> 这是引用文本\n' +
     '>> 嵌套引用文本\n'
 )
-const markdownToHtml = ref(marked(markdonwText.value))
-const summaryText = ref(
-  `这是一篇关于 C 语言的超详细学习笔记，涵盖了 C 语言的众多基础知识和应用，包括入门介绍、数据类型、运算符号、控制结构（分支、循环）、函数、数组、字符串、多维数组等内容，还通过大量示例和综合练习进行了深入讲解。`
-)
-const handleCopy = async () => {
-  try {
-    await navigator.clipboard.writeText(summaryText.value)
-    ElMessage.success('复制成功')
-  } catch (err) {
-    ElMessage.error('复制失败，请手动选择文本复制')
-  }
-}
 </script>
 
 <style scoped lang="scss">

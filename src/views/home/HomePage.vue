@@ -5,14 +5,14 @@
       <h2>上次学到</h2>
       <span class="study">
         <p>{{ studentStatus.pointName }}</p>
-        <el-button type="primary">继续学习</el-button>
+        <el-button type="primary" @click="handleStudy">继续学习</el-button>
       </span>
       <p class="next-study">下一个知识点：{{ studentStatus.nextPointName }}</p>
     </div>
     <div class="four-data">
       <div class="item">
         <span class="title">学习时长</span>
-        <span class="num">45min</span>
+        <span class="num">{{ mini }}</span>
       </div>
       <div class="item">
         <span class="title">进度</span>
@@ -60,7 +60,6 @@
 import MainCm from '../../components/MainCm.vue'
 import OneCom from './components/OneCom.vue'
 import TowCom from './components/TowCom.vue'
-import { ElMessage } from 'element-plus'
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/index.js'
@@ -85,7 +84,7 @@ const studentStatus = ref({})
 // 1.获取学生学习情况
 const getStudyStatus = async () => {
   const res = await apiGetStudyStatus()
-  studentStatus.value = res
+  studentStatus.value = res.data
 }
 getStudyStatus()
 
@@ -102,7 +101,7 @@ getStudyStatus()
 const points = ref([])
 const getAllPoints = async () => {
   const res = await apiGetAllPoints()
-  points.value = res.points
+  points.value = res.data.points
 }
 getAllPoints()
 
@@ -110,13 +109,34 @@ getAllPoints()
 const studyPoints = ref([])
 const getStudyPoints = async () => {
   const res = await apiGetStudyPoints()
-  studyPoints.value = res.points
+  studyPoints.value = res.data
 }
 getStudyPoints()
 
-const plan = computed(() =>
-  Math.ceil((studyPoints.value.length / points.value.length) * 100)
-)
+// 继续学习按钮
+const handleStudy = () => {
+  router.push({
+    path: '/knowledgeDetail',
+    query: {
+      pointId: studentStatus.value.pointId,
+      sectionId: studentStatus.value.sectionId,
+    },
+  })
+}
+
+const plan = computed(() => {
+  if (points.value.length === 0) {
+    return 0 // 避免除零错误
+  }
+  return Math.ceil((studyPoints.value.length / points.value.length) * 100)
+})
+
+// 秒转分钟
+const mini = computed(() => {
+  return userStore.totalTime < 60
+    ? userStore.totalTime + 's'
+    : Math.ceil(userStore.totalTime / 60) + 'min'
+})
 </script>
 
 <style lang="scss" scoped>

@@ -215,6 +215,7 @@ pre {
   ol {
     list-style-type: decimal;
   }
+  // 恢复代码高亮
 
   h1,
   h2,
@@ -259,7 +260,6 @@ pre {
     border-radius: 3px;
     line-height: 1.5; // 代码块行高稍密
   }
-
   // 可以根据需要继续添加其他需要保留的原始样式
   // 保留表格原始样式
   table {
