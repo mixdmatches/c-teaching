@@ -35,7 +35,6 @@
       :current-page="courcesReq.pageNo"
       :page-size="courcesReq.pageSize"
       :page-sizes="[4, 6, 8, 10]"
-      :background="background"
       layout="total, sizes, prev, pager, next, jumper"
       :total="400"
       background

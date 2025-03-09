@@ -50,35 +50,35 @@ import LButton from '@/components/LButton.vue'
 import { formatTime } from '@/utils/dateUtils.js'
 import { useRouter } from 'vue-router'
 import ProblemViewDot from '@/components/problemViewDot.vue'
-
+import getQuestionListByPointId from '@/api/question.js'
+// const questionList = reactive([])
 const router = useRouter()
-
 // 定义状态变量
 const status = ref(false)
-
+const questionList = relactve([])
 // 题目列表
-const questionList = reactive(
-  [...new Array(15)].map((item, index) => {
-    return {
-      no: index + 1,
-      type: 'radio',
-      difficulty: 3,
-      emphasis: 4,
-      tags: [
-        { tagName: '循环' },
-        { tagName: '数组' },
-      ],
-      title: '1.题目描述',
-      options: [
-        { id: 'A', text: '选项一' },
-        { id: 'B', text: '选项二' },
-        { id: 'C', text: '选项三' },
-        { id: 'D', text: '选项四' },
-      ],
-      selectId: '',
-    }
-  })
-)
+// const questionList = reactive(
+//   [...new Array(15)].map((item, index) => {
+//     return {
+//       no: index + 1,
+//       type: 'radio',
+//       difficulty: 3,
+//       emphasis: 4,
+//       tags: [
+//         { tagName: '循环' },
+//         { tagName: '数组' },
+//       ],
+//       title: '1.题目描述',
+//       options: [
+//         { id: 'A', text: '选项一' },
+//         { id: 'B', text: '选项二' },
+//         { id: 'C', text: '选项三' },
+//         { id: 'D', text: '选项四' },
+//       ],
+//       selectId: '',
+//     }
+//   })
+// )
 
 // 时间相关逻辑
 const time = ref(0)
@@ -92,18 +92,41 @@ const startTiming = () => {
 onMounted(() => {
   startTiming()
 })
+
+const fetchQuestions = async (pointId) => {
+  try {
+    const data = await getQuestionListByPointId(pointId);
+    questionList.splice(0, questionList.length, ...data.map((item, index) => ({
+      no: index + 1,
+      type: item.type || 'radio',
+      difficulty: item.difficulty || 3,
+      emphasis: item.emphasis || 4,
+      tags: item.tags || [],
+      title: item.title || '题目描述',
+      options: item.options || [
+        { id: 'A', text: '选项一' },
+        { id: 'B', text: '选项二' },
+        { id: 'C', text: '选项三' },
+        { id: 'D', text: '选项四' },
+      ],
+      selectId: '',
+    })));
+  } catch (error) {
+    console.error('请求错误:', error.message); // 添加详细的错误信息打印
+    console.error('请求详情:', error.config); // 打印请求的具体配置
+  }
+}
+
+onMounted(() => {
+  const pointId = 3;
+  fetchQuestions(pointId);
+});
 onUnmounted(() => {
   clearInterval(timeInterval.value)
 })
 
 // 提交测试
 const submitTest = () => {
-  // 检查是否有未完成的题目
-  // const hasUnfinishedQuestions = questionList.some(item => !item.selectId)
-  // if (hasUnfinishedQuestions) {
-  //   alert('请完成所有题目后再提交！')
-  //   return
-  // }
 
   // 更新状态为 true
   status.value = true

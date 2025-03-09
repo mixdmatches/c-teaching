@@ -1,9 +1,7 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
 const service = axios.create({
-  baseURL: import.meta.env.VITE_MOCK_ENABLED
-    ? ''
-    : import.meta.env.VITE_API_BASE_URL,
+  baseURL: 'http://47.122.30.214:8101',
   timeout: 5000,
 })
 
@@ -15,7 +13,18 @@ service.interceptors.request.use(config => {
 
 // 响应拦截器
 service.interceptors.response.use(
-  response => response.data,
+  response => {
+    switch (response.data?.code){
+      case 50000:
+        ElMessage.error(response.data.message)
+        return Promise.reject(response.data.message)
+      case 0:
+      case 200:
+        return Promise.resolve(response.data?.data)
+      default:
+        return Promise.resolve(response.data?.data)
+    }
+  },
   error => {
     console.error('请求错误:', error)
     //定义一个变量
