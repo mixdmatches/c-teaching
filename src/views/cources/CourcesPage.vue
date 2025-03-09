@@ -120,6 +120,7 @@ const sections = ref([
     sectionName: 'C语言文件操作',
   },
 ])
+
 // 状态列表
 const status = ref([
   {
@@ -166,7 +167,7 @@ const debouncedWarning = debounce(() => {
 }, 500)
 // 跳转到知识点详情页
 const goToDetail = (pointId, sectionId, knowState) => {
-  if (knowState === 2) {
+  if (knowState === 1) {
     // 调用防抖函数
     debouncedWarning()
   } else {
