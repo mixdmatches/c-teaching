@@ -7,5 +7,9 @@ export const useUserStore = defineStore('user', () => {
     isCeshi.value = true
     localStorage.setItem('isCeshi', isCeshi.value)
   }
-  return { isCeshi, changeCeshi }
+  const userId = ref('100001')
+  const getUserId = () => {
+    return userId.value
+  }
+  return { isCeshi, changeCeshi ,getUserId}
 })

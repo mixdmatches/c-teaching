@@ -16,7 +16,7 @@
         >关联知识：<el-tag style="margin-right: 5px">循环</el-tag
         ><el-tag>数组</el-tag></span
       >
-      <el-button type="primary">去测试</el-button>
+      <el-button type="primary" @click="toTest">去测试</el-button>
     </footer>
   </MainCm>
 </template>
@@ -26,10 +26,11 @@ import HeaderCm from '../../components/HeaderCm.vue'
 import MainCm from '../../components/MainCm.vue'
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { marked } from 'marked'
 // 获取路由参数
 const route = useRoute()
+const router = useRouter()
 const index = route.query.index
 console.log(index, 'index')
 
@@ -78,6 +79,16 @@ const handleCopy = async () => {
   } catch (err) {
     ElMessage.error('复制失败，请手动选择文本复制')
   }
+}
+
+const toTest = () => {
+  router.push({
+    path: '/question',
+    query:{
+      sectionId: '3',
+      pointId: '1'
+    }
+  })
 }
 </script>
 

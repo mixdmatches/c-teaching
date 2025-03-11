@@ -2,15 +2,15 @@
   <main>
     <!-- 用户信息卡片 -->
     <el-card class="info-card">
-      <div class="filed" v-for="(value, key) in userInfo" :key="key">
-        <div class="label">{{ formatLabel(key) }}</div>
+      <div class="filed" v-for="filed in userInfoFiled" :key="filed.value">
+        <div class="label">{{ filed.label }}</div>
         <input
           v-if="isEditing"
-          v-model="tempUserInfo[key]"
+          v-model="tempUserInfo[filed.value]"
           :disabled="!isEditing"
           class="input-field"
         />
-        <span v-else class="display-field">{{ value }}</span>
+        <span v-else class="display-field">{{ userInfo[filed.value] }}</span>
       </div>
 
       <!-- 按钮区域 -->
@@ -31,62 +31,71 @@
     </el-card>
   </main>
 </template>
+
 <script setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
 import { ElButton } from 'element-plus'
+import axios from 'axios'
+import { getUserInfo, updateUserInfo } from '@/api/user.js'
+import { useUserStore } from '@/stores/index.js'
 
 // 初始化用户信息
-const userInfo = reactive({
-  clazz: '班级1',
-  number: '20230001',
-  mobile: '12345678901',
-  email: 'example@example.com',
+const userStore = useUserStore()
+const userInfo = ref({})
+const handleGetUserInfo = async () => {
+  userInfo.value = await getUserInfo(userStore.getUserId())
+}
+const userInfoFiled =[
+  {
+    value: 'classes',
+    label: '班级'
+  },
+  {
+    value: 'stuNum',
+    label: '学号'
+  },
+  {
+    value: 'phone',
+    label: '电话'
+  },
+  {
+    value: 'email',
+    label: '邮箱'
+  }
+]
+onMounted(async () => {
+  await handleGetUserInfo()
 })
-
 // 编辑状态
 const isEditing = ref(false)
 
 // 临时存储用户信息
-const tempUserInfo = reactive({ ...userInfo })
-
-// 格式化字段名称
-const formatLabel = key => {
-  switch (key) {
-    case 'clazz':
-      return '班级'
-    case 'number':
-      return '学号'
-    case 'mobile':
-      return '电话'
-    case 'email':
-      return '邮箱'
-    default:
-      return key
-  }
-}
+const tempUserInfo = reactive({})
 
 // 开始编辑
 const startEditing = () => {
-  // 将当前用户信息复制到临时对象
-  Object.assign(tempUserInfo, userInfo)
+  Object.assign(tempUserInfo, userInfo.value)
   isEditing.value = true
 }
 
 // 确认修改
-const confirmEdit = () => {
-  // 将临时数据同步到 userInfo
-  Object.assign(userInfo, tempUserInfo)
+const confirmEdit = async () => {
+  tempUserInfo.id = userStore.getUserId()
+  await updateUserInfo(tempUserInfo)
+  await handleGetUserInfo()
   isEditing.value = false
-  console.log('用户信息已更新:', userInfo)
 }
 
 // 取消修改
 const cancelEdit = () => {
-  // 恢复原始数据
-  Object.assign(tempUserInfo, userInfo)
+  for (let key in tempUserInfo) {
+    delete tempUserInfo[key]
+  }
   isEditing.value = false
 }
 </script>
+
+
 <style lang="scss" scoped>
 // 引入全局变量
 @import '@/styles/variables.scss';

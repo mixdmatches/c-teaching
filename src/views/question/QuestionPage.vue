@@ -9,8 +9,8 @@
       <div class="questionBox">
         <QuestionItem
           v-for="(item, index) in questionList"
-          v-model="questionList[index].selectId"
-          :key="index"
+          v-model="questionList[index].answer"
+          :key="item.id"
           :option="item"
         />
       </div>
@@ -22,7 +22,7 @@
         <div class="viewDotBox">
           <ProblemViewDot
             v-for="(item, index) in questionList"
-            :value="questionList[index].selectId"
+            :value="questionList[index].answer"
           >
             {{ item.no }}
           </ProblemViewDot>
@@ -48,37 +48,44 @@ import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import QuestionItem from '@/views/question/components/QuestionItem.vue'
 import LButton from '@/components/LButton.vue'
 import { formatTime } from '@/utils/dateUtils.js'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import ProblemViewDot from '@/components/problemViewDot.vue'
+import { getQuestionByKnowledge, getQuestionBySectionId } from '@/api/question.js'
+import { useUserStore } from '@/stores/index.js'
 
 const router = useRouter()
+const route = useRoute()
+const userStore = useUserStore()
 
 // 定义状态变量
 const status = ref(false)
 
 // 题目列表
-const questionList = reactive(
-  [...new Array(15)].map((item, index) => {
-    return {
-      no: index + 1,
-      type: 'radio',
-      difficulty: 3,
-      emphasis: 4,
-      tags: [
-        { tagName: '循环' },
-        { tagName: '数组' },
-      ],
-      title: '1.题目描述',
-      options: [
-        { id: 'A', text: '选项一' },
-        { id: 'B', text: '选项二' },
-        { id: 'C', text: '选项三' },
-        { id: 'D', text: '选项四' },
-      ],
-      selectId: '',
-    }
-  })
-)
+const questionList = reactive([])
+const handleGetQuestionList = async () => {
+  if (route.query.sectionId && route.query.pointId) {
+    questionList.length = 0
+    const list = (await getQuestionByKnowledge({sectionId:route.query.sectionId,pointId:route.query.pointId,studentId: userStore.getUserId()})).map((item) => {
+      return{
+        ...item,
+        type: 'radio'
+      }
+    })
+    questionList.push(...list)
+    return
+  }
+  if (route.query.sectionId){
+    questionList.length = 0
+    const list = (await getQuestionBySectionId({sectionId:route.query.sectionId})).map((item) => {
+      return{
+        ...item,
+        type: 'radio'
+      }
+    })
+    questionList.push(...list)
+  }
+}
+
 
 // 时间相关逻辑
 const time = ref(0)
@@ -90,6 +97,7 @@ const startTiming = () => {
   }, 1000)
 }
 onMounted(() => {
+  handleGetQuestionList()
   startTiming()
 })
 onUnmounted(() => {
@@ -99,11 +107,6 @@ onUnmounted(() => {
 // 提交测试
 const submitTest = () => {
   // 检查是否有未完成的题目
-  // const hasUnfinishedQuestions = questionList.some(item => !item.selectId)
-  // if (hasUnfinishedQuestions) {
-  //   alert('请完成所有题目后再提交！')
-  //   return
-  // }
 
   // 更新状态为 true
   status.value = true
@@ -111,7 +114,17 @@ const submitTest = () => {
   // 将状态传递到其他页面
   router.push({
     path: '/result',
-    query: { testCompleted: status.value },
+    query: {
+      pointId: route.query.pointId,
+      sectionId: route.query.sectionId,
+      time: time.value,
+      results: JSON.stringify(questionList.map((item) => {
+        return{
+          id: item.id,
+          studentAnswer: item.answer
+        }
+      }))
+    },
   })
 }
 </script>

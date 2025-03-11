@@ -5,7 +5,7 @@
       <h2>上次学到</h2>
       <span class="study">
         <p>{{ studentStatus.pointName }}</p>
-        <el-button type="primary">继续学习</el-button>
+        <el-button type="primary" @click="study">继续学习</el-button>
       </span>
       <p class="next-study">下一个知识点：{{ studentStatus.nextPointName }}</p>
     </div>
@@ -61,7 +61,7 @@ import MainCm from '../../components/MainCm.vue'
 import OneCom from './components/OneCom.vue'
 import TowCom from './components/TowCom.vue'
 import { ElMessage } from 'element-plus'
-import { ref, computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/index.js'
 // api
@@ -71,19 +71,25 @@ import {
   apiGetAllPoints,
   apiGetStudyPoints,
 } from '@/api/chapters.js'
+
 const router = useRouter()
 const userStore = useUserStore()
 
 // 进入测试按钮
 const handleTest = () => {
-  if (!chapterId.value) {
-    ElMessage.error('请选择章节')
-    return
-  }
   router.push({
     path: '/question',
     query: {
-      id: chapterId.value,
+      sectionId: 3,
+    },
+  })
+}
+
+const study = () => {
+  router.push({
+    path: '/question',
+    query: {
+      sectionId: 3,
     },
   })
 }
@@ -91,8 +97,7 @@ const handleTest = () => {
 const studentStatus = ref({})
 // 1.获取学生学习情况
 const getStudyStatus = async () => {
-  const res = await apiGetStudyStatus()
-  studentStatus.value = res
+  studentStatus.value = await apiGetStudyStatus()
 }
 getStudyStatus()
 
