@@ -10,7 +10,11 @@ service.interceptors.request.use(config => {
   // 添加 token 等逻辑
   if (config.method === 'put' || config.method === 'post') {
     for (let key in config.data) {
-      if (config.data[key] === undefined || config.data[key] === '' || config.data[key] === null) {
+      if (
+        config.data[key] === undefined ||
+        config.data[key] === '' ||
+        config.data[key] === null
+      ) {
         delete config.data[key]
       }
     }
@@ -21,17 +25,18 @@ service.interceptors.request.use(config => {
 // 响应拦截器
 service.interceptors.response.use(
   response => {
-    switch (response.data?.code){
+    switch (response.data?.code) {
       case 50000:
       case 40000:
         ElMessage.error(response.data.message)
         return Promise.reject(response.data.message)
       case 0:
       case 200:
-        return Promise.resolve(response.data?.data)
+        return Promise.resolve(response.data)
       default:
-        return Promise.resolve(response.data?.data)
+        return Promise.resolve(response.data)
     }
+    // return response.data
   },
   error => {
     console.error('请求错误:', error)
