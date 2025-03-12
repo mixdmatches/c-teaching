@@ -127,11 +127,16 @@ const plan = computed(() => {
   return Math.ceil((studyPoints.value.length / points.value.length) * 100)
 })
 
-// 秒转分钟
+// 时间转换
 const mini = computed(() => {
-  return userStore.totalTime < 60
-    ? userStore.totalTime + 's'
-    : Math.ceil(userStore.totalTime / 60) + 'min'
+  if (userStore.totalTime < 60) {
+    return userStore.totalTime + 's'
+  }
+  const minutes = Math.ceil(userStore.totalTime / 60)
+  if (minutes >= 100) {
+    return (minutes / 60).toFixed(1) + 'h'
+  }
+  return minutes + 'min'
 })
 </script>
 
