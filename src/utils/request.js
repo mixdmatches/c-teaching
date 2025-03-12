@@ -8,12 +8,31 @@ const service = axios.create({
 // 请求拦截器
 service.interceptors.request.use(config => {
   // 添加 token 等逻辑
+  if (config.method === 'put' || config.method === 'post') {
+    for (let key in config.data) {
+      if (config.data[key] === undefined || config.data[key] === '' || config.data[key] === null) {
+        delete config.data[key]
+      }
+    }
+  }
   return config
 })
 
 // 响应拦截器
 service.interceptors.response.use(
-  response => response.data,
+  response => {
+    switch (response.data?.code){
+      case 50000:
+      case 40000:
+        ElMessage.error(response.data.message)
+        return Promise.reject(response.data.message)
+      case 0:
+      case 200:
+        return Promise.resolve(response.data?.data)
+      default:
+        return Promise.resolve(response.data?.data)
+    }
+  },
   error => {
     console.error('请求错误:', error)
     //定义一个变量
@@ -46,5 +65,4 @@ service.interceptors.response.use(
     return Promise.reject(error)
   }
 )
-
 export default service

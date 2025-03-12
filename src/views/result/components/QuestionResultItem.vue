@@ -8,14 +8,14 @@ const props = defineProps({
   option: {required:true}
 });
 const model = defineModel()
-const getRadioClassName = (id) =>{
-  if (props.option.selectId === id){
-    if (props.option.rightId === id){
+const getRadioClassName = (key) =>{
+  if (props.option.studentAnswer === key){
+    if (props.option.answer === key){
       return 'right'
     }else {
       return 'error'
     }
-  }else if (props.option.rightId === id){
+  }else if (props.option.answer === key){
     return 'right'
   }else {
     return ''
@@ -33,7 +33,7 @@ const getRadioClassName = (id) =>{
       </div>
       <div class="starBox">
         <div class="label">重点：</div>
-        <Stars :num="option.emphasis" />
+        <Stars :num="option.hierarchy" />
       </div>
 
       <div class="tagBox">
@@ -42,19 +42,19 @@ const getRadioClassName = (id) =>{
     </div>
     <div class="title">{{option.title}}</div>
     <el-radio-group v-model="model" class="radioGroup">
-      <el-radio :class="getRadioClassName(item.id)" v-for="(item,index) in option.options" :key="index" :label="item.text" :value="item.id" />
+      <el-radio :class="getRadioClassName(item.key)" v-for="(item,index) in option.option" :key="index" :label="item.value" :value="item.key" />
     </el-radio-group>
 
     <div class="analysisBox">
       <div class="top">
-        <span>正确答案:{{option.rightId}}</span>
-        <span>你的答案:{{option.selectId}}</span>
+        <span>正确答案:{{option.answer}}</span>
+        <span>你的答案:{{option.studentAnswer}}</span>
       </div>
       <div>
         AI解析:{{option.AIAnalysis}}
       </div>
     </div>
-    <CircleProgress class="progress" :size="44" :border-width="6" :progress="70" v-if="option.rightId !== option.selectId">!</CircleProgress>
+    <CircleProgress class="progress" :size="44" :border-width="6" :progress="70" v-if="option.answer !== option.studentAnswer">!</CircleProgress>
     <CircleProgress class="progress" :size="44" :border-width="6" :progress="70" v-else color="#52c41a" ><el-icon><Check /></el-icon></CircleProgress>
   </div>
 

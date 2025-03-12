@@ -2,7 +2,7 @@
 import Stars from "@/components/Stars.vue";
 import Tag from "@/components/Tag.vue";
 
-const props = defineProps({
+defineProps({
   option: {required:true}
 });
 const model = defineModel()
@@ -18,16 +18,16 @@ const model = defineModel()
       </div>
       <div class="starBox">
         <div class="label">重点：</div>
-        <Stars :num="option.emphasis" />
+        <Stars :num="option.hierarchy" />
       </div>
 
       <div class="tagBox">
-        <Tag v-for="(item,index) in option.tags" :key="index" :text="item.tagName" />
+        <Tag :text="option.knowPointName" />
       </div>
     </div>
     <div class="title">{{option.title}}</div>
     <el-radio-group v-model="model" class="radioGroup">
-      <el-radio v-for="(item,index) in option.options" :key="index" :label="item.text" :value="item.id" />
+      <el-radio v-for="(item,index) in option.option" :key="index" :label="item.value" :value="item.key" />
     </el-radio-group>
   </div>
 </template>
