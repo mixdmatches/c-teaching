@@ -12,7 +12,6 @@
         />
         <span v-else class="display-field">{{ userInfo[filed.value] }}</span>
       </div>
-
       <!-- 按钮区域 -->
       <div class="buttonDiv">
         <el-button
@@ -74,7 +73,7 @@ const tempUserInfo = reactive({})
 
 // 开始编辑
 const startEditing = () => {
-  Object.assign(tempUserInfo, userInfo.value)
+  Object.assign(tempUserInfo, userInfo.value)//userInfo->tempUserInfo
   isEditing.value = true
 }
 

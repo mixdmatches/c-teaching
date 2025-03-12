@@ -1,2 +1,2 @@
-import service from '../utils/request'
-export const apiGetStudyStatus = id => service.get('/api/getStudyStatus')
+import service from '../utils/requestNode'
+export const apiGetStudyStatus = stuNum => service.get('/api/getstudystatus')
