@@ -25,9 +25,9 @@
     </div>
     <div class="data">
       <!-- 折线图 -->
-      <OneCom />
+      <OneCom :pointList="points" />
       <!-- 圆环 进度-->
-      <TowCom />
+      <TowCom :pointList="points" />
     </div>
   </MainCm>
   <MainCm v-else>
