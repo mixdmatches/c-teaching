@@ -35,6 +35,7 @@
         size="large"
         v-model="question"
         placeholder="请输入问题"
+        @keyup.enter="handleSendQuestion"
       ></el-input>
       <el-button
         size="large"
@@ -75,24 +76,36 @@ const talkGroupArr = ref([])
 const isLoading = ref(false)
 // 向ai发起对话
 const handleSendQuestion = async () => {
+  // 请求开始前，将加载状态设置为 true
   isLoading.value = true
+  // 检查问题是否为空
+  if (!question.value.trim()) {
+    ElMessage.warning('请输入问题')
+    isLoading.value = false
+    return
+  }
+  talkGroupArr.value.push({
+    question: question.value,
+    answer: '等待响应',
+  })
   try {
     const res = await apiPostAiTalk(question.value)
-    if (res.data.data.code !== 0) {
-      ElMessage.error(res.data.data.message)
-      return
+    // 清空输入框
+    question.value = ''
+    if (res.data.code != 0) {
+      // 更改等待响应的记录
+      talkGroupArr.value[talkGroupArr.value.length - 1].answer =
+        res.data.message
+    } else {
+      answer.value = res.data.data
+      talkGroupArr.value[talkGroupArr.value.length - 1].answer = answer.value
     }
-    answer.value = res.data.data
-    talkGroupArr.value.push({
-      question: question.value,
-      answer: answer.value,
-    })
-    console.log(talkGroupArr.value, 'talkGroupArr')
-  } catch (error) {
-    ElMessage.error('请求失败')
+  } catch (err) {
+    // ElMessage.error('请求失败')
+    // 更改等待响应的记录
+    talkGroupArr.value[talkGroupArr.value.length - 1].answer = err.message
   } finally {
     // 请求结束后，无论成功还是失败，都将加载状态设置为 false
-    question.value = ''
     isLoading.value = false
   }
 }
@@ -200,7 +213,7 @@ const handleClearTalk = () => {
         align-self: flex-end;
         background-color: $primary-color;
         color: #fff;
-        font-size: $font-size-l;
+        font-size: $font-size-m;
         line-height: 1.7;
         padding: $padding-l;
         border-radius: $border-radius-l;
@@ -211,7 +224,7 @@ const handleClearTalk = () => {
         max-width: 100%;
         background-color: #fff;
         color: $text-color;
-        font-size: $font-size-m;
+        font-size: $font-size-s;
         line-height: 1.7;
         padding: $padding-l $padding-m;
         border-radius: $border-radius-l;

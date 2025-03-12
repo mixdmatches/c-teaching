@@ -243,9 +243,7 @@ const filter = (sectionId, knowState) => {
     return knowledges.value.filter(item => item.sectionId == sectionId)
   }
   if (sectionId !== 0 && knowState !== -1) {
-    return knowledges.value.filter(
-      item => item.sectionId === sectionId && item.knowState == knowState
-    )
+    return knowledges.value.filter(item => item.sectionId === sectionId)
   }
 }
 </script>
