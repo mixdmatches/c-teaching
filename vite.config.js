@@ -3,6 +3,7 @@ import vue from '@vitejs/plugin-vue'
 import path from 'path'
 // https://vite.dev/config/
 export default defineConfig({
+<<<<<<< HEAD
   plugins: [
     vue(),
     // viteMockServe({
@@ -19,6 +20,9 @@ export default defineConfig({
     //   `,
     // }),
   ],
+=======
+  plugins: [vue()],
+>>>>>>> a4b76a2fbb0bff24a491a58d366714375955a690
   build: {
     minify: 'terser',
     terserOptions: {

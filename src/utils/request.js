@@ -1,7 +1,11 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
 const service = axios.create({
+<<<<<<< HEAD
   baseURL: import.meta.env.VITE_API_BASE,
+=======
+  baseURL: 'http://47.122.30.214:8101',
+>>>>>>> a4b76a2fbb0bff24a491a58d366714375955a690
   timeout: 5000,
 })
 
