@@ -33,7 +33,7 @@
         @click="goToDetail(item.knowId, item.sectionId, item.knowState)"
       >
         <h5 :style="{ color: activeColor[item.knowState] }">
-          {{ item.knowName }}
+          {{ item.knowId }}.{{ item.knowName }}
         </h5>
         <p>
           {{ item.knowContent }}
