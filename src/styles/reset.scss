@@ -196,6 +196,12 @@ pre {
 
 // 在文件底部添加针对markdown容器的样式恢复
 .markdown-container {
+  // width: 100%;
+  height: auto;
+  background-color: #ffffff;
+  margin: $margin-xl 0;
+  padding: $padding-xl;
+  border-radius: $border-radius-s;
   * {
     font: revert; // 恢复浏览器默认字体设置
     // 恢复字体大小
@@ -259,6 +265,11 @@ pre {
     padding: 0.2em 0.4em;
     border-radius: 3px;
     line-height: 1.5; // 代码块行高稍密
+
+    max-width: 100%;
+    white-space: pre-wrap !important; /* 允许长单词换行 */
+    word-wrap: break-word !important; /* 强制换行 */
+    overflow: hidden;
   }
   // 可以根据需要继续添加其他需要保留的原始样式
   // 保留表格原始样式

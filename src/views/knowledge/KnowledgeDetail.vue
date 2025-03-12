@@ -1,39 +1,24 @@
 <template>
   <HeaderCm></HeaderCm>
-  <MainCm>
-    <div class="ai-summary">
-      <div class="top">
-        <h5>AI智能总结</h5>
-        <span class="icon" @click="handleCopy"
-          ><el-icon size="20"><CopyDocument /></el-icon> 复制</span
-        >
-      </div>
-      <div class="content">{{ pointDetail.aiSummary }}</div>
-    </div>
-    <section class="markdown-container" v-html="markdownToHtml"></section>
-    <footer>
-      <span
-        >关联知识：<el-tag
-          style="margin-right: 5px"
-          v-for="tag in pointDetail.relationName"
-          :key="tag"
-          >{{ tag }}</el-tag
-        ></span
-      >
-      <el-button type="primary" @click="handleTest">去测试</el-button>
-    </footer>
-  </MainCm>
+  <div class="content-box">
+    <LeftSection @sendRef="handleSendRef"></LeftSection>
+    <transition name="slide-fade">
+      <LLMTalk ref="rightDom" v-if="isAi" @closeAi="handleCloseAi"></LLMTalk>
+    </transition>
+    <span v-show="!isAi" class="ai-help" @click="handleOpenAi">
+      <el-icon><ChatDotRound /></el-icon>
+    </span>
+  </div>
 </template>
 
 <script setup>
 import HeaderCm from '../../components/HeaderCm.vue'
-import MainCm from '../../components/MainCm.vue'
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import LLMTalk from '@/views/knowledge/components/LLMTalk'
+import LeftSection from '@/views/knowledge/components/LeftSection'
+import { ref, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { useUserStore } from '@/stores/index'
-import { ElMessage } from 'element-plus'
-// 引入api
-import { apiGetPointDetail } from '@/api/chapters'
-import { useRoute, useRouter } from 'vue-router'
+
+// 引入图标
 import { marked } from 'marked'
 import hljs from 'highlight.js'
 // 引入高亮样式
@@ -44,15 +29,15 @@ marked.setOptions({
     return hljs.highlightAuto(code).value
   },
 })
-// 获取路由参数
-const route = useRoute()
-const router = useRouter()
-// 从路由参数中解析出章节id和知识点id
-const { pointId, sectionId } = route.query
-console.log(pointId, sectionId)
+// 定义是否显示ai
+const isAi = ref(false)
+
+// leftdom元素
+const leftDom = ref()
 
 // 获取user仓库
 const userStore = useUserStore()
+
 // 定义在线学习时间
 const studyTime = ref(0)
 let timer = null
@@ -73,40 +58,31 @@ onUnmounted(() => {
   }
 })
 
-// 定义知识点详情
-const pointDetail = ref({
-  context: '',
-  aiSummary: '',
-  relationName: [],
+// 获取子组件传过来的dom
+const handleSendRef = left => {
+  leftDom.value = left
+}
+
+// 关闭ai
+const handleCloseAi = () => {
+  isAi.value = false
+  leftDom.value.style.transform = ''
+  leftDom.value.style.transition = 'transform 0.5s ease'
+  nextTick(() => {
+    leftDom.value.style.transform = ''
+    leftDom.value.style.transition = ''
+  })
+}
+
+// 打开ai
+const handleOpenAi = () => {
+  isAi.value = true
+}
+
+// 监听 isAi 的变化
+watch(isAi, () => {
+  leftDom.value.style.transform = `translateX(-${210}px)`
 })
-
-// 获取知识点详情教程
-const getPointDetail = async () => {
-  const res = await apiGetPointDetail({ pointId, sectionId })
-  pointDetail.value = res.data
-  console.log(pointDetail.value)
-}
-getPointDetail()
-
-// markdown转html
-const markdownToHtml = computed(() => {
-  return marked.parse(pointDetail.value.context)
-})
-
-// 复制按钮回调
-const handleCopy = async () => {
-  try {
-    await navigator.clipboard.writeText(pointDetail.value.aiSummary)
-    ElMessage.success('复制成功')
-  } catch (err) {
-    ElMessage.error('复制失败，请手动选择文本复制')
-  }
-}
-
-// 去测试按钮回调
-const handleTest = () => {
-  router.push({ path: '/question', query: { pointId, sectionId } })
-}
 
 // markdown文本
 const markdownText = ref(
@@ -151,73 +127,74 @@ const markdownText = ref(
 </script>
 
 <style scoped lang="scss">
+/* 定义 slide-fade 动画 */
+.slide-fade-enter-active,
+.slide-fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  transform: translateX(300px);
+  opacity: 0;
+}
+
 @font-face {
   font-family: 'DingTalk'; // 自定义字体名称
   src: url('@/assets/fonts/DingTalk-JinBuTi.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
-.ai-summary {
+.content-box {
+  position: relative;
   width: 100%;
-  height: 200px;
-  background-color: #ffffff;
-  border-radius: $border-radius-s;
-  padding: $padding-xl;
-  display: flex;
-  flex-direction: column;
-  .top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: $margin-l;
-    h5 {
-      color: $primary-color;
-      font-size: 1.6rem;
-      font-family: DingTalk;
-    }
-    .icon {
-      display: flex;
-      font-size: $font-size-xl;
-      align-items: center;
-      gap: $margin-s;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      &:hover {
-        color: $primary-color;
-      }
-    }
-  }
-  .content {
-    flex: 1;
-    padding: $padding-m;
-    color: $text-color;
-    font-size: $font-size-xl;
-    line-height: 1.5;
-    border: 1px solid #ccc;
-    border-radius: $border-radius-s;
-    white-space: pre-wrap;
-    overflow-y: auto;
-  }
-}
-.markdown-container {
-  // width: 100%;
+  // 高度根据子盒子自适应
   height: auto;
-  background-color: #ffffff;
-  margin: $margin-xl 0;
-  padding: $padding-xl;
-  border-radius: $border-radius-s;
-}
-footer {
-  width: 100%;
-  height: 80px;
-  background-color: #ffffff;
-  border-radius: $border-radius-s;
-  padding: 0 $padding-xl;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  span {
-    font-size: $font-size-l;
+  justify-content: center;
+  padding: 0 6 * $padding-xxl 0;
+  gap: 10px;
+  margin-top: calc($margin-xxl + $header-height);
+  margin-bottom: $header-height;
+  .ai-help {
+    position: fixed;
+    top: 110px;
+    right: 50px;
+    background-color: $primary-color;
+    color: #fff;
+    font-size: 2 * $font-size-xl;
+    padding: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    &::after {
+      content: 'Ai助手';
+      position: absolute;
+      top: 110%;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 14px;
+      opacity: 0;
+      visibility: hidden;
+      /* 确保文字横向显示 */
+      writing-mode: horizontal-tb;
+      white-space: nowrap; /* 防止文字换行 */
+      transition:
+        opacity 0.3s,
+        visibility 0.3s;
+    }
+
+    &:hover::after {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+  .right {
+    transition: all 0.5s ease;
   }
 }
 </style>

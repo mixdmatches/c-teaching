@@ -3,11 +3,11 @@
   <MainCm>
     <ul class="section">
       <el-button
-        :class="{ active: i === courcesReq.currentISec }"
+        :class="{ active: i === currentSection }"
         round
         v-for="(item, i) in sections"
         :key="item.sectionId"
-        @click="handleSectionClick(i)"
+        @click="handleSectionClick(i, item.sectionId)"
         >{{
           item.sectionId == 0
             ? '全部'
@@ -15,41 +15,39 @@
         }}</el-button
       >
     </ul>
-    <ul class="status">
+    <ul class="status" v-if="courcesReq.sectionId == 0">
       <el-button
-        :class="{ active: i === courcesReq.currentISta }"
+        :class="{ active: i === currentStatus }"
         round
         v-for="(item, i) in status"
         :key="item.knowState"
-        @click="handleStatusClick(i)"
+        @click="handleStatusClick(i, item.knowState)"
         >{{ item.stateName }}</el-button
       >
     </ul>
-    <div class="knowledges">
+    <div class="knowledges" v-if="filterKnowledges.length !== 0">
       <div
         class="knowledge-card"
-        v-for="item in knowledges"
+        v-for="item in filterKnowledges"
         :key="item.id"
-        @click="goToDetail(item.pointId, item.sectionId, item.knowState)"
+        @click="goToDetail(item.knowId, item.sectionId, item.knowState)"
       >
         <h5 :style="{ color: activeColor[item.knowState] }">
-          {{ item.pointName }}
+          {{ item.knowName }}
         </h5>
         <p>
-          {{ item.context }}
+          {{ item.knowContent }}
         </p>
       </div>
     </div>
-    <el-pagination
+    <el-empty v-else description="什么都没有" />
+    <!-- <el-pagination
       :current-page="courcesReq.pageNo"
-      :page-size="courcesReq.pageSize"
-      :page-sizes="[6, 12, 18]"
       :background="background"
-      layout="total,sizes, prev, pager, next, jumper"
-      :total="knowledges.length"
-      @size-change="handleSizeChange"
+      layout="total, prev, pager, next, jumper"
+      :total="3"
       @current-change="handleCurrentChange"
-    />
+    /> -->
   </MainCm>
 </template>
 
@@ -62,15 +60,16 @@ import { debounce } from 'lodash'
 // 导入api
 import { apiGetAllPoints } from '@/api/chapters'
 import { ElMessage } from 'element-plus'
-const activeColor = ref(['#67c23a', '#f56c6c'])
+const activeColor = ref(['#67c23a', '#67c23a', '#f56c6c'])
 const router = useRouter()
 
-// 请求参数
+const currentSection = ref(0)
+const currentStatus = ref(0)
+
+// 过滤参数
 const courcesReq = ref({
-  pageNo: 1,
-  pageSize: 6,
-  currentISec: 0,
-  currentISta: 0,
+  sectionId: 0,
+  knowState: -1,
 })
 
 // 章节列表
@@ -132,33 +131,34 @@ const status = ref([
     stateName: '已学习',
   },
   {
-    knowState: 1,
+    knowState: 2,
     stateName: '未解锁',
   },
 ])
 
-const handleCurrentChange = value => {
-  console.log(value)
-}
-
 // 知识点列表
 const knowledges = ref([])
-
+const filterKnowledges = ref([])
 // 获取所有知识点列表
 const getAllPoints = async () => {
-  const res = await apiGetAllPoints()
-  knowledges.value = res.data.points
+  const res = await apiGetAllPoints(210047301)
+  knowledges.value = res.data.knowPointList
+  filterKnowledges.value = res.data.knowPointList
 }
 getAllPoints()
 
 // 选择章节按钮回调
-const handleSectionClick = i => {
-  courcesReq.value.currentISec = i
+const handleSectionClick = (i, sectionId) => {
+  currentSection.value = i
+  courcesReq.value.sectionId = sectionId
+  filterKnowledges.value = filter(sectionId, courcesReq.value.knowState)
 }
 
 // 选择状态按钮回调
-const handleStatusClick = i => {
-  courcesReq.value.currentISta = i
+const handleStatusClick = (i, knowState) => {
+  currentStatus.value = i
+  courcesReq.value.knowState = knowState
+  filterKnowledges.value = filter(courcesReq.value.sectionId, knowState)
 }
 
 // 定义防抖函数
@@ -167,7 +167,8 @@ const debouncedWarning = debounce(() => {
 }, 500)
 // 跳转到知识点详情页
 const goToDetail = (pointId, sectionId, knowState) => {
-  if (knowState === 1) {
+  console.log(knowState)
+  if (knowState == 2) {
     // 调用防抖函数
     debouncedWarning()
   } else {
@@ -226,6 +227,27 @@ const numberToChinese = num => {
 
   return result
 }
+
+// 过滤函数
+const filter = (sectionId, knowState) => {
+  // ok
+  if (sectionId == 0 && knowState == -1) {
+    return knowledges.value
+  }
+  //ok
+  if (sectionId == 0 && knowState !== -1) {
+    return knowledges.value.filter(item => item.knowState == knowState)
+  }
+  // ok
+  if (sectionId !== 0 && knowState == -1) {
+    return knowledges.value.filter(item => item.sectionId == sectionId)
+  }
+  if (sectionId !== 0 && knowState !== -1) {
+    return knowledges.value.filter(
+      item => item.sectionId === sectionId && item.knowState == knowState
+    )
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -242,10 +264,8 @@ const numberToChinese = num => {
   margin: $margin-xl 0;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
   gap: $margin-xl;
   .knowledge-card {
-    // width: calc(25% - #{$margin-xl * 3 / 4});
     width: calc((100% - #{$margin-xl * 2}) / 3);
     border: 1px solid #ccc;
     height: 120px;

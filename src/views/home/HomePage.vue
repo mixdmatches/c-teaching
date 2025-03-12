@@ -64,12 +64,8 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/index.js'
 // api
-import { apiGetStudyStatus } from '@/api/home.js'
-import {
-  apiGetAllChapters,
-  apiGetAllPoints,
-  apiGetStudyPoints,
-} from '@/api/chapters.js'
+import { apiGetStudyStatus, apiGetStudyPoints } from '@/api/home.js'
+import { apiGetAllChapters, apiGetAllPoints } from '@/api/chapters.js'
 const router = useRouter()
 const userStore = useUserStore()
 
@@ -83,7 +79,7 @@ const handleTest = () => {
 const studentStatus = ref({})
 // 1.获取学生学习情况
 const getStudyStatus = async () => {
-  const res = await apiGetStudyStatus()
+  const res = await apiGetStudyStatus(210047301)
   studentStatus.value = res.data
 }
 getStudyStatus()
@@ -100,15 +96,15 @@ getStudyStatus()
 // 3.获取所有知识点列表
 const points = ref([])
 const getAllPoints = async () => {
-  const res = await apiGetAllPoints()
-  points.value = res.data.points
+  const res = await apiGetAllPoints(210047301)
+  points.value = res.data.knowPointList
 }
 getAllPoints()
 
 // 4.获取已学知识点列表
 const studyPoints = ref([])
 const getStudyPoints = async () => {
-  const res = await apiGetStudyPoints()
+  const res = await apiGetStudyPoints(210047301)
   studyPoints.value = res.data
 }
 getStudyPoints()
