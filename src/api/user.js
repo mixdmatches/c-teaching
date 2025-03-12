@@ -10,9 +10,9 @@ export const apiGetStudentInfo = () => service.get('/api/student/info/100001')
 // export const apiPostLogin...
 // export const apiAddUser...
 // export const apiDeleteUser...
-export const getUserInfo = id => {
-  return service.get(`/api/student/info/${id}`)
+export const  getUserInfo = async id => {
+  return (await service.get(`/api/student/info/${id}`)).data
 }
-export const updateUserInfo = data => {
-  return service.put(`/api/student/update`, data)
+export const updateUserInfo = async data => {
+  return (await service.put(`/api/student/update`, data)).data
 }
