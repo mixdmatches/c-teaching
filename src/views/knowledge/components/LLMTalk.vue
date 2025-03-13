@@ -89,11 +89,10 @@ const handleSendQuestion = async () => {
     answer: '等待响应',
   })
   try {
-    const res = await apiPostAiTalk(question.value)
-    // 清空输入框
+    let buffQestion = question.value
     question.value = ''
+    const res = await apiPostAiTalk(buffQestion)
     if (res.data.code != 0) {
-      // 更改等待响应的记录
       talkGroupArr.value[talkGroupArr.value.length - 1].answer =
         res.data.message
     } else {
@@ -101,12 +100,25 @@ const handleSendQuestion = async () => {
       talkGroupArr.value[talkGroupArr.value.length - 1].answer = answer.value
     }
   } catch (err) {
-    // ElMessage.error('请求失败')
-    // 更改等待响应的记录
     talkGroupArr.value[talkGroupArr.value.length - 1].answer = err.message
   } finally {
-    // 请求结束后，无论成功还是失败，都将加载状态设置为 false
     isLoading.value = false
+  }
+}
+// 创建 EventSource 实例
+  const eventSource = new EventSource(
+    `http://localhost:3007/api/streamAiTalk?question=${question.value}`
+  )
+// Ai流式响应对话
+const handleSendQuestionL = () => {
+  // 监听 message 事件
+  eventSource.onmessage = event => {
+    event.data
+  }
+  // 监听 error 事件
+  eventSource.onerror = error => {
+    console.error('EventSource 发生错误:', error)
+    eventSource.close()
   }
 }
 
