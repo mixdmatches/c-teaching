@@ -19,7 +19,7 @@ const handleGetAnswer = async () => {
       knowId: route.query.pointId,
       sectionId: route.query.sectionId,
       topicResults: JSON.parse(route.query.results),
-      studentId: userStore.getUserId()
+      studentId: userStore.getUserId() 
     })
     data.showTopicResponses = data.showTopicResponses.map((item,index) => {
       return{

@@ -34,7 +34,7 @@
 <script setup>
 import { reactive, ref, onMounted } from 'vue'
 import { ElButton } from 'element-plus'
-import axios from 'axios'
+
 import { getUserInfo, updateUserInfo } from '@/api/user.js'
 import { useUserStore } from '@/stores/index.js'
 
@@ -42,7 +42,7 @@ import { useUserStore } from '@/stores/index.js'
 const userStore = useUserStore()
 const userInfo = ref({})
 const handleGetUserInfo = async () => {
-  userInfo.value = await getUserInfo(userStore.getUserId())
+  userInfo.value = await getUserInfo('210047301')
 }
 const userInfoFiled =[
   {

@@ -73,6 +73,9 @@ const userStore = useUserStore()
 const handleTest = () => {
   router.push({
     path: '/question',
+    query: {
+      sectionId: 3,
+    },
   })
 }
 
