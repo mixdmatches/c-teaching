@@ -51,7 +51,7 @@ const getRadioClassName = (key) =>{
         <span>你的答案:{{option.studentAnswer}}</span>
       </div>
       <div>
-        AI解析:{{option.AIAnalysis}}
+        AI解析:{{option.analysis}}
       </div>
     </div>
     <CircleProgress class="progress" :size="44" :border-width="6" :progress="70" v-if="option.answer !== option.studentAnswer">!</CircleProgress>

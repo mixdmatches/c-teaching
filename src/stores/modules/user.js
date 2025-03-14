@@ -12,8 +12,9 @@ export const useUserStore = defineStore('user', () => {
     localStorage.setItem('totalTime', totalTime.value)
   }
   const userId = ref('100001')
+  const studentId = ref('210047301')
   const getUserId = () => {
     return userId.value
   }
-  return { isCeshi, changeCeshi, totalTime, changeTotalTime ,getUserId}
+  return { isCeshi, changeCeshi, totalTime, changeTotalTime, getUserId, studentId: studentId.value}
 })

@@ -1,5 +1,4 @@
 <script setup>
-
 import SubHeader from "@/components/SubHeader.vue";
 import LButton from "@/components/LButton.vue";
 import { onMounted, ref } from 'vue'
@@ -19,7 +18,7 @@ const handleGetAnswer = async () => {
       knowId: route.query.pointId,
       sectionId: route.query.sectionId,
       topicResults: JSON.parse(route.query.results),
-      studentId: userStore.getUserId() 
+      studentId: userStore.studentId 
     })
     data.showTopicResponses = data.showTopicResponses.map((item,index) => {
       return{

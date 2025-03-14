@@ -1,7 +1,6 @@
 <script setup>
 import Stars from "@/components/Stars.vue";
 import Tag from "@/components/Tag.vue";
-
 defineProps({
   option: {required:true}
 });
