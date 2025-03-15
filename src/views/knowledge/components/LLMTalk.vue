@@ -17,7 +17,7 @@
       /></el-icon>
     </div>
     <div class="talk" v-if="talkGroupArr.length !== 0">
-      <div class="talk-group" v-for="item in htmlTalkArr" :key="item">
+      <div class="talk-group" v-for="item in talkGroupArr" :key="item">
         <div class="message-right">
           {{ item.question }}
         </div>
@@ -49,14 +49,17 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 // 引入api
 import { apiPostAiTalk, apiPostAiTalkNode } from '@/api/aiTalk.js'
 import { marked } from 'marked'
 import hljs from 'highlight.js'
 // 引入高亮样式
 import 'highlight.js/styles/monokai-sublime.css'
+// 导入所有语言
+import 'highlight.js/lib/languages/javascript'
 import { ElMessage } from 'element-plus'
+
 // 配置marked高亮
 marked.setOptions({
   highlight: function (code, lang) {
@@ -75,7 +78,7 @@ const talkGroupArr = ref([])
 // 加载状态
 const isLoading = ref(false)
 // 向ai发起对话
-const handleSendQuestion = async () => {
+const handleSendQuestionp = async () => {
   // 请求开始前，将加载状态设置为 true
   isLoading.value = true
   // 检查问题是否为空
@@ -105,22 +108,62 @@ const handleSendQuestion = async () => {
     isLoading.value = false
   }
 }
-// 创建 EventSource 实例
-  const eventSource = new EventSource(
-    `http://localhost:3007/api/streamAiTalk?question=${question.value}`
-  )
+
 // Ai流式响应对话
-const handleSendQuestionL = () => {
+const handleSendQuestion = async () => {
+  // 请求开始前，将加载状态设置为 true
+  isLoading.value = true
+  // 检查问题是否为空
+  if (!question.value.trim()) {
+    ElMessage.warning('请输入问题')
+    isLoading.value = false
+    return
+  }
+  talkGroupArr.value.push({
+    question: question.value,
+    answer: '等待响应',
+  })
+  let buffQestion = question.value
+  question.value = ''
+  // 创建 EventSource 实例
+  const eventSource = new EventSource(
+    `http://localhost:3007/api/streamAiTalk?question=${buffQestion}`
+  )
+  talkGroupArr.value[talkGroupArr.value.length - 1].answer = ''
   // 监听 message 事件
   eventSource.onmessage = event => {
-    event.data
+    talkGroupArr.value[talkGroupArr.value.length - 1].answer += event.data
   }
   // 监听 error 事件
   eventSource.onerror = error => {
     console.error('EventSource 发生错误:', error)
+    isLoading.value = false
+    talkGroupArr.value[talkGroupArr.value.length - 1].answer = marked.parse(
+      talkGroupArr.value[talkGroupArr.value.length - 1].answer
+    )
     eventSource.close()
   }
+  // 监听事件源关闭事件
+  eventSource.onclose = () => {
+    // 事件源关闭时，将加载状态设置为 false
+    isLoading.value = false
+    // 流式响应结束后，再进行 Markdown 解析
+    talkGroupArr.value[talkGroupArr.value.length - 1].answer = marked.parse(
+      talkGroupArr.value[talkGroupArr.value.length - 1].answer
+    )
+  }
 }
+// 监听ai返回的信息
+watch(
+  () => answer.value,
+  (newVal, oldVal) => {
+    if (newVal) {
+      // 进行 Markdown 解析
+      const parsedAnswer = marked.parse(newVal)
+      talkGroupArr.value[talkGroupArr.value.length - 1].answer = parsedAnswer
+    }
+  }
+)
 
 // ai回答文本转html
 const htmlTalkArr = computed(() => {
@@ -236,7 +279,7 @@ const handleClearTalk = () => {
         max-width: 100%;
         background-color: #fff;
         color: $text-color;
-        font-size: $font-size-s;
+        font-size: $font-size-xl;
         line-height: 1.7;
         padding: $padding-l $padding-m;
         border-radius: $border-radius-l;

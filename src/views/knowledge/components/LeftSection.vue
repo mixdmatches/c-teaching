@@ -174,9 +174,19 @@ const handleTest = () => {
 watch(isAi, () => {
   leftDom.value.style.transform = `translateX(-${210}px)`
 })
+
+onMounted(() => {
+  // 手动初始化高亮
+  const codeBlocks = document.querySelectorAll('pre code')
+  codeBlocks.forEach(block => {
+    hljs.highlightElement(block)
+  })
+})
 </script>
 
 <style lang="scss" scoped>
+// 引入 highlight.js 的样式
+@import 'highlight.js/styles/vs2015.css';
 .left {
   width: 70%;
   transition: all 0.5s ease;
