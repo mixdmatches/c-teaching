@@ -59,7 +59,6 @@ marked.setOptions({
     return hljs.highlightAuto(code).value
   },
 })
-
 const emits = defineEmits(['sendRef'])
 // 获取路由参数
 const route = useRoute()
@@ -103,21 +102,57 @@ onUnmounted(() => {
 
 // 定义知识点详情
 const pointDetail = ref({
+  course: '',
   context: '',
   aiSummary: '',
   relationName: [],
 })
 
+// 修复marke语法
+function fixMarkdown(md) {
+  // 1. 匹配代码块并临时存储
+  const codeBlocks = []
+  const mdWithCode = md.replace(/```([^]*?)```/g, (match, content) => {
+    const placeholder = `[CODE_BLOCK_${codeBlocks.length}]`
+    codeBlocks.push(content)
+    return placeholder
+  })
+
+  // 2. 替换非代码块的 \\n 为实际换行符
+  const fixedMd = mdWithCode.replace(/\\\\n/g, '\n')
+
+  // 3. 恢复代码块并保留原转义符
+  let finalMd = fixedMd
+  codeBlocks.forEach((block, index) => {
+    // 将代码块里的 \\n 转为 \n
+    const processedBlock = block.replace(/\\\\n/g, '\n')
+    finalMd = finalMd.replace(
+      `[CODE_BLOCK_${index}]`,
+      `\n\`\`\`\n${processedBlock}\n\`\`\`\n`
+    )
+  })
+
+  return finalMd
+}
+
 // 获取知识点详情教程
 const getPointDetail = async () => {
-  const res = await apiGetPointDetail({ pointId, sectionId })
+  const res = await apiGetPointDetail({
+    pointId,
+    sectionId,
+    studentId: userStore.studentId,
+  })
   pointDetail.value = res.data
+  let arr = pointDetail.value.course.split('')
+  arr.splice(0, 33)
+  arr.splice(arr.length - 12, 12)
+  pointDetail.value.course = fixMarkdown(arr.join(''))
 }
 getPointDetail()
 
 // markdown转html
 const markdownToHtml = computed(() => {
-  return marked.parse(pointDetail.value.context)
+  return marked(pointDetail.value.course)
 })
 
 // 复制按钮回调

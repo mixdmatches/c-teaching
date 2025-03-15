@@ -6,7 +6,11 @@ export const apiGetAllChapters = () => serviceN.get('/api/getAllChapters')
 export const apiGetAllPoints = studentId =>
   service.get('/api/knowPoint/allKnowPoint', { params: { studentId } })
 
-export const apiGetPointDetail = ({ pointId, sectionId, stuNum }) =>
+export const apiGetPointDetailD = ({ pointId, sectionId, stuNum }) =>
   serviceN.get('/api/getpointdetail', {
     params: { pointId, sectionId, stuNum },
   })
+
+// 获取知识点详情
+export const apiGetPointDetail = ({ pointId, sectionId, studentId }) =>
+  service.post('/api/knowPoint/info', { pointId, sectionId, studentId })
