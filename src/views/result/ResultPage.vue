@@ -8,12 +8,13 @@ import { useRoute, useRouter } from 'vue-router'
 import { getAnswer } from '@/api/question.js'
 import { useUserStore } from '@/stores/index.js'
 import { formatToMinute } from '@/utils/dateUtils.js'
+
 const router = useRouter();
 const route = useRoute()
 const userStore = useUserStore()
 const result = ref()
 const handleGetAnswer = async () => {
-  if (route.query.pointId){
+  if (route.query.pointId ){
     const data  = await getAnswer({
       knowId: route.query.pointId,
       sectionId: route.query.sectionId,
@@ -28,8 +29,25 @@ const handleGetAnswer = async () => {
       }
     })
     result.value = data
+  } else if(route.query.sectionId) {
+     const data  = await getAnswer({
+      knowId: route.query.sectionId,
+      sectionId: route.query.sectionId,
+      topicResults: JSON.parse(route.query.results),
+      studentId: userStore.studentId 
+    })
+    data.showTopicResponses = data.showTopicResponses.map((item,index) => {
+      return{
+        ...item,
+        no:index+1,
+        type: 'radio',
+      }
+    })
+    result.value = data
+
   }
 }
+
 onMounted(() => {
   handleGetAnswer()
 })
@@ -49,7 +67,7 @@ onMounted(() => {
     <el-scrollbar>
       <div class="topBox">
         <div class="box">
-          <div>{{result?.correctRate}}%</div>
+          <div>{{result?.correctRate*100}}%</div>
           <div>正确率</div>
         </div>
         <div class="box">
@@ -96,7 +114,7 @@ onMounted(() => {
       <div style="display: flex;gap: 20px">
         <LButton @click="() => router.push('/')" border>返回首页</LButton>
         <LButton v-if="result?.accuracy !== 100">提交</LButton>
-        <LButton v-else>测试下一个</LButton>
+        <LButton v-else @click="() => router.push('/question')" border>测试下一章</LButton>
       </div>
     </div>
   </footer>

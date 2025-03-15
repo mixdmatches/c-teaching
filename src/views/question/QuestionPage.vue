@@ -19,7 +19,7 @@
       <div class="left">
         <div class="viewDotBox">
           <ProblemViewDot v-for="(item, index) in questionList" :value="questionList[index].answer">
-            {{ item.no }}
+            {{index+1}}
           </ProblemViewDot>
         </div>
         <div class="tipBox">
@@ -123,6 +123,7 @@ const submitTest = () => {
     },
   })
 }
+
 </script>
 
 <style lang="scss" scoped>
