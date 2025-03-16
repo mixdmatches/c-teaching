@@ -61,9 +61,10 @@ const questionList = reactive([])
 const handleGetQuestionList = async () => {
   if (route.query.sectionId && route.query.pointId) {
     questionList.length = 0
-    const list = (await getQuestionByKnowledge({ sectionId: route.query.sectionId, pointId: route.query.pointId, studentId: userStore.getUserId() })).map((item) => {
+    const list = (await getQuestionByKnowledge({ sectionId: route.query.sectionId, pointId: route.query.pointId, studentId: userStore.getUserId() })).map((item,index) => {
       return {
         ...item,
+        no: index + 1,
         type: 'radio'
       }
     })
@@ -72,9 +73,10 @@ const handleGetQuestionList = async () => {
   }
   if (route.query.sectionId) {
     questionList.length = 0
-    const list = (await getQuestionBySectionId({ sectionId: route.query.sectionId })).map((item) => {
+    const list = (await getQuestionBySectionId({ sectionId: route.query.sectionId })).map((item,index) => {
       return {
         ...item,
+        no: index + 1,
         type: 'radio'
       }
     })
