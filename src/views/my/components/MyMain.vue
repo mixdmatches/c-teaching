@@ -34,9 +34,6 @@
 <script setup>
 import { reactive, ref, onMounted } from 'vue'
 import { ElButton } from 'element-plus'
-import axios from 'axios'
-import { getUserInfo, updateUserInfo } from '@/api/user.js'
-import { useUserStore } from '@/stores/index.js'
 
 import { getUserInfo, updateUserInfo } from '@/api/user.js'
 import { useUserStore } from '@/stores/index.js'

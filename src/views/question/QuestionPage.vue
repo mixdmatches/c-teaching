@@ -55,7 +55,7 @@ const userStore = useUserStore()
 
 // 定义状态变量
 const status = ref(false)
-const questionList = relactve([])
+// const questionList = relactve([])
 // 题目列表
 const questionList = reactive([])
 const handleGetQuestionList = async () => {
