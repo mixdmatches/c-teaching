@@ -12,7 +12,7 @@ const props = defineProps({
     <span v-for="(item,index) in num" :key="index" class="active star">
       <el-icon><StarFilled /></el-icon>
     </span>
-    <span v-for="(item,index) in (max - num)" class="star">
+    <span v-for="(item,index) in ((max ?? 0) - (num ?? 0))" class="star">
       <el-icon><Star /></el-icon>
     </span>
   </div>

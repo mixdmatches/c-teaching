@@ -1,47 +1,19 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
 const service = axios.create({
-  baseURL: 'http://47.122.30.214:8101',
+  baseURL: 'http://127.0.0.1:3007',
   timeout: 5000,
 })
 
 // 请求拦截器
 service.interceptors.request.use(config => {
   // 添加 token 等逻辑
-  if (config.method === 'put' || config.method === 'post') {
-    for (let key in config.data) {
-      if (
-        config.data[key] === undefined ||
-        config.data[key] === '' ||
-        config.data[key] === null
-      ) {
-        delete config.data[key]
-      }
-    }
-  }
-  if (config.method === 'put') {
-    config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
-     
-  }
   return config
 })
 
 // 响应拦截器
 service.interceptors.response.use(
-  response => {
-    switch (response.data?.code) {
-      case 50000:
-      case 40000:
-        ElMessage.error(response.data.message)
-        return Promise.reject(response.data.message)
-      case 0:
-      case 200:
-        return Promise.resolve(response.data)
-      default:
-        return Promise.resolve(response.data)
-    }
-    // return response.data
-  },
+  response => response.data,
   error => {
     console.error('请求错误:', error)
     //定义一个变量
@@ -74,4 +46,5 @@ service.interceptors.response.use(
     return Promise.reject(error)
   }
 )
+
 export default service

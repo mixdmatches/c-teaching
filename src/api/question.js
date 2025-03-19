@@ -1,14 +1,10 @@
-import service from '../utils/request'
-
-export async function getQuestionListByPointId (pointId) {
-    const response = await service.get('/api/topic/section',{
-        params:{
-            pointId:pointId
-        }
-    })
-    if(response.status === 200 && response.data.code === 200){
-        return response.data.data
-    } else {
-        throw new Error('获取题目列表失败')
-    }
+import service from "@/utils/request.js";
+export const getQuestionBySectionId = async (params) => {
+  return (await service.get('/api/topic/section', { params })).data
+}
+export const getQuestionByKnowledge = async (data) => {
+  return (await service.post('/api/topic/knowledge', data)).data
+}
+export const getAnswer = async (data) => {
+  return (await service.post('/api/topic/result', data)).data
 }

@@ -5,14 +5,14 @@
       <h2>上次学到</h2>
       <span class="study">
         <p>{{ studentStatus.pointName }}</p>
-        <el-button type="primary">继续学习</el-button>
+        <el-button type="primary" @click="handleStudy">继续学习</el-button>
       </span>
       <p class="next-study">下一个知识点：{{ studentStatus.nextPointName }}</p>
     </div>
     <div class="four-data">
       <div class="item">
         <span class="title">学习时长</span>
-        <span class="num">45min</span>
+        <span class="num">{{ mini }}</span>
       </div>
       <div class="item">
         <span class="title">进度</span>
@@ -25,16 +25,16 @@
     </div>
     <div class="data">
       <!-- 折线图 -->
-      <OneCom />
+      <OneCom :pointList="points" />
       <!-- 圆环 进度-->
-      <TowCom />
+      <TowCom :pointList="points" />
     </div>
   </MainCm>
   <MainCm v-else>
     <div class="top-todo">
-      <h2>请先选择章节测试，测试后可选择课程学习</h2>
+      <h2>请先测试，测试后可选择课程学习</h2>
       <span>
-        <el-select
+        <!-- <el-select
           v-model="chapterId"
           placeholder="请选择章节"
           style="width: 250px; margin-right: 5px"
@@ -45,7 +45,7 @@
             :label="chapter.sectionName"
             :value="chapter.sectionId"
           />
-        </el-select>
+        </el-select> -->
         <el-button type="primary" @click="handleTest">进入测试</el-button>
       </span>
       <el-button @click="userStore.changeCeshi">假如测试完后返回页面</el-button>
@@ -60,30 +60,21 @@
 import MainCm from '../../components/MainCm.vue'
 import OneCom from './components/OneCom.vue'
 import TowCom from './components/TowCom.vue'
-import { ElMessage } from 'element-plus'
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/index.js'
 // api
-import { apiGetStudyStatus } from '@/api/home.js'
-import {
-  apiGetAllChapters,
-  apiGetAllPoints,
-  apiGetStudyPoints,
-} from '@/api/chapters.js'
+import { apiGetStudyStatus, apiGetStudyPoints } from '@/api/home.js'
+import { apiGetAllChapters, apiGetAllPoints } from '@/api/chapters.js'
 const router = useRouter()
 const userStore = useUserStore()
 
 // 进入测试按钮
 const handleTest = () => {
-  if (!chapterId.value) {
-    ElMessage.error('请选择章节')
-    return
-  }
   router.push({
     path: '/question',
     query: {
-      id: chapterId.value,
+      sectionId: 3,
     },
   })
 }
@@ -91,39 +82,65 @@ const handleTest = () => {
 const studentStatus = ref({})
 // 1.获取学生学习情况
 const getStudyStatus = async () => {
-  const res = await apiGetStudyStatus()
-  studentStatus.value = res
+  const res = await apiGetStudyStatus(210047301)
+  studentStatus.value = res.data
 }
 getStudyStatus()
 
-const chapters = ref([])
-const chapterId = ref('')
-// 2.获取章节列表
-const getChapters = async () => {
-  const res = await apiGetAllChapters()
-  chapters.value = res.chapters
-}
-getChapters()
+// const chapters = ref([])
+// const chapterId = ref('')
+// // 2.获取章节列表
+// const getChapters = async () => {
+//   const res = await apiGetAllChapters()
+//   chapters.value = res.chapters
+// }
+// getChapters()
 
 // 3.获取所有知识点列表
 const points = ref([])
 const getAllPoints = async () => {
-  const res = await apiGetAllPoints()
-  points.value = res.points
+  const res = await apiGetAllPoints(210047301)
+  points.value = res.data.knowPointList
 }
 getAllPoints()
 
 // 4.获取已学知识点列表
 const studyPoints = ref([])
 const getStudyPoints = async () => {
-  const res = await apiGetStudyPoints()
-  studyPoints.value = res.points
+  const res = await apiGetStudyPoints(210047301)
+  studyPoints.value = res.data
 }
 getStudyPoints()
 
-const plan = computed(() =>
-  Math.ceil((studyPoints.value.length / points.value.length) * 100)
-)
+// 继续学习按钮
+const handleStudy = () => {
+  router.push({
+    path: '/knowledgeDetail',
+    query: {
+      pointId: studentStatus.value.pointId,
+      sectionId: studentStatus.value.sectionId,
+    },
+  })
+}
+
+const plan = computed(() => {
+  if (points.value.length === 0) {
+    return 0 // 避免除零错误
+  }
+  return Math.ceil((studyPoints.value.length / points.value.length) * 100)
+})
+
+// 时间转换
+const mini = computed(() => {
+  if (userStore.totalTime < 60) {
+    return userStore.totalTime + 's'
+  }
+  const minutes = Math.ceil(userStore.totalTime / 60)
+  if (minutes >= 100) {
+    return (minutes / 60).toFixed(1) + 'h'
+  }
+  return minutes + 'min'
+})
 </script>
 
 <style lang="scss" scoped>

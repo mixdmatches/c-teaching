@@ -1,57 +1,55 @@
 <script setup>
-
 import SubHeader from "@/components/SubHeader.vue";
 import LButton from "@/components/LButton.vue";
-import {ref} from "vue";
+import { onMounted, ref } from 'vue'
 import QuestionResultItem from "@/views/result/components/QuestionResultItem.vue";
 import ProblemViewDot from "@/components/problemViewDot.vue";
-import {useRouter} from "vue-router";
-const router = useRouter();
-const result = ref({
-  rightRate: 0,
-  rightNumber: 4,
-  maxNumber: 5,
-  time: 16,
-  practisedRate: 100,
-  questionList: [...new Array(8)].map((item,index) => {
-    return{
-      no: index+1,
-      type: 'radio',
-      difficulty: 3,
-      emphasis: 4,
-      tags: [
-        {
-          tagName: '循环',
-        },
-        {
-          tagName: '数组',
-        }
-      ],
-      title: '1.题目描述',
-      options: [
-        {
-          id: 'A',
-          text: '选项一'
-        },
-        {
-          id: 'B',
-          text: '选项一'
-        },
-        {
-          id: 'C',
-          text: '选项一'
-        },
-        {
-          id: 'D',
-          text: '选项一'
-        }
-      ],
-      selectId: 'A',
-      rightId:'A',
-      AIAnalysis: '无'
-    }
-  })
+import { useRoute, useRouter } from 'vue-router'
+import { getAnswer } from '@/api/question.js'
+import { useUserStore } from '@/stores/index.js'
+import { formatToMinute } from '@/utils/dateUtils.js'
 
+const router = useRouter();
+const route = useRoute()
+const userStore = useUserStore()
+const result = ref()
+const handleGetAnswer = async () => {
+  if (route.query.pointId ){
+    const data  = await getAnswer({
+      knowId: route.query.pointId,
+      sectionId: route.query.sectionId,
+      topicResults: JSON.parse(route.query.results),
+      studentId: userStore.studentId 
+    })
+    data.showTopicResponses = data.showTopicResponses.map((item,index) => {
+      return{
+        ...item,
+        no:index+1,
+        type: 'radio',
+      }
+    })
+    result.value = data
+  } else if(route.query.sectionId) {
+     const data  = await getAnswer({
+      knowId: route.query.sectionId,
+      sectionId: route.query.sectionId,
+      topicResults: JSON.parse(route.query.results),
+      studentId: userStore.studentId 
+    })
+    data.showTopicResponses = data.showTopicResponses.map((item,index) => {
+      return{
+        ...item,
+        no:index+1,
+        type: 'radio',
+      }
+    })
+    result.value = data
+
+  }
+}
+
+onMounted(() => {
+  handleGetAnswer()
 })
 //调用接口模拟数据
 </script>
@@ -70,33 +68,32 @@ const result = ref({
     <el-scrollbar>
       <div class="topBox">
         <div class="box">
-          <div>{{result.rightRate}}%</div>
+          <div>{{result?.correctRate*100}}%</div>
           <div>正确率</div>
         </div>
         <div class="box">
-          <div>{{result.rightNumber}}/{{result.maxNumber}}</div>
+          <div>{{result?.correctCount}}/{{result?.showTopicResponses?.length}}</div>
           <div>答对题数</div>
         </div>
         <div class="box">
-          <div>{{result.time}}min</div>
+          <div>{{formatToMinute(route.query.time)}}min</div>
           <div>用时</div>
         </div>
         <div class="box">
-          <div>{{result.practisedRate}}%</div>
+          <div>{{result?.accuracy ?? 0}}%</div>
           <div>熟练程度</div>
         </div>
       </div>
       <div class="questionBox">
-        <QuestionResultItem v-for="(item,index) in result.questionList" :key="index" :option="item" />
+        <QuestionResultItem v-for="(item,index) in result?.showTopicResponses" :key="index" :option="item" />
       </div>
     </el-scrollbar>
   </main>
   <footer>
     <div class="footerBox">
       <div class="left">
-        <!--        <Pagination :total="questionList.length" class="pagination" />-->
         <div class="viewDotBox">
-          <ProblemViewDot v-for="(item,index) in result.questionList" :error="Boolean(item.selectId) && item.selectId !== item.rightId" :value="item.selectId" complete-color="#00ff0c">
+          <ProblemViewDot v-for="(item,index) in result?.showTopicResponses" :error="Boolean(item.studentAnswer) && item.studentAnswer !== item.answer" :value="item.studentAnswer" complete-color="#00ff0c">
             {{item.no}}
           </ProblemViewDot>
         </div>
@@ -117,8 +114,8 @@ const result = ref({
       </div>
       <div style="display: flex;gap: 20px">
         <LButton @click="() => router.push('/')" border>返回首页</LButton>
-        <LButton v-if="result.practisedRate !== 100">提交</LButton>
-        <LButton v-else>测试下一个</LButton>
+        <LButton v-if="result?.accuracy !== 100">提交</LButton>
+        <LButton v-else @click="() => router.push('/question')" border>测试下一章</LButton>
       </div>
     </div>
   </footer>

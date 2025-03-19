@@ -12,7 +12,6 @@
         />
         <span v-else class="display-field">{{ userInfo[filed.value] }}</span>
       </div>
-
       <!-- 按钮区域 -->
       <div class="buttonDiv">
         <el-button
@@ -39,11 +38,14 @@ import axios from 'axios'
 import { getUserInfo, updateUserInfo } from '@/api/user.js'
 import { useUserStore } from '@/stores/index.js'
 
+import { getUserInfo, updateUserInfo } from '@/api/user.js'
+import { useUserStore } from '@/stores/index.js'
+
 // 初始化用户信息
 const userStore = useUserStore()
 const userInfo = ref({})
 const handleGetUserInfo = async () => {
-  userInfo.value = await getUserInfo(userStore.getUserId())
+  userInfo.value = await getUserInfo('210047301')
 }
 const userInfoFiled =[
   {
@@ -74,7 +76,7 @@ const tempUserInfo = reactive({})
 
 // 开始编辑
 const startEditing = () => {
-  Object.assign(tempUserInfo, userInfo.value)
+  Object.assign(tempUserInfo, userInfo.value)//userInfo->tempUserInfo
   isEditing.value = true
 }
 

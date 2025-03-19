@@ -13,7 +13,7 @@
       </ul>
     </nav>
     <div class="user">
-      <span>姓名</span>
+      <span>姓名:{{ userInfo?.name }}</span>
       <el-avatar
         src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
       />
@@ -22,6 +22,9 @@
 </template>
 
 <script setup>
+import { getUserInfo } from '@/api/user.js'
+import { ref, onMounted } from 'vue'  
+
 const routers = [
   {
     path: '/',
@@ -33,9 +36,16 @@ const routers = [
   },
   {
     path: '/my',
-    name: '个人中心',
+    name: '个人中心', 
   },
 ]
+const userInfo = ref()
+const handleGetUserInfo = async () => {
+  userInfo.value = await getUserInfo('210047301')
+}
+onMounted(async () => {
+  await handleGetUserInfo() 
+})
 </script>
 
 <style lang="scss" scoped>

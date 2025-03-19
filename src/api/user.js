@@ -5,14 +5,14 @@ import { id } from 'element-plus/es/locale/index'
 export const apiPostLogin = data => service.post('/api/login', data)
 export const apiGetUserInfo = () => service.get('/api/user')
 export const apiPostAiTopic = data => service.post('/api/ai/topic', data)
-export const apiGetStudentInfo = () => service.get('/api/student/info/210047301')
+export const apiGetStudentInfo = () => service.get('/api/student/info/100001')
 // export const apiUpdateUserInfo = data => service.post('/user/info', data)
 // export const apiPostLogin...
 // export const apiAddUser...
 // export const apiDeleteUser...
-export const getUserInfo = id => {
-  return service.get(`/api/student/info/${id}`)
+export const  getUserInfo = async id => {
+  return (await service.get(`/api/student/info/${id}`)).data
 }
-export const updateUserInfo = data => {
-  return service.put(`/api/student/update`, data)
+export const updateUserInfo = async data => {
+  return (await service.put(`/api/student/update`, data)).data
 }
