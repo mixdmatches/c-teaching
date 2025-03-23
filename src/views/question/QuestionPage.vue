@@ -7,19 +7,30 @@
   <main>
     <el-scrollbar>
       <div class="questionBox">
-        <QuestionItem v-for="(item, index) in questionList" v-model="questionList[index].answer" :key="item.id"
-          :option="item" />
+        <QuestionItem
+          v-for="(item, index) in questionList"
+          v-model="questionList[index].answer"
+          :key="item.id"
+          :option="item"
+        />
       </div>
     </el-scrollbar>
     <!-- 返回顶部 -->
-    <el-backtop target=".el-scrollbar .el-scrollbar__wrap" :visibility-height="100" />
+    <el-backtop
+      target=".el-scrollbar .el-scrollbar__wrap"
+      :visibility-height="100"
+    />
   </main>
   <footer>
     <div class="footerBox">
       <div class="left">
         <div class="viewDotBox">
-          <ProblemViewDot v-for="(item, index) in questionList" :value="questionList[index].answer">
-            {{index+1}}
+          <ProblemViewDot
+            v-for="(item, index) in questionList"
+            :key="item.id"
+            :value="questionList[index].answer"
+          >
+            {{ index + 1 }}
           </ProblemViewDot>
         </div>
         <div class="tipBox">
@@ -46,7 +57,10 @@ import LButton from '@/components/LButton.vue'
 import { formatTime } from '@/utils/dateUtils.js'
 import { useRoute, useRouter } from 'vue-router'
 import ProblemViewDot from '@/components/problemViewDot.vue'
-import { getQuestionByKnowledge, getQuestionBySectionId } from '@/api/question.js'
+import {
+  getQuestionByKnowledge,
+  getQuestionBySectionId,
+} from '@/api/question.js'
 import { useUserStore } from '@/stores/index.js'
 
 const router = useRouter()
@@ -61,11 +75,17 @@ const questionList = reactive([])
 const handleGetQuestionList = async () => {
   if (route.query.sectionId && route.query.pointId) {
     questionList.length = 0
-    const list = (await getQuestionByKnowledge({ sectionId: route.query.sectionId, pointId: route.query.pointId, studentId: userStore.getUserId() })).map((item,index) => {
+    const list = (
+      await getQuestionByKnowledge({
+        sectionId: route.query.sectionId,
+        pointId: route.query.pointId,
+        studentId: userStore.getUserId(),
+      })
+    ).map((item, index) => {
       return {
         ...item,
         no: index + 1,
-        type: 'radio'
+        type: 'radio',
       }
     })
     questionList.push(...list)
@@ -73,11 +93,13 @@ const handleGetQuestionList = async () => {
   }
   if (route.query.sectionId) {
     questionList.length = 0
-    const list = (await getQuestionBySectionId({ sectionId: route.query.sectionId })).map((item,index) => {
+    const list = (
+      await getQuestionBySectionId({ sectionId: route.query.sectionId })
+    ).map((item, index) => {
       return {
         ...item,
         no: index + 1,
-        type: 'radio'
+        type: 'radio',
       }
     })
     questionList.push(...list)
@@ -98,34 +120,38 @@ onMounted(() => {
   startTiming()
 })
 
-const fetchQuestions = async (pointId) => {
+const fetchQuestions = async pointId => {
   try {
-    const data = await getQuestionListByPointId(pointId);
-    questionList.splice(0, questionList.length, ...data.map((item, index) => ({
-      no: index + 1,
-      type: item.type || 'radio',
-      difficulty: item.difficulty || 3,
-      emphasis: item.emphasis || 4,
-      tags: item.tags || [],
-      title: item.title || '题目描述',
-      options: item.options || [
-        { id: 'A', text: '选项一' },
-        { id: 'B', text: '选项二' },
-        { id: 'C', text: '选项三' },
-        { id: 'D', text: '选项四' },
-      ],
-      selectId: '',
-    })));
+    const data = await getQuestionListByPointId(pointId)
+    questionList.splice(
+      0,
+      questionList.length,
+      ...data.map((item, index) => ({
+        no: index + 1,
+        type: item.type || 'radio',
+        difficulty: item.difficulty || 3,
+        emphasis: item.emphasis || 4,
+        tags: item.tags || [],
+        title: item.title || '题目描述',
+        options: item.options || [
+          { id: 'A', text: '选项一' },
+          { id: 'B', text: '选项二' },
+          { id: 'C', text: '选项三' },
+          { id: 'D', text: '选项四' },
+        ],
+        selectId: '',
+      }))
+    )
   } catch (error) {
-    console.error('请求错误:', error.message); // 添加详细的错误信息打印
-    console.error('请求详情:', error.config); // 打印请求的具体配置
+    console.error('请求错误:', error.message) // 添加详细的错误信息打印
+    console.error('请求详情:', error.config) // 打印请求的具体配置
   }
 }
 
 onMounted(() => {
-  const pointId = 3;
-  fetchQuestions(pointId);
-});
+  const pointId = 3
+  fetchQuestions(pointId)
+})
 onUnmounted(() => {
   clearInterval(timeInterval.value)
 })
@@ -145,16 +171,17 @@ const submitTest = () => {
       pointId: route.query.pointId,
       sectionId: route.query.sectionId,
       time: time.value,
-      results: JSON.stringify(questionList.map((item) => {
-        return {
-          id: item.id,
-          studentAnswer: item.answer
-        }
-      }))
+      results: JSON.stringify(
+        questionList.map(item => {
+          return {
+            id: item.id,
+            studentAnswer: item.answer,
+          }
+        })
+      ),
     },
   })
 }
-
 </script>
 
 <style lang="scss" scoped>
@@ -204,7 +231,7 @@ footer {
         gap: $padding-xl;
         margin-left: 20px;
 
-        &>div {
+        & > div {
           display: flex;
           align-items: center;
           gap: $padding-s;
