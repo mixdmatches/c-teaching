@@ -8,6 +8,7 @@
     <span v-show="!isAi" class="ai-help" @click="handleOpenAi">
       <el-icon><ChatDotRound /></el-icon>
     </span>
+    <el-backtop :right="50" :bottom="100" />
   </div>
 </template>
 
