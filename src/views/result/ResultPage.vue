@@ -47,6 +47,17 @@ const handleGetAnswer = async () => {
     result.value = data
   }
 }
+// 重新测试回调函数
+const handleResetTest = () => {
+  // 传递路由参数并跳转
+  router.push({
+    path: '/question',
+    query: {
+      pointId: route.query.pointId,
+      sectionId: route.query.sectionId,
+    },
+  })
+}
 
 onMounted(() => {
   handleGetAnswer()
@@ -59,7 +70,7 @@ onMounted(() => {
     <template #right>
       <div class="headerRight">
         <div>对AI评估结果不满意?</div>
-        <LButton>重新测试</LButton>
+        <LButton @click="handleResetTest">重新测试</LButton>
       </div>
     </template>
   </SubHeader>
@@ -128,9 +139,8 @@ onMounted(() => {
       </div>
       <div style="display: flex; gap: 20px">
         <LButton @click="() => router.push('/')" border>返回首页</LButton>
-        <!-- <LButton v-if="result?.accuracy !== 100">提交</LButton> -->
         <LButton
-          v-if="result.correctRate == 1"
+          v-if="result?.correctRate == 1"
           @click="() => router.push('/question')"
           border
           >测试下一章</LButton
