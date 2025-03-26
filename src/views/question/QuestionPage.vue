@@ -55,15 +55,16 @@ const userStore = useUserStore()
 
 // 定义状态变量
 const status = ref(false)
-
+// const questionList = relactve([])
 // 题目列表
 const questionList = reactive([])
 const handleGetQuestionList = async () => {
   if (route.query.sectionId && route.query.pointId) {
     questionList.length = 0
-    const list = (await getQuestionByKnowledge({ sectionId: route.query.sectionId, pointId: route.query.pointId, studentId: userStore.getUserId() })).map((item) => {
+    const list = (await getQuestionByKnowledge({ sectionId: route.query.sectionId, pointId: route.query.pointId, studentId: userStore.getUserId() })).map((item,index) => {
       return {
         ...item,
+        no: index + 1,
         type: 'radio'
       }
     })
@@ -72,9 +73,10 @@ const handleGetQuestionList = async () => {
   }
   if (route.query.sectionId) {
     questionList.length = 0
-    const list = (await getQuestionBySectionId({ sectionId: route.query.sectionId })).map((item) => {
+    const list = (await getQuestionBySectionId({ sectionId: route.query.sectionId })).map((item,index) => {
       return {
         ...item,
+        no: index + 1,
         type: 'radio'
       }
     })
@@ -95,6 +97,35 @@ onMounted(() => {
   handleGetQuestionList()
   startTiming()
 })
+
+const fetchQuestions = async (pointId) => {
+  try {
+    const data = await getQuestionListByPointId(pointId);
+    questionList.splice(0, questionList.length, ...data.map((item, index) => ({
+      no: index + 1,
+      type: item.type || 'radio',
+      difficulty: item.difficulty || 3,
+      emphasis: item.emphasis || 4,
+      tags: item.tags || [],
+      title: item.title || '题目描述',
+      options: item.options || [
+        { id: 'A', text: '选项一' },
+        { id: 'B', text: '选项二' },
+        { id: 'C', text: '选项三' },
+        { id: 'D', text: '选项四' },
+      ],
+      selectId: '',
+    })));
+  } catch (error) {
+    console.error('请求错误:', error.message); // 添加详细的错误信息打印
+    console.error('请求详情:', error.config); // 打印请求的具体配置
+  }
+}
+
+onMounted(() => {
+  const pointId = 3;
+  fetchQuestions(pointId);
+});
 onUnmounted(() => {
   clearInterval(timeInterval.value)
 })
