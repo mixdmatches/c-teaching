@@ -115,7 +115,7 @@ getStudyPoints()
 // 继续学习按钮
 const handleStudy = () => {
   router.push({
-    path: '/knowledgeDetail',
+    path: '/study',
     query: {
       pointId: studentStatus.value.pointId,
       sectionId: studentStatus.value.sectionId,

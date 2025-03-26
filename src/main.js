@@ -11,7 +11,9 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import HeaderCm from '@/components/HeaderCm.vue'
 // 引入element中文包
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
-
+//引入视频播放组件
+import VueVideoPlayer from 'vue-video-player'
+import 'video.js/dist/video-js.css'
 // 获取当前环境变量
 const baseURL = import.meta.env.VITE_API_BASE
 console.log('当前环境变量：', baseURL)
@@ -30,3 +32,4 @@ app.use(ElementPlus, {
 app.use(pinia)
 app.use(router)
 app.mount('#app')
+app.use(VueVideoPlayer)
