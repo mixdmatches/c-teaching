@@ -1,4 +1,3 @@
-import service from '../aiRequest'
 /**接口地址 */
 export const APIURL = 'https://open.bigmodel.cn/api/paas/v4/chat/completions'
 /**密钥 */
@@ -409,7 +408,6 @@ const question = {
   chapter: '',
   topic: '',
 }
-
 // 按知识点生成题目的提示信息
 export const TOOL_MESSAGE = {
   /**生成题目信息--按章节和知识点 */
@@ -433,9 +431,32 @@ export const TOOL_MESSAGE = {
             7. 检查题目是否重复，若重复则重新出题
             8. 题目相关的章节和知识点按照这个${JSON.stringify(chapters)}来出，给出的章节名称格式为第XX章。`
   },
+  /**生成知识点熟练度信息--按题目和用户答案 */
+  proficiency: (question, userAnswer) => {
+    return `你是一个严谨的根据C语言知识点题目给出用户对该知识点熟练度专家，我会给你如下信息：
+            '''
+            {question: ${question},
+            userAnswer: ${userAnswer}}
+            'question是题目信息，包含题目标题title、正确答案answer和知识点topic等信息；userAnswer是用户的答案'
+            请你根据上述信息，按照以下步骤来评估学生对知识点的熟练度：
+            1. 要求：对于每个知识点，计算学生答对的题目数量占该知识点总题目数量的比例，以百分比形式表示熟练度，如 18%。
+            2. 严格按照下面的 JSON 对象格式输出评估结果
+            '''
+            [{"topic":"","proficiency":"0%"}]
+            '''
+            topic 是知识点名称，proficiency 是该知识点的熟练度百分比。
+            3. 出的评估结果必须是针对C语言题目的知识点的熟练度。
+            4. 返回的评估结果列表格式必须为 JSON 对象。
+            5. 返回的评估结果 json 对象必须紧凑，不能有换行。
+            6. 题目相关的章节和知识点按照这个${JSON.stringify(chapters)}来确定。`
+  },
 }
 
-// 生成题目--传章节号，传题数量
+/**
+ * 生成题目信息--按章节
+ * @param {*} c 章节id
+ * @param {*} questionCount 题目数量
+ */
 export const generateConfigChapter = (c, questionCount) => {
   const chapter = chapters[c - 1]
   const { chapter: chapterName, topics } = chapter
@@ -456,8 +477,13 @@ export const generateConfigChapter = (c, questionCount) => {
   }
 }
 
-
-// 生成题目--传章节号，知识点号，题数量
+/**
+ * 生成题目信息--按章节的某一个知识点
+ * @param {*} c 章节id
+ * @param {*} t 知识点id
+ * @param {*} questionCount 题目数量
+ * @returns
+ */
 export const generateConfigTopic = (c, t, questionCount) => {
   let chapter = chapters[c - 1]
   const { chapter: chapterName, topics } = chapter
@@ -478,6 +504,46 @@ export const generateConfigTopic = (c, t, questionCount) => {
     },
   }
 }
+
+// 生成熟练度信息--传题目和用户答案
+/**
+ * @param {*} question 题目信息，包含题目标题title、正确答案answer和知识点topic等信息
+ * @param {*} userAnswer 用户的答案
+ * @returns 评估结果，包含知识点名称topic和熟练度proficiency
+ * @example 输入：{question: {title: '1+1=?', answer: '2', topic: '数学'}, userAnswer: '2'}
+ * 输出：{"topic":"数学","proficiency":"100%"}
+ * */
+export const generateConfigProficiency = (question, userAnswer) => {
+  return {
+    messages: [
+      {
+        role: 'system',
+        content: TOOL_MESSAGE.proficiency(question, userAnswer),
+      },
+      {
+        role: 'user',
+        content: `评估用户对该题目的知识点的熟练度${JSON.stringify(question)}`,
+      },
+    ],
+    response_format: {
+      type: 'json_object',
+    },
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // 生成题目--传章节号，知识点号，题数量
