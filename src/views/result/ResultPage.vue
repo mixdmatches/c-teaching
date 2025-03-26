@@ -51,7 +51,6 @@ const handleGetAnswer = async () => {
 onMounted(() => {
   handleGetAnswer()
 })
-//调用接口模拟数据
 </script>
 
 <template>

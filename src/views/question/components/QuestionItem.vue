@@ -24,14 +24,12 @@ const model = defineModel()
         <Tag :text="option.knowPointName" />
       </div>
     </div>
-    <div class="title">{{option.no + '. ' + option.title}}</div>
+    <div class="title">{{option.title}}</div>
     <el-radio-group v-model="model" class="radioGroup">
-        <el-radio v-for="(item,index) in option.option" :key="index" :label="item.key + ':  ' + item.value" :value="item.key" />
+      <el-radio v-for="(item,index) in option.option" :key="index" :label="item.value" :value="item.key" />
     </el-radio-group>
-    
   </div>
 </template>
-
 
 <style scoped lang="scss">
 .questionItem{

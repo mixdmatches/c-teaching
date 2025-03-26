@@ -227,7 +227,7 @@ const handleClearTalk = () => {
   top: calc($margin-xxl + $header-height);
   right: calc(2 * $padding-xxl);
   width: 30%;
-  height: calc(100% - 2 * $margin-xxl - $header-height);
+  height: 770px;
   display: flex;
   flex-direction: column;
   background-color: rgb(240, 244, 251);
