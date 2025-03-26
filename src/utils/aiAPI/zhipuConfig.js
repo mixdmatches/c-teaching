@@ -436,7 +436,7 @@ export const TOOL_MESSAGE = {
 }
 
 // 生成题目--传章节号，传题数量
-const generateConfigChapter = (c, questionCount) => {
+export const generateConfigChapter = (c, questionCount) => {
   const chapter = chapters[c - 1]
   const { chapter: chapterName, topics } = chapter
   return {
@@ -455,17 +455,10 @@ const generateConfigChapter = (c, questionCount) => {
     },
   }
 }
-export const apiPostChapterAi = (chapter, questionCount) => {
-  const configData = generateConfigChapter(chapter, questionCount)
-  return service({
-    method: 'post',
-    url: '',
-    data: configData,
-  })
-}
+
 
 // 生成题目--传章节号，知识点号，题数量
-const generateConfigTopic = (c, t, questionCount) => {
+export const generateConfigTopic = (c, t, questionCount) => {
   let chapter = chapters[c - 1]
   const { chapter: chapterName, topics } = chapter
   const topic = topics[t - 1]
@@ -485,14 +478,7 @@ const generateConfigTopic = (c, t, questionCount) => {
     },
   }
 }
-export const apiPostTopicAi = (chapter, topic, questionCount) => {
-  const configData = generateConfigTopic(chapter, topic, questionCount)
-  return service({
-    method: 'post',
-    url: '',
-    data: configData,
-  })
-}
+
 
 // 生成题目--传章节号，知识点号，题数量
 // const generateConfigTopic = (c, questionCount, ...args) => {

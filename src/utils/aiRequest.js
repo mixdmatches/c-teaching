@@ -16,7 +16,7 @@ service.interceptors.request.use(config => {
     // 确保有 data 对象
     config.data = config.data || {}
     // 为 POST 请求的参数添加 model 字段
-    config.data.model = modelType 
+    config.data.model = modelType
   }
   return config
 })
