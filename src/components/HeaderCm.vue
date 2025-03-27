@@ -13,7 +13,7 @@
       </ul>
     </nav>
     <div class="user">
-      <span>姓名:{{ userInfo?.name }}</span>
+      <span>{{ userInfo?.name }}</span>
       <el-avatar
         src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
       />
@@ -23,7 +23,7 @@
 
 <script setup>
 import { getUserInfo } from '@/api/user.js'
-import { ref, onMounted } from 'vue'  
+import { ref, onMounted } from 'vue'
 
 const routers = [
   {
@@ -36,7 +36,7 @@ const routers = [
   },
   {
     path: '/my',
-    name: '个人中心', 
+    name: '个人中心',
   },
 ]
 const userInfo = ref()
@@ -44,7 +44,7 @@ const handleGetUserInfo = async () => {
   userInfo.value = await getUserInfo('210047301')
 }
 onMounted(async () => {
-  await handleGetUserInfo() 
+  await handleGetUserInfo()
 })
 </script>
 
@@ -58,7 +58,8 @@ onMounted(async () => {
 
 .header {
   // // 固定在页面顶部
-  position: fixed;
+  // position: fixed;
+  position: sticky;
   top: 0;
   left: 0;
   z-index: 999;

@@ -21,7 +21,6 @@ service.interceptors.request.use(config => {
   }
   if (config.method === 'put') {
     config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
-     
   }
   return config
 })

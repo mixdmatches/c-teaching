@@ -12,16 +12,16 @@
           ><Delete
         /></el-icon>
       </el-tooltip>
-      <el-icon style="font-size: 1.6em" @click="handleCloseAi"
+      <!-- <el-icon style="font-size: 1.6em" @click="handleCloseAi"
         ><CloseBold
-      /></el-icon>
+      /></el-icon> -->
     </div>
     <div class="talk" v-if="talkGroupArr.length !== 0">
       <div class="talk-group" v-for="item in talkGroupArr" :key="item">
         <div class="message-right">
           {{ item.question }}
         </div>
-        <div class="message-left markdown-container" v-html="item.answer"></div>
+        <div class="font-10 message-left markdown-container" v-html="item.answer"></div>
       </div>
     </div>
     <div class="talk-none" v-else>
@@ -203,6 +203,10 @@ const handleClearTalk = () => {
 </script>
 
 <style lang="scss" scoped>
+.font-10 {
+  // 恢复字体大小
+  font-size: 10px;
+}
 @mixin talk-body {
   flex: 1;
   padding: $padding-xl;
@@ -223,11 +227,16 @@ const handleClearTalk = () => {
   opacity: 0;
 }
 .right {
+<<<<<<< HEAD
   position: fixed;
   top: calc($margin-xxl + $header-height);
   right: calc(2 * $padding-xxl);
   width: 30%;
   height: 770px;
+=======
+  flex: 1;
+  height: calc(100vh - 150px); /* 假设底部留 20px 空白 */
+>>>>>>> 353b747a1cd8203a0477d5c69096305c1331b28f
   display: flex;
   flex-direction: column;
   background-color: rgb(240, 244, 251);
@@ -279,7 +288,7 @@ const handleClearTalk = () => {
         max-width: 100%;
         background-color: #fff;
         color: $text-color;
-        font-size: $font-size-xl;
+        font-size: $font-size-l;
         line-height: 1.7;
         padding: $padding-l $padding-m;
         border-radius: $border-radius-l;

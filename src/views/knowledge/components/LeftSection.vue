@@ -1,5 +1,6 @@
 <template>
   <div class="left" ref="leftDom">
+    <!-- ai总结 -->
     <div class="ai-summary">
       <div class="top">
         <h5>AI智能总结</h5>
@@ -27,7 +28,23 @@
         <el-button>发送</el-button>
       </div> -->
     </div>
-    <section class="markdown-container" v-html="markdownToHtml"></section>
+    <!-- 教程内容 -->
+    <el-tabs
+      style="background: white"
+      v-model="activeName"
+      class="demo-tabs"
+      @tab-click="handleClickTab"
+    >
+      <el-tab-pane label="图文" name="text"
+        ><section class="markdown-container" v-html="markdownToHtml"></section
+      ></el-tab-pane>
+      <el-tab-pane label="视频" name="video">
+        <div class="play-video">
+          <video class="video" controls src=""></video>
+        </div>
+      </el-tab-pane>
+    </el-tabs>
+
     <footer>
       <span
         >关联知识：<el-tag
@@ -175,6 +192,10 @@ watch(isAi, () => {
   leftDom.value.style.transform = `translateX(-${210}px)`
 })
 
+const activeName = ref('text')
+const handleClickTab = (tab, event) => {
+  activeName.value = tab.name
+}
 onMounted(() => {
   // 手动初始化高亮
   const codeBlocks = document.querySelectorAll('pre code')
@@ -188,7 +209,14 @@ onMounted(() => {
 // 引入 highlight.js 的样式
 @import 'highlight.js/styles/vs2015.css';
 .left {
-  width: 70%;
+  width: 100%;
+  flex: 2;
+  max-width: 740px;
+  max-height: calc(100vh - $header-height - $margin-xxl);
+  height: 100vh;
+  scrollbar-color: transparent transparent;
+  scrollbar-width: thin;
+  overflow-y: auto;
   transition: all 0.5s ease;
   .ai-summary {
     width: 100%;
@@ -244,6 +272,27 @@ onMounted(() => {
     }
     .input {
       display: flex;
+    }
+  }
+  .play-video {
+    width: 100%;
+    height: 400px;
+    background-color: #ffffff;
+    padding: 0 $padding-xl;
+    video {
+      width: 100%;
+    }
+  }
+  .demo-tabs > .el-tabs__content {
+    color: #6b778c;
+    font-size: 32px;
+    font-weight: 600;
+  }
+  .demo-tabs {
+    width: 100%;
+    margin: $margin-l 0;
+    .el-tabs__nav-scroll {
+      padding-left: 20px;
     }
   }
 
