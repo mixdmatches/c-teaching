@@ -14,9 +14,6 @@ import zhCn from 'element-plus/es/locale/lang/zh-cn'
 //引入视频播放组件
 import VueVideoPlayer from 'vue-video-player'
 import 'video.js/dist/video-js.css'
-// 获取当前环境变量
-const baseURL = import.meta.env.VITE_API_BASE
-console.log('当前环境变量：', baseURL)
 const app = createApp(App)
 
 app.component('HeaderCm', HeaderCm)

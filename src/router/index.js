@@ -54,7 +54,6 @@ const router = createRouter({
 
 // 在路由配置中添加
 router.beforeEach((to, from) => {
-  console.log('从:', from.path, '导航至:', to.path)
   if (to.path === '/cources' && !userStore.isCeshi) {
     ElMessage.warning('还未测试，请先去测试！')
     return false
