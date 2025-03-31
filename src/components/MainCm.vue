@@ -12,7 +12,7 @@ main {
   width: $main-width;
   height: auto;
   margin: 0 auto;
-  margin-top: $margin-xxl;
+  margin-top: $margin-xl;
   margin-bottom: $header-height;
 }
 </style>

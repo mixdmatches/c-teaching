@@ -8,11 +8,18 @@ const routes = [
   {
     path: '/',
     name: 'home',
+    meta: { title: '首页', show: 'header' },
     component: () => import('@/views/home/HomePage.vue'),
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: () => import('@/views/login/index.vue'),
   },
   {
     path: '/cources',
     name: 'cources',
+    meta: { title: '课程', show: 'header' },
     component: () => import('@/views/cources/CourcesPage.vue'),
   },
   {
@@ -38,7 +45,14 @@ const routes = [
   {
     path: '/my',
     name: 'my',
+    meta: { title: '我的', show: 'dropdown', icon: 'User' },
     component: () => import('@/views/my/myPage.vue'),
+  },
+  {
+    path: '/notes',
+    name: 'notes',
+    meta: { title: '笔记本', show: 'dropdown', icon: 'Notebook' },
+    component: () => import('@/views/notes/index.vue'),
   },
   {
     path: '/:pathMatch(.*)*',
