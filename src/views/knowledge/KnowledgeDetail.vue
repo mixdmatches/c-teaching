@@ -2,10 +2,10 @@
   <HeaderCm></HeaderCm>
   <div class="content-box">
     <LeftStudy></LeftStudy>
-    <LeftSection @sendRef="handleSendRef"></LeftSection>
-    <transition name="slide-fade">
-      <LLMTalk ref="rightDom" @closeAi="handleCloseAi"></LLMTalk>
-    </transition>
+    <LeftSection></LeftSection>
+    <div class="aiTalk">
+      <LLMTalk></LLMTalk>
+    </div>
     <!-- <span v-show="!isAi" class="ai-help" @click="handleOpenAi">
       <el-icon><ChatDotRound /></el-icon>
     </span> -->
@@ -18,7 +18,6 @@ import HeaderCm from '../../components/HeaderCm.vue'
 import LeftStudy from '@/views/knowledge/components/LeftStudy.vue'
 import LLMTalk from '@/views/knowledge/components/LLMTalk'
 import LeftSection from '@/views/knowledge/components/LeftSection'
-import { ref } from 'vue'
 // 引入图标
 import { marked } from 'marked'
 import hljs from 'highlight.js'
@@ -30,26 +29,6 @@ marked.setOptions({
     return hljs.highlightAuto(code).value
   },
 })
-// 定义是否显示ai
-const isAi = ref(false)
-
-// leftdom元素
-const leftDom = ref()
-
-// 获取子组件传过来的dom
-const handleSendRef = left => {
-  leftDom.value = left
-}
-
-// 关闭ai
-const handleCloseAi = () => {
-  isAi.value = false
-}
-
-// 打开ai
-const handleOpenAi = () => {
-  isAi.value = true
-}
 </script>
 
 <style scoped lang="scss">
@@ -71,6 +50,7 @@ const handleOpenAi = () => {
   font-weight: normal;
   font-style: normal;
 }
+
 .content-box {
   position: relative;
   width: 100%;
@@ -82,6 +62,9 @@ const handleOpenAi = () => {
   padding: 0 $padding-xl;
   margin-top: $margin-xxl;
   margin-bottom: $header-height;
+  .aiTalk {
+    flex: 1;
+  }
   .ai-help {
     position: fixed;
     top: 110px;

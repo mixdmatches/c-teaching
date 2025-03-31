@@ -12,16 +12,16 @@
           ><Delete
         /></el-icon>
       </el-tooltip>
-      <!-- <el-icon style="font-size: 1.6em" @click="handleCloseAi"
-        ><CloseBold
-      /></el-icon> -->
     </div>
     <div class="talk" v-if="talkGroupArr.length !== 0">
       <div class="talk-group" v-for="item in talkGroupArr" :key="item">
         <div class="message-right">
           {{ item.question }}
         </div>
-        <div class="font-10 message-left markdown-container" v-html="item.answer"></div>
+        <div
+          class="font-10 message-left markdown-container"
+          v-html="item.answer"
+        ></div>
       </div>
     </div>
     <div class="talk-none" v-else>
@@ -173,33 +173,10 @@ const htmlTalkArr = computed(() => {
   })
 })
 
-// 通知父组件关闭ai
-const handleCloseAi = () => {
-  emit('closeAi')
-}
-
 // 清空对话
 const handleClearTalk = () => {
   talkGroupArr.value = []
 }
-
-;[
-  {
-    question: '你好',
-    answer:
-      "你好，我是AI，很高兴为你服务。下面是一个简单的 JavaScript 函数示例：\n```javascript\nfunction greet(name) {\n  return `Hello, ${name}!`;\n}\nconsole.log(greet('World'));\n```",
-  },
-  {
-    question: '你是谁',
-    answer:
-      '我是AI，很高兴为你服务。这里有一个 Python 的示例代码：\n```python\nname = "World"\nprint(f"Hello, {name}!")\n```',
-  },
-  {
-    question: '微任务是什么',
-    answer:
-      "微任务（Microtask）是 JavaScript 异步编程中的一个概念。它是在当前任务执行结束后，下一个宏任务开始之前执行的异步任务。以下是一个使用 `Promise` 创建微任务的示例：\n```javascript\nconsole.log('Start');\n\nPromise.resolve().then(() => {\n  console.log('This is a microtask');\n});\n\nconsole.log('End');\n```",
-  },
-]
 </script>
 
 <style lang="scss" scoped>
@@ -227,8 +204,8 @@ const handleClearTalk = () => {
   opacity: 0;
 }
 .right {
-  flex: 1;
-  height: calc(100vh - 150px); /* 假设底部留 20px 空白 */
+  width: 100%;
+  height: calc(100vh - 150px);
   display: flex;
   flex-direction: column;
   background-color: rgb(240, 244, 251);

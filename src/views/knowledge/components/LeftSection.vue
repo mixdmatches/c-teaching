@@ -8,7 +8,7 @@
           ><el-icon size="20"><CopyDocument /></el-icon>复制</span
         >
       </div>
-      <div class="content">{{ pointDetail.aiSummary }}</div>
+      <div class="content">{{ pointDetail.summary }}</div>
       <!-- <div class="question">
         关联问题：
         <p
@@ -76,25 +76,11 @@ marked.setOptions({
     return hljs.highlightAuto(code).value
   },
 })
-const emits = defineEmits(['sendRef'])
 // 获取路由参数
 const route = useRoute()
 const router = useRouter()
 // 从路由参数中解析出章节id和知识点id
 const { pointId, sectionId } = route.query
-console.log(pointId, sectionId)
-
-// 定义是否显示ai
-const isAi = ref(false)
-
-// leftdom元素
-const leftDom = ref(null)
-
-// 传给父组件dom
-onMounted(() => {
-  emits('sendRef', leftDom.value)
-})
-
 // 获取user仓库
 const userStore = useUserStore()
 // 定义在线学习时间
@@ -121,7 +107,7 @@ onUnmounted(() => {
 const pointDetail = ref({
   course: '',
   context: '',
-  aiSummary: '',
+  summary: '',
   relationName: [],
 })
 
@@ -186,11 +172,6 @@ const handleCopy = async () => {
 const handleTest = () => {
   router.push({ path: '/question', query: { pointId, sectionId } })
 }
-
-// 监听 isAi 的变化
-watch(isAi, () => {
-  leftDom.value.style.transform = `translateX(-${210}px)`
-})
 
 const activeName = ref('text')
 const handleClickTab = (tab, event) => {

@@ -51,7 +51,7 @@ const checkAnswer = () => {
         <Tag :text="option.knowPointName" />
       </div>
     </div>
-    <div class="title">{{option.no + '. ' + option.title}}</div>
+    <div class="title">{{option.title}}</div>
     <el-radio-group v-model="model" class="radioGroup">
         <el-radio v-for="(item,index) in option.options" :key="index" :label="item.id + ':  ' + item.text" :value="item.key" />
     </el-radio-group>
@@ -63,7 +63,6 @@ const checkAnswer = () => {
   </div>
   
 </template>
-
 
 <style scoped lang="scss">
 .questionItem{
