@@ -8,7 +8,7 @@
           ><el-icon size="20"><CopyDocument /></el-icon>复制</span
         >
       </div>
-      <div class="content">{{ pointDetail.aiSummary }}</div>
+      <div class="content">{{ pointDetail.summary }}</div>
       <!-- <div class="question">
         关联问题：
         <p
@@ -107,7 +107,7 @@ onUnmounted(() => {
 const pointDetail = ref({
   course: '',
   context: '',
-  aiSummary: '',
+  summary: '',
   relationName: [],
 })
 

@@ -204,7 +204,7 @@ const handleClearTalk = () => {
   opacity: 0;
 }
 .right {
-  flex: 1;
+  width: 100%;
   height: calc(100vh - 150px);
   display: flex;
   flex-direction: column;

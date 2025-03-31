@@ -3,7 +3,9 @@
   <div class="content-box">
     <LeftStudy></LeftStudy>
     <LeftSection></LeftSection>
-    <LLMTalk></LLMTalk>
+    <div class="aiTalk">
+      <LLMTalk></LLMTalk>
+    </div>
     <!-- <span v-show="!isAi" class="ai-help" @click="handleOpenAi">
       <el-icon><ChatDotRound /></el-icon>
     </span> -->
@@ -48,6 +50,7 @@ marked.setOptions({
   font-weight: normal;
   font-style: normal;
 }
+
 .content-box {
   position: relative;
   width: 100%;
@@ -59,6 +62,9 @@ marked.setOptions({
   padding: 0 $padding-xl;
   margin-top: $margin-xxl;
   margin-bottom: $header-height;
+  .aiTalk {
+    flex: 1;
+  }
   .ai-help {
     position: fixed;
     top: 110px;
