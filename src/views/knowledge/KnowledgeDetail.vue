@@ -2,13 +2,10 @@
   <HeaderCm></HeaderCm>
   <div class="content-box">
     <LeftStudy></LeftStudy>
-    <LeftSection></LeftSection>
+    <LeftSection @send-question="callChildMethod"></LeftSection>
     <div class="aiTalk">
-      <LLMTalk></LLMTalk>
+      <LLMTalk ref="llmTalkRef"></LLMTalk>
     </div>
-    <!-- <span v-show="!isAi" class="ai-help" @click="handleOpenAi">
-      <el-icon><ChatDotRound /></el-icon>
-    </span> -->
     <el-backtop :right="50" :bottom="100" />
   </div>
 </template>
@@ -18,6 +15,7 @@ import HeaderCm from '../../components/HeaderCm.vue'
 import LeftStudy from '@/views/knowledge/components/LeftStudy.vue'
 import LLMTalk from '@/views/knowledge/components/LLMTalk'
 import LeftSection from '@/views/knowledge/components/LeftSection'
+import { ref } from 'vue'
 // 引入图标
 import { marked } from 'marked'
 import hljs from 'highlight.js'
@@ -29,6 +27,14 @@ marked.setOptions({
     return hljs.highlightAuto(code).value
   },
 })
+// 创建一个 ref 来引用子组件实例
+const llmTalkRef = ref(null)
+// 定义一个方法来调用子组件的暴露方法
+const callChildMethod = selectText => {
+  if (llmTalkRef.value) {
+    llmTalkRef.value.handleSendQuestion(null, `解释：${selectText}`)
+  }
+}
 </script>
 
 <style scoped lang="scss">

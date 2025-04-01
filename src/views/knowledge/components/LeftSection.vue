@@ -56,6 +56,18 @@
       >
       <el-button type="primary" @click="handleTest">去测试</el-button>
     </footer>
+    <el-button
+      v-show="showSendButton"
+      :style="{
+        position: 'absolute',
+        zIndex: '999',
+        top: `${sendButtonPosition.y}px`,
+        left: `${sendButtonPosition.x}px`,
+      }"
+      type="primary"
+      @click="sendQuestion"
+      >AI解释</el-button
+    >
   </div>
 </template>
 
@@ -76,6 +88,8 @@ marked.setOptions({
     return hljs.highlightAuto(code).value
   },
 })
+// leftDom实例
+const leftDom = ref()
 // 获取路由参数
 const route = useRoute()
 const router = useRouter()
@@ -183,6 +197,46 @@ onMounted(() => {
   codeBlocks.forEach(block => {
     hljs.highlightElement(block)
   })
+})
+
+// 定义响应式变量来控制按钮的显示和隐藏')
+const showSendButton = ref(false)
+const sendButtonPosition = ref({ x: 0, y: 0 })
+const selectedText = ref('')
+// 定义选中文字事件处理函数
+const handleSelectionChange = () => {
+  const selection = window.getSelection()
+  const text = selection.toString()
+  if (text) {
+    const range = selection.getRangeAt(0)
+    const rect = range.getBoundingClientRect()
+    sendButtonPosition.value = {
+      x: rect.left + document.documentElement.scrollLeft,
+      y: rect.top + document.documentElement.scrollTop - 130, // 按钮显示在选择文字上方
+    }
+    selectedText.value = text
+    showSendButton.value = true
+  } else {
+    showSendButton.value = false
+  }
+}
+// 定义可触发的事件
+const emits = defineEmits(['send-question'])
+// 发送ai处理函数
+const sendQuestion = () => {
+  emits('send-question', selectedText.value)
+  showSendButton.value = false
+  selectedText.value = ''
+  window.getSelection().removeAllRanges()
+}
+// 组件挂载时添加事件监听器
+onMounted(() => {
+  document.addEventListener('selectionchange', handleSelectionChange)
+})
+
+// 组件卸载时移除事件监听器
+onUnmounted(() => {
+  document.removeEventListener('selectionchange', handleSelectionChange)
 })
 </script>
 
