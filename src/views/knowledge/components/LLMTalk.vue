@@ -41,7 +41,7 @@
         size="large"
         @click="handleSendQuestion"
         :loading="isLoading"
-        :disabled="isLoading"
+        :disabled="question === ''"
         >发送</el-button
       >
     </div>
@@ -66,7 +66,6 @@ marked.setOptions({
     return hljs.highlightAuto(code).value
   },
 })
-const emit = defineEmits(['closeAi'])
 // rightDom元素
 const rightDom = ref()
 // 发送消息
@@ -92,7 +91,7 @@ const handleSendQuestionp = async () => {
     answer: '等待响应',
   })
   try {
-    let buffQestion = question.value
+    let buffQestion = question.value || selectedText
     question.value = ''
     const res = await apiPostAiTalk(buffQestion)
     if (res.data.code != 0) {
@@ -110,20 +109,14 @@ const handleSendQuestionp = async () => {
 }
 
 // Ai流式响应对话
-const handleSendQuestion = async () => {
+const handleSendQuestion = async (event, selectedText) => {
   // 请求开始前，将加载状态设置为 true
   isLoading.value = true
-  // 检查问题是否为空
-  if (!question.value.trim()) {
-    ElMessage.warning('请输入问题')
-    isLoading.value = false
-    return
-  }
   talkGroupArr.value.push({
-    question: question.value,
+    question: selectedText || question.value,
     answer: '等待响应',
   })
-  let buffQestion = question.value
+  let buffQestion = selectedText || question.value
   question.value = ''
   // 创建 EventSource 实例
   const eventSource = new EventSource(
@@ -136,7 +129,7 @@ const handleSendQuestion = async () => {
   }
   // 监听 error 事件
   eventSource.onerror = error => {
-    console.error('EventSource 发生错误:', error)
+    console.error('EventSource failed:', error)
     isLoading.value = false
     talkGroupArr.value[talkGroupArr.value.length - 1].answer = marked.parse(
       talkGroupArr.value[talkGroupArr.value.length - 1].answer
@@ -153,6 +146,8 @@ const handleSendQuestion = async () => {
     )
   }
 }
+// 把handleSendQuestion函数暴露给父组件
+defineExpose({ handleSendQuestion })
 // 监听ai返回的信息
 watch(
   () => answer.value,
