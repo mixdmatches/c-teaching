@@ -2,6 +2,8 @@
 import Stars from "@/components/Stars.vue";
 import Tag from "@/components/Tag.vue";
 import { ref } from 'vue';
+import LButton from '@/components/LButton.vue'
+import { ElMessage } from "element-plus";
 
 const props = defineProps({
   option: {
@@ -19,10 +21,22 @@ const props = defineProps({
   explanation: {
     type: String,
     required: true
+  },
+  spentTime: {
+    type: Number,
+    required: true
+  },
+  resetTimer: {
+    type: Function,
+    required: true
+  },
+  isLastQuestion: {
+    type: Boolean,
+    default: false
   }
 });
-
 const model = ref(props.modelValue);
+// 数据双向绑定
 const emit = defineEmits(['update:modelValue']);
 const showResult = ref(false);
 const isCorrect = ref(false);
@@ -31,6 +45,10 @@ const checkAnswer = () => {
   showResult.value = true;
   isCorrect.value = model.value === props.correctAnswer;
   emit('update:modelValue', model.value);
+  props.resetTimer();
+  if (props.isLastQuestion) {
+    ElMessage.success('已完成所有题目');
+  }
 };
 </script>
 
@@ -53,21 +71,24 @@ const checkAnswer = () => {
     </div>
     <div class="title">{{option.title}}</div>
     <el-radio-group v-model="model" class="radioGroup">
-        <el-radio v-for="(item,index) in option.options" :key="index" :label="item.id + ':  ' + item.text" :value="item.key" />
+      <el-radio v-for="(item,index) in option.options" :key="index" :label="item.id + ':  ' + item.text" :value="item.id" />
     </el-radio-group>
-    <el-button class="submit" @click="checkAnswer">提交</el-button>
-    <div class="result" v-if="showResult">
-      <p :style="{color: isCorrect ? 'green' : 'red'}">{{ isCorrect ? '回答正确' : '回答错误' }}</p>
-      <p>解析：{{ anysis }}</p>
+    <!-- 添加提交按钮 -->
+    <LButton class="submit" @click="checkAnswer">提交</LButton>
+    <!-- 显示结果和解析 -->
+    <div v-if="showResult" class="result">
+      <p :style="{ color: isCorrect ? 'green' : 'red' }">
+        {{ isCorrect ? '回答正确' : '回答错误' }}
+      </p>
+      <p>解析：{{ props.explanation }}</p>
     </div>
   </div>
-  
 </template>
 
 <style scoped lang="scss">
 .questionItem{
   width: 1200px;
-  height: 1000px;
+  height: 400px;
   background-color: $base-bg-color;
   border-radius: $border-radius-m;
   padding: $padding-xl;
@@ -110,12 +131,12 @@ const checkAnswer = () => {
 }
 .submit {
   position: absolute;
-  top: 300px;
+  top: 270px;
   left: 40px;
 }
 .result {
   position: absolute;
-  top: 300px;
+  top: 260px;
   width: 100%;
   height: 100px;
   padding: $padding-xl;
