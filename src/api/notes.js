@@ -14,11 +14,12 @@ export const apiGetNotes = (params = {}) =>
 export const apiAddNotes = data => service.post('/api/notes', data)
 
 /**
- * 删除笔记
- * @param {*} id
+ * 彻底删除笔记
+ * @param {*} ids 数组
  * @returns
  */
-export const apiDeleteNote = id => service.delete(`/api/notes/${id}`)
+export const apiDeleteNote = ids =>
+  service.post(`/api/notes/delete`, { ids })
 
 /**
  * 更新笔记

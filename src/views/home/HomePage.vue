@@ -72,6 +72,7 @@ const studentStatus = ref({})
 const getStudyStatus = async () => {
   const res = await apiGetStudyStatus(210047301)
   studentStatus.value = res.data
+  console.log(studentStatus.value)
 }
 getStudyStatus()
 
@@ -103,9 +104,9 @@ getStudyPoints()
 // 继续学习按钮
 const handleStudy = () => {
   router.push({
-    path: '/study',
+    path: '/knowledgeDetail',
     query: {
-      pointId: studentStatus.value.pointId,
+      pointId: studentStatus.value.knowPointId,
       sectionId: studentStatus.value.sectionId,
     },
   })

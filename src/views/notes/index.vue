@@ -12,11 +12,20 @@ import '@kangc/v-md-editor/lib/style/base-editor.css'
 import vuepressTheme from '@kangc/v-md-editor/lib/theme/vuepress.js'
 import '@kangc/v-md-editor/lib/theme/style/vuepress.css'
 import hljs from 'highlight.js'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { Delete } from '@element-plus/icons-vue'
 // 使用主题
 VMdEditor.use(vuepressTheme, {
   Hljs: hljs,
 })
+const targetElement = ref('')
+
+onMounted(() => {
+  targetElement.value = '.target'
+})
+
+// 编辑器实例
+const editorRef = ref()
 
 // 编辑数据，用于去传参/添加/修改笔记
 const postData = ref({
@@ -63,14 +72,14 @@ const currentCategoryIndex = ref(category.value[0].index || '0')
 // 笔记列表
 const notes = ref([])
 
-// 当前选中的笔记
-const currentNoteId = ref(0)
-
 // 搜索模糊词
 const inputSerch = ref('')
 
 // 搜索笔记函数
 async function getSearchNotes() {
+  if (inputSerch.value === '') {
+    return switchCategory(currentCategoryIndex.value)
+  }
   const { data } = await apiGetSerchNotes(inputSerch.value)
   notes.value = data
 }
@@ -100,10 +109,13 @@ const categoryMap = {
 }
 
 // 删除笔记
-async function deleteNote(id) {
-  await apiDeleteNote(id)
-  ElMessage.success('删除成功')
+async function deleteNote(item) {
+  Object.assign(postData.value, item)
+  postData.value.isDelete = true
+  await apiPutNote(postData.value)
   await switchCategory(currentCategoryIndex.value)
+  postData.value = { ...notes.value[0] }
+  ElMessage.success('删除成功')
 }
 
 // 切换分类
@@ -117,8 +129,8 @@ async function switchCategory(index) {
 
 // 取消编辑按钮回调
 function handleCancel() {
-  isEditor.value = !isEditor.value
-  // postData.value = { ...notes.value[0] }
+  isEditor.value = false
+  postData.value = { ...notes.value[0] }
 }
 
 // 下拉框的编辑按钮
@@ -127,29 +139,108 @@ const handleEdit = note => {
   postData.value = { ...note }
 }
 
-// 更新保存笔记
+// 笔记编辑确定按钮回调
 async function editNote(item) {
-  isEditor.value = !isEditor.value
+  isEditor.value = false
+  if (postData.value.id === 0) {
+    await apiAddNotes(postData.value)
+    await switchCategory(currentCategoryIndex.value)
+    postData.value = { ...notes.value[0] }
+  } else {
+    await apiPutNote(postData.value)
+    await switchCategory(currentCategoryIndex.value)
+  }
+}
+
+// 收藏/取消收藏笔记
+async function starNote(item) {
+  Object.assign(postData.value, item)
+  postData.value.isStar = !item.isStar
   await apiPutNote(postData.value)
   await switchCategory(currentCategoryIndex.value)
 }
 
-// 收藏/取消收藏笔记 !!!有bug
-async function starNote(item) {
-  Object.assign(postData.value, item)
-  postData.value.isStar = !item.star
+// 格式化日期
+function formatDate(date) {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  return `${year}-${month}-${day} ${hours}:${minutes}`
+}
+
+// 添加笔记按钮回调
+async function handleAddNote() {
+  Object.assign(postData.value, {
+    id: 0,
+    content: '',
+    date: formatDate(new Date()),
+    isStar: false,
+    isDelete: false,
+  })
+  isEditor.value = true
+}
+
+// 下载笔记按钮函数
+function downloadMarkdown(note) {
+  const markdownContent = note.content
+  const blob = new Blob([markdownContent], { type: 'text/markdown' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  // 从content中提取标题作为文件名
+  const titleMatch = markdownContent.match(/# (.+)/)
+  const fileName = titleMatch ? titleMatch[1] : '未命名笔记'
+  a.download = `${fileName}.md`
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
+// 分享笔记
+function shareNote(note) {
+  ElMessage.info('分享功能还未实现')
+}
+
+// 全部清除按钮/彻底删除按钮函数
+async function permanentlyDeleteNote(id) {
+  ElMessageBox.confirm('笔记将被彻底删除，此操作不能撤销', '确定删除笔记?', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  })
+    .then(async () => {
+      const ids = notes.value.map(item => item.id)
+      await apiDeleteNote(ids)
+      if (id) {
+        await apiDeleteNote([id])
+      }
+      await switchCategory(currentCategoryIndex.value)
+      postData.value = { ...notes.value[0] }
+      ElMessage.success('清空成功')
+    })
+    .catch(() => {})
+}
+
+// 还原笔记函数
+async function restoreNote() {
+  postData.value.isDelete = false
   await apiPutNote(postData.value)
   await switchCategory(currentCategoryIndex.value)
 }
+
 onMounted(() => {
   getNotes()
 })
 </script>
+
 <template>
   <HeaderCm />
   <div class="noteContent">
     <div class="left">
-      <el-button type="primary" icon="plus">新建笔记</el-button>
+      <el-button type="primary" icon="plus" @click="handleAddNote"
+        >写笔记</el-button
+      >
       <el-menu :default-active="'1'" class="el-menu-vertical-demo">
         <el-menu-item
           v-for="item in category"
@@ -167,13 +258,27 @@ onMounted(() => {
       </el-menu>
     </div>
     <div class="center">
+      <!-- 搜索笔记 -->
       <el-input
         v-model="inputSerch"
         @input="getSearchNotes"
         placeholder="搜索笔记"
         prefix-icon="search"
       />
-      <div class="notes">
+      <!-- 仅在最近删除时展示的信息提醒和一键清除按钮 -->
+      <div class="deleteInfo" v-if="currentCategoryIndex === '3'">
+        <el-button
+          type="danger"
+          :icon="'delete'"
+          size="small"
+          plain
+          @click="permanentlyDeleteNote"
+          >全部清除</el-button
+        >
+        <p>被删除的笔记保留30天后将清除</p>
+      </div>
+      <!-- 笔记列表区域 -->
+      <div class="notes" v-if="notes.length">
         <div
           class="note-item"
           v-for="item in notes"
@@ -191,38 +296,59 @@ onMounted(() => {
             </p>
           </div>
           <div class="footer">
-            <el-dropdown placement="bottom-end">
+            <el-dropdown
+              placement="bottom-end"
+              :append-to="targetElement"
+              trigger="click"
+            >
               <el-icon><More /></el-icon>
               <template #dropdown>
-                <el-dropdown-menu>
-                  <el-dropdown-item @click="handleEdit(item)"
-                    ><el-icon><EditPen /></el-icon>编辑</el-dropdown-item
-                  >
-                  <el-dropdown-item @click="deleteNote(item.id)"
-                    ><el-icon><Delete /></el-icon>删除</el-dropdown-item
-                  >
-                  <el-dropdown-item @click="starNote(item)"
-                    ><el-icon
-                      ><component
-                        :is="item.isStar ? 'star-filled' : 'star'"
-                      ></component></el-icon
-                    >收藏</el-dropdown-item
-                  >
-                  <el-dropdown-item
-                    ><el-icon><Download /></el-icon>下载</el-dropdown-item
-                  >
-                  <el-dropdown-item
-                    ><el-icon><Share /></el-icon>分享</el-dropdown-item
-                  >
+                <!-- 不是最近删除显示 -->
+                <el-dropdown-menu v-if="currentCategoryIndex !== '3'">
+                  <el-dropdown-item @click="handleEdit(item)">
+                    <el-icon><EditPen /></el-icon>编辑
+                  </el-dropdown-item>
+                  <el-dropdown-item @click="deleteNote(item)">
+                    <el-icon><Delete /></el-icon>删除
+                  </el-dropdown-item>
+                  <el-dropdown-item @click="starNote(item)">
+                    <el-icon>
+                      <component :is="item.isStar ? 'star-filled' : 'star'"
+                    /></el-icon>
+                    收藏
+                  </el-dropdown-item>
+                  <el-dropdown-item @click="downloadMarkdown(item)">
+                    <el-icon><Download /></el-icon>下载
+                  </el-dropdown-item>
+                  <el-dropdown-item @click="shareNote(item)">
+                    <el-icon><Share /></el-icon>分享
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+                <!-- 是最近删除显示 -->
+                <el-dropdown-menu v-else>
+                  <el-dropdown-item @click="restoreNote(item)">
+                    <el-icon><Back /></el-icon>还原
+                  </el-dropdown-item>
+                  <el-dropdown-item @click="permanentlyDeleteNote(item.id)">
+                    <el-icon><Delete /></el-icon>彻底删除
+                  </el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
           </div>
         </div>
       </div>
+      <!-- 无笔记列表时展示 -->
+      <div class="notes" v-else>
+        <img
+          src="https://lf-cdn-tos.bytescm.com/obj/static/xitu_extension/static/inspiration.29187097.svg"
+          alt=""
+        />
+      </div>
     </div>
     <div class="right">
-      <div class="work">
+      <!-- 操作，删除列表不展示 -->
+      <div class="work" v-if="currentCategoryIndex !== '3'">
         <span class="work-inline" v-if="!isEditor">
           <el-button
             type="primary"
@@ -244,6 +370,7 @@ onMounted(() => {
         v-model="postData.content"
         :mode="isEditor ? 'editable' : 'preview'"
         height="100%"
+        ref="editorRef"
       />
     </div>
   </div>
@@ -275,7 +402,16 @@ onMounted(() => {
     display: flex;
     flex-direction: column;
     gap: $margin-l;
-
+    .deleteInfo {
+      display: flex;
+      align-items: center;
+      padding: $padding-s;
+      gap: $margin-s;
+      p {
+        font-size: 12px;
+        color: $info-color;
+      }
+    }
     .notes {
       display: flex;
       flex-direction: column;
