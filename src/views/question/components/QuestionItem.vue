@@ -1,10 +1,55 @@
 <script setup>
 import Stars from "@/components/Stars.vue";
 import Tag from "@/components/Tag.vue";
-defineProps({
-  option: {required:true}
+import { ref } from 'vue';
+import LButton from '@/components/LButton.vue'
+import { ElMessage } from "element-plus";
+
+const props = defineProps({
+  option: {
+    type: Object,
+    required: true
+  },
+  modelValue: {
+    type: String,
+    default: ''
+  },
+  correctAnswer: {
+    type: String,
+    required: true
+  },
+  explanation: {
+    type: String,
+    required: true
+  },
+  spentTime: {
+    type: Number,
+    required: true
+  },
+  resetTimer: {
+    type: Function,
+    required: true
+  },
+  isLastQuestion: {
+    type: Boolean,
+    default: false
+  }
 });
-const model = defineModel()
+const model = ref(props.modelValue);
+// 数据双向绑定
+const emit = defineEmits(['update:modelValue']);
+const showResult = ref(false);
+const isCorrect = ref(false);
+
+const checkAnswer = () => {
+  showResult.value = true;
+  isCorrect.value = model.value === props.correctAnswer;
+  emit('update:modelValue', model.value);
+  props.resetTimer();
+  if (props.isLastQuestion) {
+    ElMessage.success('已完成所有题目');
+  }
+};
 </script>
 
 <template>
@@ -24,17 +69,26 @@ const model = defineModel()
         <Tag :text="option.knowPointName" />
       </div>
     </div>
-    <div class="title">{{option.no + '. ' + option.title}}</div>
+    <div class="title">{{option.title}}</div>
     <el-radio-group v-model="model" class="radioGroup">
-        <el-radio v-for="(item,index) in option.option" :key="index" :label="item.key + ':  ' + item.value" :value="item.key" />
+      <el-radio v-for="(item,index) in option.options" :key="index" :label="item.id + ':  ' + item.text" :value="item.id" />
     </el-radio-group>
-    
+    <!-- 添加提交按钮 -->
+    <LButton class="submit" @click="checkAnswer">提交</LButton>
+    <!-- 显示结果和解析 -->
+    <div v-if="showResult" class="result">
+      <p :style="{ color: isCorrect ? 'green' : 'red' }">
+        {{ isCorrect ? '回答正确' : '回答错误' }}
+      </p>
+      <p>解析：{{ props.explanation }}</p>
+    </div>
   </div>
 </template>
 
-
 <style scoped lang="scss">
 .questionItem{
+  width: 1200px;
+  height: 400px;
   background-color: $base-bg-color;
   border-radius: $border-radius-m;
   padding: $padding-xl;
@@ -74,5 +128,21 @@ const model = defineModel()
     align-items: start;
     padding-left: 20px;
   }
+}
+.submit {
+  position: absolute;
+  top: 270px;
+  left: 40px;
+}
+.result {
+  position: absolute;
+  top: 260px;
+  width: 100%;
+  height: 100px;
+  padding: $padding-xl;
+  margin-top: $padding-xl;
+  font-size: $margin-l;
+  line-height: 25px;
+  margin-top: 50px;
 }
 </style>

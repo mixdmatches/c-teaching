@@ -34,20 +34,9 @@
     <div class="top-todo">
       <h2>请先测试，测试后可选择课程学习</h2>
       <span>
-        <!-- <el-select
-          v-model="chapterId"
-          placeholder="请选择章节"
-          style="width: 250px; margin-right: 5px"
-        >
-          <el-option
-            v-for="chapter in chapters"
-            :key="chapter.sectionId"
-            :label="chapter.sectionName"
-            :value="chapter.sectionId"
-          />
-        </el-select> -->
         <el-button type="primary" @click="handleTest">进入测试</el-button>
       </span>
+      <el-button @click="userStore.changeCeshi">假如测试完后返回页面</el-button>
     </div>
     <div class="data-todo">
       <el-empty description="测试后再查看数据" />
@@ -83,6 +72,7 @@ const studentStatus = ref({})
 const getStudyStatus = async () => {
   const res = await apiGetStudyStatus(210047301)
   studentStatus.value = res.data
+  console.log(studentStatus.value)
 }
 getStudyStatus()
 
@@ -114,9 +104,9 @@ getStudyPoints()
 // 继续学习按钮
 const handleStudy = () => {
   router.push({
-    path: '/study',
+    path: '/knowledgeDetail',
     query: {
-      pointId: studentStatus.value.pointId,
+      pointId: studentStatus.value.knowPointId,
       sectionId: studentStatus.value.sectionId,
     },
   })

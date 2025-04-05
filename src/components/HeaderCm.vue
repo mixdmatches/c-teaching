@@ -5,46 +5,55 @@
       <ul>
         <li
           :class="{ active: r.path === $route.path }"
-          v-for="(r, i) in routers"
-          :key="i"
+          v-for="r in headRoutes"
+          :key="r.path"
         >
-          <router-link :to="r.path">{{ r.name }}</router-link>
+          <el-icon v-if="r.meta.icon">
+            <component :is="r.meta.icon" />
+          </el-icon>
+          <router-link :to="r.path">{{ r.meta.title }}</router-link>
         </li>
       </ul>
     </nav>
     <div class="user">
-      <span>姓名:{{ userInfo?.name }}</span>
-      <el-avatar
-        src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-      />
+      <span>{{ userInfo?.name }}</span>
+      <el-dropdown>
+        <el-avatar
+          src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+        />
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item v-for="r in dropdownRoutes" :key="r.path">
+              <el-icon v-if="r.meta.icon">
+                <component :is="r.meta.icon" />
+              </el-icon>
+              <router-link :to="r.path">{{ r.meta.title }}</router-link>
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
     </div>
   </div>
 </template>
 
 <script setup>
 import { getUserInfo } from '@/api/user.js'
-import { ref, onMounted } from 'vue'  
+import { ref, onMounted, computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+const router = useRouter()
+const dropdownRoutes = computed(() => {
+  return router.getRoutes().filter(r => r.meta && r.meta.show === 'dropdown')
+})
+const headRoutes = computed(() => {
+  return router.getRoutes().filter(r => r.meta && r.meta.show === 'header')
+})
 
-const routers = [
-  {
-    path: '/',
-    name: '首页',
-  },
-  {
-    path: '/cources',
-    name: '课程',
-  },
-  {
-    path: '/my',
-    name: '个人中心', 
-  },
-]
 const userInfo = ref()
 const handleGetUserInfo = async () => {
   userInfo.value = await getUserInfo('210047301')
 }
 onMounted(async () => {
-  await handleGetUserInfo() 
+  await handleGetUserInfo()
 })
 </script>
 
@@ -57,8 +66,7 @@ onMounted(async () => {
 }
 
 .header {
-  // // 固定在页面顶部
-  position: fixed;
+  position: sticky;
   top: 0;
   left: 0;
   z-index: 999;
@@ -68,8 +76,8 @@ onMounted(async () => {
   border-radius: $border-radius-s;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 $padding-xl;
+  justify-content: space-around;
+  padding: 0 4 * $padding-xl;
   gap: 3 * $margin-xxl;
 }
 .logo {
@@ -86,6 +94,10 @@ nav {
     gap: 2 * $margin-xl;
     li {
       font-size: $font-size-xl;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: $margin-s;
       cursor: pointer;
       transition: all 0.3s ease;
       &:hover {

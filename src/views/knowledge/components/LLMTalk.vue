@@ -12,16 +12,16 @@
           ><Delete
         /></el-icon>
       </el-tooltip>
-      <el-icon style="font-size: 1.6em" @click="handleCloseAi"
-        ><CloseBold
-      /></el-icon>
     </div>
     <div class="talk" v-if="talkGroupArr.length !== 0">
       <div class="talk-group" v-for="item in talkGroupArr" :key="item">
         <div class="message-right">
           {{ item.question }}
         </div>
-        <div class="message-left markdown-container" v-html="item.answer"></div>
+        <div
+          class="font-10 message-left markdown-container"
+          v-html="item.answer"
+        ></div>
       </div>
     </div>
     <div class="talk-none" v-else>
@@ -41,7 +41,7 @@
         size="large"
         @click="handleSendQuestion"
         :loading="isLoading"
-        :disabled="isLoading"
+        :disabled="question === ''"
         >发送</el-button
       >
     </div>
@@ -66,7 +66,6 @@ marked.setOptions({
     return hljs.highlightAuto(code).value
   },
 })
-const emit = defineEmits(['closeAi'])
 // rightDom元素
 const rightDom = ref()
 // 发送消息
@@ -92,7 +91,7 @@ const handleSendQuestionp = async () => {
     answer: '等待响应',
   })
   try {
-    let buffQestion = question.value
+    let buffQestion = question.value || selectedText
     question.value = ''
     const res = await apiPostAiTalk(buffQestion)
     if (res.data.code != 0) {
@@ -110,20 +109,14 @@ const handleSendQuestionp = async () => {
 }
 
 // Ai流式响应对话
-const handleSendQuestion = async () => {
+const handleSendQuestion = async (event, selectedText) => {
   // 请求开始前，将加载状态设置为 true
   isLoading.value = true
-  // 检查问题是否为空
-  if (!question.value.trim()) {
-    ElMessage.warning('请输入问题')
-    isLoading.value = false
-    return
-  }
   talkGroupArr.value.push({
-    question: question.value,
+    question: selectedText || question.value,
     answer: '等待响应',
   })
-  let buffQestion = question.value
+  let buffQestion = selectedText || question.value
   question.value = ''
   // 创建 EventSource 实例
   const eventSource = new EventSource(
@@ -136,7 +129,7 @@ const handleSendQuestion = async () => {
   }
   // 监听 error 事件
   eventSource.onerror = error => {
-    console.error('EventSource 发生错误:', error)
+    console.error('EventSource failed:', error)
     isLoading.value = false
     talkGroupArr.value[talkGroupArr.value.length - 1].answer = marked.parse(
       talkGroupArr.value[talkGroupArr.value.length - 1].answer
@@ -153,6 +146,8 @@ const handleSendQuestion = async () => {
     )
   }
 }
+// 把handleSendQuestion函数暴露给父组件
+defineExpose({ handleSendQuestion })
 // 监听ai返回的信息
 watch(
   () => answer.value,
@@ -173,36 +168,17 @@ const htmlTalkArr = computed(() => {
   })
 })
 
-// 通知父组件关闭ai
-const handleCloseAi = () => {
-  emit('closeAi')
-}
-
 // 清空对话
 const handleClearTalk = () => {
   talkGroupArr.value = []
 }
-
-;[
-  {
-    question: '你好',
-    answer:
-      "你好，我是AI，很高兴为你服务。下面是一个简单的 JavaScript 函数示例：\n```javascript\nfunction greet(name) {\n  return `Hello, ${name}!`;\n}\nconsole.log(greet('World'));\n```",
-  },
-  {
-    question: '你是谁',
-    answer:
-      '我是AI，很高兴为你服务。这里有一个 Python 的示例代码：\n```python\nname = "World"\nprint(f"Hello, {name}!")\n```',
-  },
-  {
-    question: '微任务是什么',
-    answer:
-      "微任务（Microtask）是 JavaScript 异步编程中的一个概念。它是在当前任务执行结束后，下一个宏任务开始之前执行的异步任务。以下是一个使用 `Promise` 创建微任务的示例：\n```javascript\nconsole.log('Start');\n\nPromise.resolve().then(() => {\n  console.log('This is a microtask');\n});\n\nconsole.log('End');\n```",
-  },
-]
 </script>
 
 <style lang="scss" scoped>
+.font-10 {
+  // 恢复字体大小
+  font-size: 10px;
+}
 @mixin talk-body {
   flex: 1;
   padding: $padding-xl;
@@ -223,11 +199,8 @@ const handleClearTalk = () => {
   opacity: 0;
 }
 .right {
-  position: fixed;
-  top: calc($margin-xxl + $header-height);
-  right: calc(2 * $padding-xxl);
-  width: 30%;
-  height: calc(100% - 2 * $margin-xxl - $header-height);
+  width: 100%;
+  height: calc(100vh - 150px);
   display: flex;
   flex-direction: column;
   background-color: rgb(240, 244, 251);
@@ -279,7 +252,7 @@ const handleClearTalk = () => {
         max-width: 100%;
         background-color: #fff;
         color: $text-color;
-        font-size: $font-size-xl;
+        font-size: $font-size-l;
         line-height: 1.7;
         padding: $padding-l $padding-m;
         border-radius: $border-radius-l;

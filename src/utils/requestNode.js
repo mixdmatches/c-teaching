@@ -16,33 +16,12 @@ service.interceptors.response.use(
   response => response.data,
   error => {
     console.error('请求错误:', error)
-    //定义一个变量
-    // let message = ''
-    // //http状态码
-    // console.log(errer.response)
-
-    // const status = errer.response.status
-    // switch (status) {
-    //   case 401:
-    //     message = 'TOKEN过期'
-    //     break
-    //   case 403:
-    //     message = '无权访问'
-    //     break
-    //   case 404:
-    //     message = '请求地址错误'
-    //     break
-    //   case 500:
-    //     message = '服务器出现问题'
-    //     break
-    //   default:
-    //     message = '网络出现问题'
-    //     break
-    // }
-    // ElMessage({
-    //   type: 'error',
-    //   message,
-    // })
+    if (error.response) {
+      // 处理错误响应
+      ElMessage.error(error.response.data.message || '请求失败')
+    } else {
+      ElMessage.error('网络错误')
+    }
     return Promise.reject(error)
   }
 )

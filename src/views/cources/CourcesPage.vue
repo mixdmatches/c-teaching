@@ -1,30 +1,32 @@
 <template>
   <HeaderCm />
-  <MainCm>
-    <ul class="section">
-      <el-button
-        :class="{ active: i === currentSection }"
-        round
-        v-for="(item, i) in sections"
-        :key="item.sectionId"
-        @click="handleSectionClick(i, item.sectionId)"
-        >{{
-          item.sectionId == 0
-            ? '全部'
-            : `第${numberToChinese(item.sectionId)}章`
-        }}</el-button
-      >
-    </ul>
-    <ul class="status" v-if="courcesReq.sectionId == 0">
-      <el-button
-        :class="{ active: i === currentStatus }"
-        round
-        v-for="(item, i) in status"
-        :key="item.knowState"
-        @click="handleStatusClick(i, item.knowState)"
-        >{{ item.stateName }}</el-button
-      >
-    </ul>
+  <div class="main">
+    <div class="select-box">
+      <ul class="section">
+        <el-button
+          :class="{ active: i === currentSection }"
+          round
+          v-for="(item, i) in sections"
+          :key="item.sectionId"
+          @click="handleSectionClick(i, item.sectionId)"
+          >{{
+            item.sectionId == 0
+              ? '全部'
+              : `第${numberToChinese(item.sectionId)}章`
+          }}</el-button
+        >
+      </ul>
+      <ul class="status" v-if="courcesReq.sectionId == 0">
+        <el-button
+          :class="{ active: i === currentStatus }"
+          round
+          v-for="(item, i) in status"
+          :key="item.knowState"
+          @click="handleStatusClick(i, item.knowState)"
+          >{{ item.stateName }}</el-button
+        >
+      </ul>
+    </div>
     <div class="knowledges" v-if="filterKnowledges.length !== 0">
       <div
         class="knowledge-card"
@@ -32,27 +34,40 @@
         :key="item.id"
         @click="goToDetail(item.knowId, item.sectionId, item.knowState)"
       >
-        <h5 :style="{ color: activeColor[item.knowState] }">
-          {{ item.knowId }}.{{ item.knowName }}
-        </h5>
-        <p>
-          {{ item.knowContent }}
+        <span class="card-header">
+          <h5 :style="{ color: activeColor[item.knowState] }">
+            {{ item.knowId }}.{{ item.knowName }}
+          </h5>
+          <el-rate
+            v-model="item.hierarchy"
+            :colors="['#409eff', '#409eff', '#409eff']"
+            disabled
+            show-score
+            text-color="#409eff"
+            score-template="重点"
+            size="small"
+          />
+          <el-rate
+            v-model="item.difficulty"
+            disabled
+            :colors="['#409eff', '#409eff', '#409eff']"
+            show-score
+            text-color="#409eff"
+            score-template="难度"
+            size="small"
+          />
+        </span>
+        <p :style="{ backgroundColor: activeInfoColor[item.knowState] }">
+          {{ item.describe }}
         </p>
       </div>
     </div>
     <el-empty v-else description="什么都没有" />
-    <!-- <el-pagination
-      :current-page="courcesReq.pageNo"
-      :background="background"
-      layout="total, prev, pager, next, jumper"
-      :total="3"
-      @current-change="handleCurrentChange"
-    /> -->
-  </MainCm>
+    <el-backtop :right="100" :bottom="100" />
+  </div>
 </template>
 
 <script setup>
-import MainCm from '@/components/MainCm.vue'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 // 引入 debounce 函数
@@ -61,6 +76,11 @@ import { debounce } from 'lodash'
 import { apiGetAllPoints } from '@/api/chapters'
 import { ElMessage } from 'element-plus'
 const activeColor = ref(['#67c23a', '#67c23a', '#f56c6c'])
+const activeInfoColor = ref([
+  'rgb(239.8, 248.9, 235.3)',
+  'rgb(239.8, 248.9, 235.3)',
+  'rgb(254, 240.3, 240.3)',
+])
 const router = useRouter()
 
 const currentSection = ref(0)
@@ -249,24 +269,32 @@ const filter = (sectionId, knowState) => {
 </script>
 
 <style lang="scss" scoped>
-.active {
-  background-color: $primary-color;
-  color: #fff;
-}
-.section {
-  margin: $margin-xl 0;
+.main {
+  padding: 0 3 * $padding-xxl;
   display: flex;
+  flex-direction: column;
+  align-items: self-start;
 }
+.select-box {
+  .active {
+    background-color: $primary-color;
+    color: #fff;
+  }
+  .section {
+    margin: $margin-xl 0;
+    display: flex;
+  }
+}
+
 .knowledges {
   width: 100%;
   margin: $margin-xl 0;
   display: flex;
   flex-wrap: wrap;
-  gap: $margin-xl;
+  gap: $margin-l;
   .knowledge-card {
-    width: calc((100% - #{$margin-xl * 2}) / 3);
+    width: calc((100% - #{$margin-l}) / 2);
     border: 1px solid #ccc;
-    height: 120px;
     background-color: #fff;
     border-radius: $border-radius-s;
     padding: $padding-xl;
@@ -277,21 +305,29 @@ const filter = (sectionId, knowState) => {
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // 添加阴影效果，增强视觉反馈
       transform: translateY(-5px); // 卡片向上移动 5px，产生上浮效果
     }
-    h5 {
+    .card-header {
+      display: flex;
+      justify-content: start;
+      align-items: center;
+      gap: $margin-xxl;
       margin-bottom: $margin-m;
-      font-size: $font-size-xl;
-      font-weight: bold;
+      h5 {
+        font-size: $font-size-xl;
+        font-weight: bold;
+      }
     }
+
     p {
       margin: 0;
       font-size: $font-size-l;
       color: #666;
-      line-height: 1.5;
+      background-color: $light-blue;
+      line-height: 2.5;
       // 多行文本溢出显示省略号
       overflow: hidden;
       text-overflow: ellipsis;
       display: -webkit-box;
-      -webkit-line-clamp: 3;
+      -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
     }
   }

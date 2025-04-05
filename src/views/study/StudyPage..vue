@@ -69,6 +69,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
+import { ArrowLeft, ArrowRight } from '@element-plus/icons-vue';
 import HeaderCm from '@/components/HeaderCm.vue';
 import { marked } from 'marked';
 import hljs from 'highlight.js';
@@ -103,18 +104,21 @@ const playerOptions = ref({
 
 // 视频播放事件处理函数
 const onVideoPlay = () => {
-  const player = videoRef.value.player;
-  if (player) {
-    player.requestFullscreen();
+  if (videoRef.value) {
+    const player = (videoRef.value as any).player;
+    if (player) {
+      player.requestFullscreen(); // 调用全屏方法
+    }
   }
 };
-
 // 配置 marked 高亮 -对代码块进行语法高亮
 marked.setOptions({
+  // 使用类型断言绕过类型检查
   highlight: function (code, lang) {
     return hljs.highlightAuto(code).value;
   },
-});
+} as any);
+
 
 // 测试题目数据
 const questionList = reactive([
@@ -232,7 +236,7 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .c-study-page {
-  margin: 80px 0;
+  margin: 10px 0;
   display: flex;
   padding: 20px;
   gap: 20px;
