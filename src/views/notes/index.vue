@@ -211,9 +211,10 @@ async function permanentlyDeleteNote(id) {
   })
     .then(async () => {
       const ids = notes.value.map(item => item.id)
-      await apiDeleteNote(ids)
       if (id) {
         await apiDeleteNote([id])
+      } else {
+        await apiDeleteNote(ids)
       }
       await switchCategory(currentCategoryIndex.value)
       postData.value = { ...notes.value[0] }
