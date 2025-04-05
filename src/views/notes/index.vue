@@ -218,7 +218,7 @@ async function permanentlyDeleteNote(id) {
       }
       await switchCategory(currentCategoryIndex.value)
       postData.value = { ...notes.value[0] }
-      ElMessage.success('清空成功')
+      ElMessage.success('删除成功')
     })
     .catch(() => {})
 }
@@ -273,7 +273,7 @@ onMounted(() => {
           :icon="'delete'"
           size="small"
           plain
-          @click="permanentlyDeleteNote"
+          @click="permanentlyDeleteNote(null)"
           >全部清除</el-button
         >
         <p>被删除的笔记保留30天后将清除</p>
