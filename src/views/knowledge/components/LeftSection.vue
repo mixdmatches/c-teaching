@@ -1,5 +1,6 @@
 <template>
   <div class="left" ref="leftDom">
+    <!-- ai总结 -->
     <div class="ai-summary">
       <div class="top">
         <h5>AI智能总结</h5>
@@ -7,7 +8,7 @@
           ><el-icon size="20"><CopyDocument /></el-icon>复制</span
         >
       </div>
-      <div class="content">{{ pointDetail.aiSummary }}</div>
+      <div class="content">{{ pointDetail.summary }}</div>
       <!-- <div class="question">
         关联问题：
         <p
@@ -27,7 +28,23 @@
         <el-button>发送</el-button>
       </div> -->
     </div>
-    <section class="markdown-container" v-html="markdownToHtml"></section>
+    <!-- 教程内容 -->
+    <el-tabs
+      style="background: white"
+      v-model="activeName"
+      class="demo-tabs"
+      @tab-click="handleClickTab"
+    >
+      <el-tab-pane label="图文" name="text"
+        ><section class="markdown-container" v-html="markdownToHtml"></section
+      ></el-tab-pane>
+      <el-tab-pane label="视频" name="video">
+        <div class="play-video">
+          <video class="video" controls src=""></video>
+        </div>
+      </el-tab-pane>
+    </el-tabs>
+
     <footer>
       <span
         >关联知识：<el-tag
@@ -39,6 +56,18 @@
       >
       <el-button type="primary" @click="handleTest">去测试</el-button>
     </footer>
+    <el-button
+      v-show="showSendButton"
+      :style="{
+        position: 'absolute',
+        zIndex: '999',
+        top: `${sendButtonPosition.y}px`,
+        left: `${sendButtonPosition.x}px`,
+      }"
+      type="primary"
+      @click="sendQuestion"
+      >AI解释</el-button
+    >
   </div>
 </template>
 
@@ -59,25 +88,13 @@ marked.setOptions({
     return hljs.highlightAuto(code).value
   },
 })
-const emits = defineEmits(['sendRef'])
+// leftDom实例
+const leftDom = ref()
 // 获取路由参数
 const route = useRoute()
 const router = useRouter()
 // 从路由参数中解析出章节id和知识点id
 const { pointId, sectionId } = route.query
-console.log(pointId, sectionId)
-
-// 定义是否显示ai
-const isAi = ref(false)
-
-// leftdom元素
-const leftDom = ref(null)
-
-// 传给父组件dom
-onMounted(() => {
-  emits('sendRef', leftDom.value)
-})
-
 // 获取user仓库
 const userStore = useUserStore()
 // 定义在线学习时间
@@ -104,7 +121,7 @@ onUnmounted(() => {
 const pointDetail = ref({
   course: '',
   context: '',
-  aiSummary: '',
+  summary: '',
   relationName: [],
 })
 
@@ -167,14 +184,13 @@ const handleCopy = async () => {
 
 // 去测试按钮回调
 const handleTest = () => {
-  router.push({ path: '/question', query: { pointId, sectionId } })
+  router.push({ path: '/question', query: { knowPointId, sectionId } })
 }
 
-// 监听 isAi 的变化
-watch(isAi, () => {
-  leftDom.value.style.transform = `translateX(-${210}px)`
-})
-
+const activeName = ref('text')
+const handleClickTab = (tab, event) => {
+  activeName.value = tab.name
+}
 onMounted(() => {
   // 手动初始化高亮
   const codeBlocks = document.querySelectorAll('pre code')
@@ -182,13 +198,60 @@ onMounted(() => {
     hljs.highlightElement(block)
   })
 })
+
+// 定义响应式变量来控制按钮的显示和隐藏')
+const showSendButton = ref(false)
+const sendButtonPosition = ref({ x: 0, y: 0 })
+const selectedText = ref('')
+// 定义选中文字事件处理函数
+const handleSelectionChange = () => {
+  const selection = window.getSelection()
+  const text = selection.toString()
+  if (text) {
+    const range = selection.getRangeAt(0)
+    const rect = range.getBoundingClientRect()
+    sendButtonPosition.value = {
+      x: rect.left + document.documentElement.scrollLeft,
+      y: rect.top + document.documentElement.scrollTop - 130, // 按钮显示在选择文字上方
+    }
+    selectedText.value = text
+    showSendButton.value = true
+  } else {
+    showSendButton.value = false
+  }
+}
+// 定义可触发的事件
+const emits = defineEmits(['send-question'])
+// 发送ai处理函数
+const sendQuestion = () => {
+  emits('send-question', selectedText.value)
+  showSendButton.value = false
+  selectedText.value = ''
+  window.getSelection().removeAllRanges()
+}
+// 组件挂载时添加事件监听器
+onMounted(() => {
+  document.addEventListener('selectionchange', handleSelectionChange)
+})
+
+// 组件卸载时移除事件监听器
+onUnmounted(() => {
+  document.removeEventListener('selectionchange', handleSelectionChange)
+})
 </script>
 
 <style lang="scss" scoped>
 // 引入 highlight.js 的样式
 @import 'highlight.js/styles/vs2015.css';
 .left {
-  width: 70%;
+  width: 100%;
+  flex: 2;
+  max-width: 740px;
+  max-height: calc(100vh - $header-height - $margin-xxl);
+  height: 100vh;
+  scrollbar-color: transparent transparent;
+  scrollbar-width: thin;
+  overflow-y: auto;
   transition: all 0.5s ease;
   .ai-summary {
     width: 100%;
@@ -244,6 +307,27 @@ onMounted(() => {
     }
     .input {
       display: flex;
+    }
+  }
+  .play-video {
+    width: 100%;
+    height: 400px;
+    background-color: #ffffff;
+    padding: 0 $padding-xl;
+    video {
+      width: 100%;
+    }
+  }
+  .demo-tabs > .el-tabs__content {
+    color: #6b778c;
+    font-size: 32px;
+    font-weight: 600;
+  }
+  .demo-tabs {
+    width: 100%;
+    margin: $margin-l 0;
+    .el-tabs__nav-scroll {
+      padding-left: 20px;
     }
   }
 

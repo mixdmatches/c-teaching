@@ -5,23 +5,14 @@
   </main>
 </template>
 
-<script setup>
-import { reactive } from 'vue'
-const userInfo = reactive({
-  clazz: '',
-  number: '',
-  mobile: '',
-  email: '',
-})
-</script>
+<script setup></script>
 
 <style lang="scss" scoped>
 main {
   width: $main-width;
-  // 高度根据子盒子自适应
   height: auto;
   margin: 0 auto;
-  margin-top: calc($margin-xxl + $header-height);
+  margin-top: $margin-xl;
   margin-bottom: $header-height;
 }
 </style>

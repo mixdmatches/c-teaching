@@ -21,7 +21,6 @@ const getRadioClassName = (key) =>{
     return ''
   }
 }
-
 </script>
 
 <template>
@@ -41,9 +40,9 @@ const getRadioClassName = (key) =>{
         <Tag v-for="(item,index) in option.tags" :key="index" :text="item.tagName" />
       </div>
     </div>
-    <div class="title">{{option.no}}. {{option.title}}</div>
+    <div class="title">{{option.title}}</div>
     <el-radio-group v-model="model" class="radioGroup">
-      <el-radio :class="getRadioClassName(item.key)" v-for="(item,index) in option.option" :key="index" :label="item.key + ':   ' + item.value" :value="item.key"/>
+      <el-radio :class="getRadioClassName(item.key)" v-for="(item,index) in option.option" :key="index" :label="item.value" :value="item.key" />
     </el-radio-group>
 
     <div class="analysisBox">
