@@ -8,3 +8,6 @@ export const getQuestionByKnowledge = async (data) => {
 export const getAnswer = async (data) => {
   return (await service.post('/api/topic/result', data)).data
 }
+export const getNextQuestion = async (data) => {
+  return (await service.post('/api/topic/nextTopic',data)).data
+}

@@ -73,5 +73,8 @@ router.beforeEach((to, from) => {
     return false
   }
 })
+export const to404 = () => {
+  router.push('/404')
+}
 
 export default router
