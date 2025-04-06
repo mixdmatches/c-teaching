@@ -130,7 +130,7 @@ async function switchCategory(index) {
 // 取消编辑按钮回调
 function handleCancel() {
   isEditor.value = false
-  postData.value = { ...notes.value[0] }
+  // postData.value = { ...notes.value[0] }
 }
 
 // 下拉框的编辑按钮
@@ -145,7 +145,7 @@ async function editNote(item) {
   if (postData.value.id === 0) {
     await apiAddNotes(postData.value)
     await switchCategory(currentCategoryIndex.value)
-    postData.value = { ...notes.value[0] }
+    // postData.value = { ...notes.value[0] }
   } else {
     await apiPutNote(postData.value)
     await switchCategory(currentCategoryIndex.value)
@@ -211,13 +211,14 @@ async function permanentlyDeleteNote(id) {
   })
     .then(async () => {
       const ids = notes.value.map(item => item.id)
-      await apiDeleteNote(ids)
       if (id) {
         await apiDeleteNote([id])
+      } else {
+        await apiDeleteNote(ids)
       }
       await switchCategory(currentCategoryIndex.value)
       postData.value = { ...notes.value[0] }
-      ElMessage.success('清空成功')
+      ElMessage.success('删除成功')
     })
     .catch(() => {})
 }
@@ -272,7 +273,8 @@ onMounted(() => {
           :icon="'delete'"
           size="small"
           plain
-          @click="permanentlyDeleteNote"
+          @click="permanentlyDeleteNote(null)"
+          :disabled="notes.length === 0"
           >全部清除</el-button
         >
         <p>被删除的笔记保留30天后将清除</p>

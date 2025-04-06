@@ -1,6 +1,7 @@
 # Vue 3 + Vite
 
-`pnpm dev`运行
+1. `pnpm install`安装依赖
+2. `pnpm dev`运行
 
 
 
@@ -13,3 +14,4 @@
 
 5. 答题页
    |----题目解析页
+6. 笔记
