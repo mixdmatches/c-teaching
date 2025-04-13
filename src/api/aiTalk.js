@@ -4,7 +4,9 @@ import {
   generateConfigChapter,
   generateConfigTopic,
   generateConfigProficiency,
+  generateConfigTalk,
 } from '@/utils/aiAPI/zhipuConfig.js'
+import { APIURL, KEY } from '@/utils/aiAPI/zhipuConfig.js'
 // ai对话接口
 export const apiPostAiTalk = question =>
   axios.get('http://47.122.30.214:8101/api/knowPoint/aiAsk', {
@@ -55,4 +57,17 @@ export const apiPostProficiencyAi = (question, useranswer) =>
     method: 'post',
     url: '',
     data: generateConfigProficiency(question, useranswer),
+  })
+
+/**
+ * 智谱ai流式对话
+ */
+export const apiPostTalk = question =>
+  fetch(APIURL, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: generateConfigTalk(question),
   })

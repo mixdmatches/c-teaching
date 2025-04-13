@@ -51,7 +51,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 // 引入api
-import { apiPostAiTalk, apiPostAiTalkNode } from '@/api/aiTalk.js'
+import { apiPostAiTalk, apiPostAiTalkNode, apiPostTalk } from '@/api/aiTalk.js'
 import { marked } from 'marked'
 import hljs from 'highlight.js'
 // 引入高亮样式
@@ -59,7 +59,6 @@ import 'highlight.js/styles/monokai-sublime.css'
 // 导入所有语言
 import 'highlight.js/lib/languages/javascript'
 import { ElMessage } from 'element-plus'
-
 // 配置marked高亮
 marked.setOptions({
   highlight: function (code, lang) {
@@ -76,8 +75,8 @@ const answer = ref('')
 const talkGroupArr = ref([])
 // 加载状态
 const isLoading = ref(false)
-// 向ai发起对话
-const handleSendQuestionp = async () => {
+// 向ai发起对话-----------------第一版接java后端，不可流式
+const handleSendQuestion1 = async () => {
   // 请求开始前，将加载状态设置为 true
   isLoading.value = true
   // 检查问题是否为空
@@ -108,8 +107,8 @@ const handleSendQuestionp = async () => {
   }
 }
 
-// Ai流式响应对话
-const handleSendQuestion = async (event, selectedText) => {
+// Ai流式响应对话-----------------------第二版接后端Node可流式
+const handleSendQuestion2 = async (event, selectedText) => {
   // 请求开始前，将加载状态设置为 true
   isLoading.value = true
   talkGroupArr.value.push({
@@ -146,8 +145,56 @@ const handleSendQuestion = async (event, selectedText) => {
     )
   }
 }
-// 把handleSendQuestion函数暴露给父组件
-defineExpose({ handleSendQuestion })
+
+// 第三版ai流式，前端直接接智谱平台API---------------------无敌了
+const handleSendQuestion = async (event, selectedText) => {
+  // 请求开始前，将加载状态设置为 true
+  isLoading.value = true
+  talkGroupArr.value.push({
+    question: selectedText || question.value,
+    answer: '等待响应',
+  })
+  let buffQestion = selectedText || question.value
+  question.value = ''
+  talkGroupArr.value[talkGroupArr.value.length - 1].answer = ''
+  try {
+    await getChat(buffQestion)
+    // 流式响应结束后，再进行 Markdown 解析
+    talkGroupArr.value[talkGroupArr.value.length - 1].answer = marked.parse(
+      talkGroupArr.value[talkGroupArr.value.length - 1].answer
+    )
+    isLoading.value = false
+  } catch (err) {
+    console.log(err)
+    const htmlStr = `<div class="error">糟糕出错了！请重试！</div>`
+    talkGroupArr.value[talkGroupArr.value.length - 1].answer += htmlStr
+    isLoading.value = false
+  }
+}
+
+// 获取ai返回的信息并拼接到页面对话框上
+const getChat = async content => {
+  const res = await apiPostTalk(content)
+  const reader = res.body.getReader()
+  // 文本解码器，用于将二进制数据解码为文本
+  const decoder = new TextDecoder()
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) break
+    const text = decoder.decode(value)
+    const lines = text
+      .split('\n')
+      .map(line => line.replace(/^data: /, '').trim())
+      .filter(line => line.trim() !== '')
+    for await (const line of lines) {
+      if (line === '[DONE]') break
+      const data = JSON.parse(line)
+      const content = data.choices[0].delta.content
+      talkGroupArr.value[talkGroupArr.value.length - 1].answer += content
+    }
+  }
+}
+
 // 监听ai返回的信息
 watch(
   () => answer.value,
@@ -160,18 +207,13 @@ watch(
   }
 )
 
-// ai回答文本转html
-const htmlTalkArr = computed(() => {
-  return talkGroupArr.value.map(item => {
-    item.answer = marked.parse(item.answer)
-    return item
-  })
-})
-
 // 清空对话
 const handleClearTalk = () => {
   talkGroupArr.value = []
 }
+
+// 把handleSendQuestion函数暴露给父组件
+defineExpose({ handleSendQuestion })
 </script>
 
 <style lang="scss" scoped>

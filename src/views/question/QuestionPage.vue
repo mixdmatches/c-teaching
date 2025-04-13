@@ -8,149 +8,91 @@
   <main>
     <div class="questionBox">
       <QuestionItem
-        v-if="questionList.length > 0"
-        v-model="questionList[currentIndex].answer"
-        :key="questionList[currentIndex].id"
-        :option="questionList[currentIndex]"
-        :correctAnswer="questionList[currentIndex].correctAnswer"
-        :explanation="questionList[currentIndex].analysis"
-        :spentTime="questionList[currentIndex].timeSpent"
-        :resetTimer="resetTimer"
-        :isLastQuestion="isLastQuestion"
-      />
+        v-model="answer"
+        :option="question"
+        :disabled="submitted"
+      >
+        <div class="answer" v-if="submitted">
+          <div class="judge">正确答案:{{result?.showTopicResponses[0]?.answer}};你的答案:{{result?.showTopicResponses[0]?.studentAnswer}}</div>
+          <div class="analysis">AI:解析:{{result?.showTopicResponses[0]?.analysis}}</div>
+        </div>
+        <div style="display: flex;justify-content: right">
+          <el-button :disabled="!answer || submitted" @click="submit">提交</el-button>
+          <el-button :disabled="!submitted" @click="nextQuestion">下一题</el-button>
+        </div>
+      </QuestionItem>
     </div>
   </main>
+  <div class="LL-Talk">
+    <LLMTalk style="height: 450px" />
+  </div>
   <footer>
     <div class="footerBox">
       <div class="left">
         <div class="viewDotBox">
           <ProblemViewDot
-            v-for="(item, index) in questionList"
-            :key="item.id"
-            :value="questionList[index].answer"
+            v-for="(status, index) in questionStatus"
+            :key="index"
+            :value="status"
           >
             {{ index + 1 }}
           </ProblemViewDot>
         </div>
+
+        <!-- 提示信息模块 -->
         <div class="tipBox">
           <div>
-            <ProblemViewDot :value="1"></ProblemViewDot>
+            <ProblemViewDot :value="true"></ProblemViewDot>
             <span>已做</span>
           </div>
           <div>
-            <ProblemViewDot></ProblemViewDot>
+            <ProblemViewDot :value="false"></ProblemViewDot>
             <span>未完成</span>
           </div>
         </div>
       </div>
-      <!-- 上一题和下一题切换 -->
-      <div class="question-nav">
-        <el-button class="btn" v-if="currentIndex > 0" @click="prevQuestion">上一题</el-button>
-        <el-button class="btn" @click="nextQuestion">下一题</el-button>
-      </div>
     </div>
   </footer>
+
 </template>
 
 <script setup>
 import SubHeader from '@/components/SubHeader.vue'
-import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import QuestionItem from '@/views/question/components/QuestionItem.vue'
-import LButton from '@/components/LButton.vue'
 import { formatTime } from '@/utils/dateUtils.js'
-import { useRoute, useRouter } from 'vue-router'
-import ProblemViewDot from '@/components/problemViewDot.vue'
-import {
-  getQuestionByKnowledge,
-  getQuestionBySectionId,
-} from '@/api/question.js'
+import { useRoute } from 'vue-router'
+import { getAnswer, getNextQuestion } from '@/api/question.js'
 import { useUserStore } from '@/stores/index.js'
-import HeaderCm from '../../components/HeaderCm.vue'
+import HeaderCm from '@/components/HeaderCm.vue'
+import { to404 } from '@/router/index.js'
+import LLMTalk from '@/views/knowledge/components/LLMTalk'
+import ProblemViewDot from '@/components/problemViewDot.vue'
+import { ElMessage } from 'element-plus'
 
-const router = useRouter()
-const route = useRoute()
 const userStore = useUserStore()
+const route = useRoute()
 
-// 定义状态变量
-const status = ref(false)
-
-// 题目列表
-const questionList = reactive([
-  {
-    id: 1,
-    no: 1,
-    type: 'radio',
-    title: 'C语言的输出语句是什么',
-    options: [
-      { id: 'A', text: 'printf' },
-      { id: 'B', text: 'print' },
-      { id: 'C', text: 'println' },
-      { id: 'D', text: 'write' }
-    ],
-    knowPointName: 'C语言',
-    answer: '',
-    correctAnswer: 'A',
-    // 修正字段名拼写
-    analysis: '在C语言中，printf是一个常用的输出语句，用于将数据输出到标准输出设备（通常是屏幕）。',
-    difficulty:3,
-    hierarchy:2,
-    timeSpent: 0,
-    isCorrect: false
-  },
-  {
-    id: 2,
-    no: 2,
-    type: 'radio',
-    title: 'C语言的跳转语句是什么',
-    options: [
-      { id: 'A', text: 'break' },
-      { id: 'B', text: 'continue' },
-      { id: 'C', text: 'return' },
-      { id: 'D', text: 'goto' }
-    ],
-    knowPointName: 'C语言',
-    answer: '',
-    correctAnswer: 'C',
-    // 修正字段名拼写
-    analysis: '在C语言中，return是一个常用的跳转语句，用于从函数中返回一个值，并终止函数的执行。',
-    difficulty:3,
-    hierarchy:2,
-    timeSpent: 0,
-    isCorrect: true
-  },
-  {
-    id: 3,
-    no: 3,
-    type: 'radio',
-    title: 'C语言的输出语句是什么',
-    options: [
-      { id: 'A', text: 'printf' },
-      { id: 'B', text: 'print' },
-      { id: 'C', text: 'println' },
-      { id: 'D', text: 'write' }
-    ],
-    knowPointName: 'C语言',
-    answer: '',
-    correctAnswer: 'A',
-    // 修正字段名拼写
-    analysis: '在C语言中，printf是一个常用的输出语句，用于将数据输出到标准输出设备（通常是屏幕）。',
-    difficulty:3,
-    hierarchy:2,
-    timeSpent: 0,
-    isCorrect: false
-  },
-])
-// 当前题目索引
-const currentIndex = ref(0)
+// 题目
+const question = ref()
+// 答案
+const answer = ref()
+// 是否已提交
+const submitted = ref(false)
+// 结果
+const result = ref()
+// 题目的回答状态
+const questionStatus = ref(Array(10).fill(false));
+// 答题数量
+const count = ref(1);
 
 // 时间相关逻辑
 const time = ref(0)
 const showTimeString = computed(() => formatTime(time.value))
 const timeInterval = ref()
 
-
 const startTiming = () => {
-  time.value = 0
+  time.value = 1
   clearInterval(timeInterval.value)
   timeInterval.value = setInterval(() => {
     time.value += 1
@@ -164,90 +106,82 @@ const stopTiming = () => {
 // 重置计时器方法
 const resetTimer = () => {
   stopTiming()
-  const currentTime = time.value
-  questionList[currentIndex.value].timeSpent = currentTime
+  question.value.timeSpent = time.value
   // startTiming()
-  console.log(currentTime);
-  
 }
 defineExpose({
   resetTimer,
 })
 
 onMounted(() => {
-  // handleGetQuestionList()
+  getQuestion()
   startTiming()
 })
 
 onUnmounted(() => {
   clearInterval(timeInterval.value)
 })
-
-// 上一题
-const prevQuestion = () => {
-  if (currentIndex.value > 0) {
-    currentIndex.value--
+// 获取第一道题目
+const getQuestion = async topicId => {
+  if (route.query.sectionId && route.query.pointId) {
+    question.value = await getNextQuestion({
+      sectionId: route.query.sectionId,
+      knowPointId: route.query.pointId,
+      answerTime: 0,
+      stuAnswer: '',
+      topicId: topicId ?? 0,
+      studentId: userStore.studentId,
+    })
+  }else {
+    to404()
   }
 }
 
 // 下一题
-const nextQuestion = () => {
-  if (currentIndex.value < questionList.length - 1) {
-     currentIndex.value++
-     stopTiming()
-     startTiming()
+const nextQuestion = async () => {
+    count.value += 1
+    answer.value = ''
+    submitted.value = false
+
+    await getQuestion(question.value.id)
+    startTiming()
+}
+
+const submit = async () => {
+  const data = {
+    answerTime: time.value,
+    knowPointId: route.query.pointId,
+    sectionId: route.query.sectionId,
+    studentId: userStore.studentId,
+    stuAnswer: answer.value,
+    topicId: question.value.id
+  }
+  result.value = await getAnswer(data)
+  submitted.value = true
+  stopTiming()
+  // 更新当前题目状态
+  const currentIndex = questionStatus.value.findIndex(status => !status);
+  if (currentIndex !== -1) {
+    questionStatus.value[currentIndex] = true;
+  }
+  if (count.value === 10) {
+    ElMessage.success("以完成所有题目");
+    submitted.value = false;
   }
 }
-//判断是否是最后一题
-const isLastQuestion = computed(() => {
-  return currentIndex.value === questionList.length - 1
-})
 
-// 提交测试
-// const submitTest = () => {
-//   // 停止计时
-//   stopTiming()
-//   // 显示答题结果
-//   showResults.value = true
-//   // 更新每个题目的 isCorrect 字段
-//   questionList.forEach(item => {
-//     item.isCorrect = item.answer === item.correctAnswer
-//   })
-//   // 更新状态为 true
-//   status.value = true
-//   userStore.changeCeshi()
-
-//   // 将状态传递到其他页面
-//   // router.push({
-//   //   path: '/result',
-//   //   query: {
-//   //     pointId: route.query.pointId,
-//   //     sectionId: route.query.sectionId,
-//   //     time: time.value,
-//   //     results: JSON.stringify(
-//   //       questionList.map(item => {
-//   //         return {
-//   //           id: item.id,
-//   //           studentAnswer: item.answer,
-//   //         }
-//   //       })
-//   //     ),
-//   //   },
-//   // })
-// }
 </script>
 
 <style lang="scss" scoped>
 main {
   position: relative;
-  width: 1200px;
-  // 修改：添加 margin-bottom 为底部 footer 预留空间
-  height: 600px; 
-  margin: 0 auto;
-  // 修改：添加 margin-bottom 为底部 footer 预留空间
-  margin-bottom: 128px; 
+  width: 1000px;
+  height: 600px;
+  margin: 0 15px;
+  margin-bottom: 128px;
 
   .questionBox {
+    float:left;
     width: 400px;
     height: 500px;
     display: flex;
@@ -262,6 +196,14 @@ main {
   right: 45px;
   margin-top: 20px;
   text-align: center;
+}
+.LL-Talk {
+  position: absolute;
+  top: 160px;
+  right: 10px;
+  height: 100px;
+  width: 27%;
+  margin-bottom: 100px;
 }
 
 footer {
@@ -305,5 +247,13 @@ footer {
       }
     }
   }
+}
+.answer {
+  width: 100%;
+  font-size: 16px;
+  margin-top: $padding-xxl;
+.judge,.analysis {
+  margin: $padding-xxl;
+}
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <main>
     <!-- 用户信息卡片 -->
-    <el-card class="info-card">
+    <el-card shadow="never" class="info-card">
       <div class="filed" v-for="filed in userInfoFiled" :key="filed.value">
         <div class="label">{{ filed.label }}</div>
         <input
@@ -28,10 +28,13 @@
         </template>
       </div>
     </el-card>
+    <!-- 错题本 -->
+    <ErrorQustion />
   </main>
 </template>
 
 <script setup>
+import ErrorQustion from './ErrorQustion.vue'
 import { reactive, ref, onMounted } from 'vue'
 import { ElButton } from 'element-plus'
 
@@ -44,23 +47,23 @@ const userInfo = ref({})
 const handleGetUserInfo = async () => {
   userInfo.value = await getUserInfo('210047301')
 }
-const userInfoFiled =[
+const userInfoFiled = [
   {
     value: 'classes',
-    label: '班级'
+    label: '班级',
   },
   {
     value: 'stuNum',
-    label: '学号'
+    label: '学号',
   },
   {
     value: 'phone',
-    label: '电话'
+    label: '电话',
   },
   {
     value: 'email',
-    label: '邮箱'
-  }
+    label: '邮箱',
+  },
 ]
 onMounted(async () => {
   await handleGetUserInfo()
@@ -73,7 +76,7 @@ const tempUserInfo = reactive({})
 
 // 开始编辑
 const startEditing = () => {
-  Object.assign(tempUserInfo, userInfo.value)//userInfo->tempUserInfo
+  Object.assign(tempUserInfo, userInfo.value) //userInfo->tempUserInfo
   isEditing.value = true
 }
 
@@ -94,24 +97,23 @@ const cancelEdit = () => {
 }
 </script>
 
-
 <style lang="scss" scoped>
 // 引入全局变量
 @import '@/styles/variables.scss';
 
 main {
   width: 100%;
-  max-width: $main-width;
-  margin: $padding-xl auto;
+  // max-width: $main-width;
+  // margin: $padding-xl auto;
   padding: $padding-l;
-  margin-top: calc($margin-xxl + $header-height);
+  // margin-top: calc($margin-xxl + $header-height);
 }
 
 .info-card {
   background-color: $base-bg-color;
   border: 1px solid $base-border-color;
   border-radius: $border-radius-m;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); // 添加阴影效果
+  // box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); // 添加阴影效果
   padding: $padding-xl;
   display: flex;
   flex-direction: column;

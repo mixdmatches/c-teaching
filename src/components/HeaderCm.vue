@@ -1,6 +1,6 @@
 <template>
   <div class="header">
-    <div class="logo">C语言教学平台</div>
+    <div class="logo">C语言AI教学平台</div>
     <nav>
       <ul>
         <li
