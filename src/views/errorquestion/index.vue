@@ -3,7 +3,7 @@
   <!-- 错题本 -->
   <el-card shadow="never" style="margin-top: 20px">
     <template #header>
-      <div class="header">
+      <div class="head">
         <span>错题本</span>
         <span>共{{ errorQuestionList.length }}题</span>
       </div>
@@ -118,7 +118,7 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-.header {
+.head {
   display: flex;
   gap: $margin-s;
   span {
