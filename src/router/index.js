@@ -55,6 +55,12 @@ const routes = [
     component: () => import('@/views/notes/index.vue'),
   },
   {
+    path: '/errorquestion',
+    name: 'errorquestion',
+    meta: { title: '错题本', show: 'header' },
+    component: () => import('@/views/errorquestion/index.vue'),
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: '404',
     component: () => import('@/views/404/NotFind.vue'),
@@ -73,5 +79,8 @@ router.beforeEach((to, from) => {
     return false
   }
 })
+export const to404 = () => {
+  router.push('/404')
+}
 
 export default router

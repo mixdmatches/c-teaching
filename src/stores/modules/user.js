@@ -16,5 +16,12 @@ export const useUserStore = defineStore('user', () => {
   const getUserId = () => {
     return userId.value
   }
-  return { isCeshi, changeCeshi, totalTime, changeTotalTime, getUserId, studentId: studentId.value}
+  return {
+    isCeshi,
+    changeCeshi,
+    totalTime,
+    changeTotalTime,
+    getUserId,
+    studentId: studentId.value,
+  }
 })
