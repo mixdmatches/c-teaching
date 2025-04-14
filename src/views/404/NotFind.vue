@@ -10,8 +10,10 @@
 </template>
 
 <script setup>
+import router from '../../router'
+
 const back = () => {
-  window.history.back()
+  router.push({ path: '/' })
 }
 </script>
 

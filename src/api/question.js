@@ -11,5 +11,10 @@ export const getAnswer = async data => {
 export const getNextQuestion = async data => {
   return (await service.post('/api/topic/nextTopic', data)).data
 }
+/**
+ * 获取错题
+ */
 export const getErrorQuestion = async params =>
   service.get('/api/topic/wrong', { params })
+export const postSameQs = topicId =>
+  service.post(`/api/topic/sameType?topicId=${topicId}`)

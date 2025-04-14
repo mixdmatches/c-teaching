@@ -47,7 +47,13 @@
           >
             查看详情
           </el-button>
-          <el-button link type="primary" size="small">做同类型</el-button>
+          <el-button
+            link
+            type="primary"
+            size="small"
+            @click="handleWordSameQs(row)"
+            >做同类型</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -69,7 +75,8 @@ import HeaderCm from '@/components/HeaderCm.vue'
 import { useUserStore } from '@/stores/index'
 // 引入hook
 import { onMounted, ref } from 'vue'
-
+import { useRouter } from 'vue-router'
+const router = useRouter()
 const userStore = useUserStore()
 // 章节选择变量
 const selectOption = ref(1)
@@ -110,6 +117,16 @@ const handleChangeChapter = () => {
 const handleVisibelity = row => {
   dialogTableVisible.value = true
   currentRow.value = row
+}
+// 做同类型函数
+const handleWordSameQs = row => {
+  // 跳转题目页面
+  router.push({
+    path: '/question',
+    query: {
+      topicId: row.id,
+    },
+  })
 }
 // 生命周期函数 挂载后获取错题列表
 onMounted(() => {
