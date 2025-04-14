@@ -71,7 +71,6 @@ const studentStatus = ref({})
 const getStudyStatus = async () => {
   const res = await apiGetStudyStatus(210047301)
   studentStatus.value = res.data
-  console.log(studentStatus.value)
 }
 getStudyStatus()
 
