@@ -36,7 +36,6 @@
       <span>
         <el-button type="primary" @click="handleTest">进入测试</el-button>
       </span>
-      <el-button @click="userStore.changeCeshi">假如测试完后返回页面</el-button>
     </div>
     <div class="data-todo">
       <el-empty description="测试后再查看数据" />

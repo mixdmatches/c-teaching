@@ -8,6 +8,7 @@ const service = axios.create({
 // 请求拦截器
 service.interceptors.request.use(config => {
   // 添加 token 等逻辑
+  config.headers['token'] = localStorage.getItem('token') || ''
   if (config.method === 'put' || config.method === 'post') {
     for (let key in config.data) {
       if (

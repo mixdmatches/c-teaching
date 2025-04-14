@@ -29,6 +29,9 @@
               </el-icon>
               <router-link :to="r.path">{{ r.meta.title }}</router-link>
             </el-dropdown-item>
+            <el-dropdown-item @click="handleOut"
+              ><el-icon><SwitchButton /></el-icon> 退出登录
+            </el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -37,7 +40,7 @@
 </template>
 
 <script setup>
-import { getUserInfo } from '@/api/user.js'
+import { getUserInfo, apiPostOutLogin } from '@/api/user.js'
 import { ref, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 const router = useRouter()
@@ -51,6 +54,13 @@ const headRoutes = computed(() => {
 const userInfo = ref()
 const handleGetUserInfo = async () => {
   userInfo.value = await getUserInfo('210047301')
+}
+
+// 退出登录
+const handleOut = async () => {
+  await apiPostOutLogin()
+  localStorage.removeItem('token')
+  router.push('/login')
 }
 onMounted(async () => {
   await handleGetUserInfo()

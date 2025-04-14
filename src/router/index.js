@@ -78,7 +78,13 @@ router.beforeEach((to, from) => {
     ElMessage.warning('还未测试，请先去测试！')
     return false
   }
+  if (to.path !== '/login' && !localStorage.getItem('token')) {
+    ElMessage.warning('请先登录！')
+    router.push('/login')
+    return false
+  }
 })
+
 export const to404 = () => {
   router.push('/404')
 }
