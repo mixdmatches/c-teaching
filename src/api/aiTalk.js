@@ -1,10 +1,14 @@
 import axios from 'axios'
 import service from '@/utils/aiRequest.js'
+// 引入仓库
+import { useUserStore } from '@/stores/index'
+import { getErrorQuestion } from './question'
 import {
   generateConfigChapter,
   generateConfigTopic,
   generateConfigProficiency,
   generateConfigTalk,
+  analyzeConfig,
 } from '@/utils/aiAPI/zhipuConfig.js'
 import { APIURL, KEY } from '@/utils/aiAPI/zhipuConfig.js'
 // ai对话接口
@@ -71,3 +75,21 @@ export const apiPostTalk = question =>
     },
     body: generateConfigTalk(question),
   })
+
+/**
+ * ai分析
+ * @returns
+ */
+export const apiGetAiAnalyze = async () => {
+  const userStore = useUserStore()
+  const {
+    data: { showTopicResults },
+  } = await getErrorQuestion({
+    stuId: userStore.studentId,
+  })
+  return service({
+    method: 'post',
+    url: '',
+    data: analyzeConfig(showTopicResults),
+  })
+}
