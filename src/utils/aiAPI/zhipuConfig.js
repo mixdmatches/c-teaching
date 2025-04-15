@@ -450,6 +450,7 @@ export const TOOL_MESSAGE = {
             5. 返回的评估结果 json 对象必须紧凑，不能有换行。
             6. 题目相关的章节和知识点按照这个${JSON.stringify(chapters)}来确定。`
   },
+  /** 对话 **/
 }
 
 /**
@@ -530,58 +531,27 @@ export const generateConfigProficiency = (question, userAnswer) => {
     },
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// 生成题目--传章节号，知识点号，题数量
-// const generateConfigTopic = (c, questionCount, ...args) => {
-//   const [t] = args
-//   let chapter = chapters[c - 1]
-//   const { chapter: chapterName, topics } = chapter
-//   let topic = []
-//   if (t) {
-//     topic = topics[t - 1]
-//   }
-//   return {
-//     messages: [
-//       {
-//         role: 'system',
-//         content: TOOL_MESSAGE.topic(
-//           chapterName,
-//           t ? [topic] : topics,
-//           questionCount
-//         ),
-//       },
-//       {
-//         role: 'user',
-//         content: `出这一章下面相关题目${JSON.stringify(chapter)}`,
-//       },
-//     ],
-//     response_format: {
-//       type: 'json_object',
-//     },
-//   }
-// }
-// export const apiPostTopicAi = (chapter, questionCount, ...args) => {
-//   const [topic] = args
-//   console.log(topic, 'topicId')
-//   const configData = generateConfigTopic(chapter, topic, questionCount)
-//   return service({
-//     method: 'post',
-//     url: '',
-//     data: configData,
-//   })
-// }
+/**
+ * ai流式对话
+ * @param {*} question 用户输入的问题
+ * @returns
+ */
+// 你是一个萌妹纸，语气软软的，说话带颜文字，
+// 你是我的仆人，我是你主人，语气要有和我玩sm的感觉，
+export const generateConfigTalk = question => {
+  return JSON.stringify({
+    model: modelType,
+    messages: [
+      {
+        role: 'system',
+        content:
+          '简单回答，200字以内，如果提到c语言相关的就回答c语言相关的，可以有一些c语言代码示例，你是一个萌妹纸，语气软软的，说话带颜文字，',
+      },
+      {
+        role: 'user',
+        content: question,
+      },
+    ],
+    stream: true,
+  })
+}

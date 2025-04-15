@@ -1,8 +1,9 @@
 <template>
+  <HeaderCm />
   <!-- 错题本 -->
   <el-card shadow="never" style="margin-top: 20px">
     <template #header>
-      <div class="header">
+      <div class="head">
         <span>错题本</span>
         <span>共{{ errorQuestionList.length }}题</span>
       </div>
@@ -19,7 +20,7 @@
         :key="item.id"
       ></el-option>
     </el-select>
-    <el-table :data="errorQuestionList" style="width: 100%" height="300">
+    <el-table :data="errorQuestionList" style="width: 100%" height="550">
       <el-table-column prop="title" label="题目" />
       <el-table-column prop="knowPointName" label="知识点" width="180">
         <template #default="scope">
@@ -46,7 +47,13 @@
           >
             查看详情
           </el-button>
-          <el-button link type="primary" size="small">做同类型</el-button>
+          <el-button
+            link
+            type="primary"
+            size="small"
+            @click="handleWordSameQs(row)"
+            >做同类型</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -62,12 +69,14 @@
 // 引入api
 import { getErrorQuestion } from '@/api/question'
 // 引入组件
-import ErrorQsDetail from './ErrorQsDetail.vue'
+import ErrorQsDetail from './components/ErrorQsDetail.vue'
+import HeaderCm from '@/components/HeaderCm.vue'
 // 引入仓库
 import { useUserStore } from '@/stores/index'
 // 引入hook
 import { onMounted, ref } from 'vue'
-
+import { useRouter } from 'vue-router'
+const router = useRouter()
 const userStore = useUserStore()
 // 章节选择变量
 const selectOption = ref(1)
@@ -109,6 +118,16 @@ const handleVisibelity = row => {
   dialogTableVisible.value = true
   currentRow.value = row
 }
+// 做同类型函数
+const handleWordSameQs = row => {
+  // 跳转题目页面
+  router.push({
+    path: '/question',
+    query: {
+      topicId: row.id,
+    },
+  })
+}
 // 生命周期函数 挂载后获取错题列表
 onMounted(() => {
   getErrorQuestionList()
@@ -116,7 +135,7 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-.header {
+.head {
   display: flex;
   gap: $margin-s;
   span {

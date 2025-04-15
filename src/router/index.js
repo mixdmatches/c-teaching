@@ -55,6 +55,12 @@ const routes = [
     component: () => import('@/views/notes/index.vue'),
   },
   {
+    path: '/errorquestion',
+    name: 'errorquestion',
+    meta: { title: '错题本', show: 'header' },
+    component: () => import('@/views/errorquestion/index.vue'),
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: '404',
     component: () => import('@/views/404/NotFind.vue'),
@@ -72,7 +78,13 @@ router.beforeEach((to, from) => {
     ElMessage.warning('还未测试，请先去测试！')
     return false
   }
+  if (to.path !== '/login' && !localStorage.getItem('token')) {
+    ElMessage.warning('请先登录！')
+    router.push('/login')
+    return false
+  }
 })
+
 export const to404 = () => {
   router.push('/404')
 }
