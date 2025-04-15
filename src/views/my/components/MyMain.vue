@@ -49,7 +49,7 @@ const handleGetUserInfo = async () => {
 }
 const userInfoFiled = [
   {
-    value: 'classes',
+    value: 'className',
     label: '班级',
   },
   {

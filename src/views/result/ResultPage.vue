@@ -5,48 +5,39 @@ import { onMounted, ref } from 'vue'
 import QuestionResultItem from '@/views/result/components/QuestionResultItem.vue'
 import ProblemViewDot from '@/components/problemViewDot.vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getAnswer } from '@/api/question.js'
+import { getAnswer, handleGetAndSubmitQuestion } from '@/api/question.js'
 import { useUserStore } from '@/stores/index.js'
 import { formatToMinute } from '@/utils/dateUtils.js'
 
 const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
+// 结果
 const result = ref()
+
 const handleGetAnswer = async () => {
-  if (route.query.pointId) {
-    const data = await getAnswer({
-      knowId: route.query.pointId,
-      sectionId: route.query.sectionId,
-      topicResults: JSON.parse(route.query.results),
+
+  await handleGetAndSubmitQuestion({
+      ...route.query,
       studentId: userStore.studentId,
+
     })
-    data.showTopicResponses = data.showTopicResponses.map((item, index) => {
-      return {
-        ...item,
-        no: index + 1,
-        type: 'radio',
-      }
-    })
-    result.value = data
-    console.log(result.value, 'result')
-  } else if (route.query.sectionId) {
-    const data = await getAnswer({
-      knowId: route.query.sectionId,
-      sectionId: route.query.sectionId,
-      topicResults: JSON.parse(route.query.results),
-      studentId: userStore.studentId,
-    })
-    data.showTopicResponses = data.showTopicResponses.map((item, index) => {
-      return {
-        ...item,
-        no: index + 1,
-        type: 'radio',
-      }
-    })
-    result.value = data
-  }
+  const data = await getAnswer({
+    ...route.query,
+    studentId: userStore.studentId,
+    knowPointId: route.query.pointId ?? 1,
+  })
+  data.showTopicResponses = data.showTopicResponses?.map((item, index) => {
+    return {
+      ...item,
+      no: index + 1,
+      type: 'radio',
+    }
+  })
+  result.value = data
 }
+
+onMounted(() => handleGetAnswer());
 // 重新测试回调函数
 const handleResetTest = () => {
   // 传递路由参数并跳转
@@ -59,9 +50,6 @@ const handleResetTest = () => {
   })
 }
 
-onMounted(() => {
-  handleGetAnswer()
-})
 </script>
 
 <template>
@@ -78,7 +66,7 @@ onMounted(() => {
     <el-scrollbar>
       <div class="topBox">
         <div class="box">
-          <div>{{ result?.correctRate * 100 }}%</div>
+          <div>{{ (result?.correctRate * 100).toFixed(0) }}%</div>
           <div>正确率</div>
         </div>
         <div class="box">
@@ -88,11 +76,11 @@ onMounted(() => {
           <div>答对题数</div>
         </div>
         <div class="box">
-          <div>{{ formatToMinute(route.query.time) }}min</div>
+          <div>{{ route.query.time }}min</div>
           <div>用时</div>
         </div>
         <div class="box">
-          <div>{{ result?.accuracy ?? 0 }}%</div>
+          <div>{{ result?.maturity * 100 ?? 0 }}%</div>
           <div>熟练程度</div>
         </div>
       </div>
@@ -139,10 +127,10 @@ onMounted(() => {
       <div style="display: flex; gap: 20px">
         <LButton @click="() => router.push('/')" border>返回首页</LButton>
         <LButton
-          v-if="result?.correctRate == 1"
-          @click="() => router.push('/question')"
+          v-if="result?.maturity == 1"
+          @click="() => router.push('/course')"
           border
-          >测试下一章</LButton
+          >学习下一章</LButton
         >
       </div>
     </div>

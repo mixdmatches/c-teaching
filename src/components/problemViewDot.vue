@@ -2,11 +2,12 @@
 import {computed} from "vue";
 
 const props = defineProps({
-  value: String,
+  value: String | Boolean,
   completeColor: {type: String, default: '#1890ff'},
   incompleteColor: {type: String, default: '#c4c4c4'},
   errorColor: {type: String, default: '#ff0000'},
   error: {type: Boolean, default: false},
+  index: { type: Number, required: true},
 });
 const color = computed(() => {
   if (props.error) {
@@ -18,10 +19,16 @@ const color = computed(() => {
     return props.incompleteColor
   }
 })
+// 定义事件
+const emit = defineEmits(['dot-click']);
+// 点击事件处理
+const handleClick = () => {
+  emit('dot-click',props.index);
+}
 </script>
 
 <template>
-  <div class="dot" :style="{backgroundColor: color}">
+  <div class="dot" @click="handleClick" :style="{backgroundColor: color}">
     <slot/>
   </div>
 </template>

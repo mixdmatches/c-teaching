@@ -184,7 +184,8 @@ const handleCopy = async () => {
 
 // 去测试按钮回调
 const handleTest = () => {
-  router.push({ path: '/question', query: { pointId, sectionId } })
+
+  router.push({ path: '/question', query: { pointId:pointId , sectionId } })
 }
 
 const activeName = ref('text')
