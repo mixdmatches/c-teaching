@@ -88,7 +88,19 @@ const getQuestion = async () => {
     hasNext.value = questionInfo.value.hasNext
     answer.value = ''
     resetTimer()
-  } 
+  } else if (route.query.sectionId) {
+    questionInfo.value = await handleGetAndSubmitQuestion({
+      sectionId: route.query.sectionId,
+      knowPointId: route.query.pointId ?? 1,
+      answerTime: route.query.answerTime,
+      stuAnswer: route.query.stuAnswer,
+      topicId: route.query.topicId ?? 0,
+      studentId: userStore.studentId,
+    })
+    hasNext.value = questionInfo.value.hasNext
+    answer.value = ''
+    resetTimer()
+  }
   else {
     
     to404()  
