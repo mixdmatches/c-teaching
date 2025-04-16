@@ -26,6 +26,11 @@ export const getSimilarQuestion = async data => {
  */
 export const getErrorQuestion = async params =>
   service.get('/api/topic/wrong', { params })
+/**
+ * 获取相似题
+ * @param {*} topicId 
+ * @returns 
+ */
 export const postSameQs = topicId =>
   service.post(`/api/topic/sameType?topicId=${topicId}`)
 // 提交错题
