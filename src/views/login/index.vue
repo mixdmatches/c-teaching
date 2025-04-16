@@ -37,8 +37,10 @@
 <script setup>
 import { ref } from 'vue'
 import { User, Lock } from '@element-plus/icons-vue'
+import { useUserStore } from '@/stores/index'
 import { apiPostLogin } from '@/api/user'
 import router from '../../router'
+const userStore = useUserStore()
 const formData = ref({
   studentId: '',
   password: '',
@@ -49,8 +51,10 @@ const rules = {
 }
 // 登录按钮点击事件
 const handleLogin = async () => {
-  const { data } = await apiPostLogin(formData.value)
-  localStorage.setItem('token', data)
+  const {
+    data: { jwt, authority },
+  } = await apiPostLogin(formData.value)
+  localStorage.setItem('token', jwt)
   router.push('/')
 }
 </script>
