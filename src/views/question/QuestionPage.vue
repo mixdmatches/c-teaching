@@ -4,7 +4,7 @@ import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import QuestionItem from '@/views/question/components/QuestionItem.vue'
 import { formatTime } from '@/utils/dateUtils.js'
 import { useRoute } from 'vue-router'
-import { getNextQuestion, handleGetAndSubmitQuestion } from '@/api/question.js'
+import { getNextQuestion, handleGetAndSubmitQuestion, getSimilarQuestion,postSameQs } from '@/api/question.js'
 import { useUserStore } from '@/stores/index.js'
 import HeaderCm from '@/components/HeaderCm.vue'
 import { to404 } from '@/router/index.js'
@@ -25,7 +25,14 @@ const question = computed(() => {
   }
   return {}
 })
-
+// 相同类型的题目
+const similarQuestion = ref()
+const handleSimilarQuestion = async () => {
+ 
+}
+// if (route.query.topicId) {
+  
+// }
 // 答案
 const answer = ref()
 // 是否已提交
@@ -81,8 +88,10 @@ const getQuestion = async () => {
     hasNext.value = questionInfo.value.hasNext
     answer.value = ''
     resetTimer()
-  } else {
-    to404()
+  } 
+  else {
+    
+    to404()  
   }
 }
 watch(() => route.query.topicId,getQuestion)
@@ -90,7 +99,7 @@ watch(() => route.query.topicId,getQuestion)
 // 下一题
 const nextQuestion = () => {
   router.push({
-    path: '/question' ,
+    path: '/question',
     query: {
       ...route.query,
       topicId: question.value.id,
@@ -102,6 +111,14 @@ const nextQuestion = () => {
 
 const submit = async () => {
   userStore.changeCeshi()
+  // 提交最后一题答案
+  // await handleGetAndSubmitQuestion({
+  //   ...route.query,
+  //   stuAnswer: answer.value,
+  //   answerTime: time.value,
+  //   topicId: question.value.id,
+  //   studentId: userStore.studentId,
+  // })
   router.replace({
     path: '/result',
     query: {
@@ -112,6 +129,32 @@ const submit = async () => {
     },
   })
 }
+// 底部题号设置
+// 固定题号数组
+const fixedQuestionNumbers = Array.from({ length: 10 }, (_, i) => i + 1);
+
+// 动态计算每个题号的状态
+const questionStatusList = computed(() => {
+  const statusList = [];
+  for (let i = 0; i < fixedQuestionNumbers.length; i++) {
+    if (i < questionInfo.value?.showTopicResultList?.length) {
+      // 已加载的题目
+      statusList.push({
+        number: i + 1,
+        isCurrent: i === questionInfo.value.showTopicResultList.length - 1,
+        isCompleted: true,
+      });
+    } else {
+      // 尚未加载的题目
+      statusList.push({
+        number: i + 1,
+        isCurrent: false,
+        isCompleted: false,
+      });
+    }
+  }
+  return statusList;
+});
 </script>
 <template>
   <HeaderCm />

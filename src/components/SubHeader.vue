@@ -12,7 +12,7 @@ const props = defineProps({
 <template>
   <header>
     <div>
-      <div class="backBox" @click="() => router.push('/knowledgeDetail')" v-if="canBack">
+      <div class="backBox" @click="() => router.push('/')" v-if="canBack">
         <el-icon :size="20"><ArrowLeftBold /></el-icon>
         <span>{{props.exitText}}</span>
       </div>

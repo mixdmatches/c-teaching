@@ -5,7 +5,7 @@ import { onMounted, ref } from 'vue'
 import QuestionResultItem from '@/views/result/components/QuestionResultItem.vue'
 import ProblemViewDot from '@/components/problemViewDot.vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getAnswer, handleGetAndSubmitQuestion } from '@/api/question.js'
+import { submitSameTypeResult, handleGetAndSubmitQuestion } from '@/api/question.js'
 import { useUserStore } from '@/stores/index.js'
 import { formatToMinute } from '@/utils/dateUtils.js'
 import LLMTalk from '@/views/knowledge/components/LLMTalk.vue'
@@ -17,12 +17,11 @@ const userStore = useUserStore()
 const result = ref()
 
 const handleGetAnswer = async () => {
-
-  const data = await getAnswer({
-    ...route.query,
-    studentId: userStore.studentId,
-    knowPointId: route.query.pointId ?? 1,
-  })
+  // 调用接口获取结果
+  const query = JSON.parse(
+    route.query.showMistakesInfos
+)
+  const data = await submitSameTypeResult({showMistakesInfos:query})
   data.showTopicResponses = data.showTopicResponses?.map((item, index) => {
     return {
       ...item,

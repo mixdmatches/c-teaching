@@ -38,6 +38,11 @@ const routes = [
     component: () => import('@/views/question/QuestionPage.vue'),
   },
   {
+    path: '/exercise',
+    name: 'exercise',
+    component: () => import('@/views/exercise/ExercisePage.vue'),
+  },
+  {
     path: '/result',
     name: 'result',
     component: () => import('@/views/result/ResultPage.vue'),
@@ -59,6 +64,11 @@ const routes = [
     name: 'errorquestion',
     meta: { title: '错题本', show: 'header' },
     component: () => import('@/views/errorquestion/index.vue'),
+  },
+  {
+    path: '/samequestion',
+    name: 'samequestion',
+    component: () => import('@/views/sametypeResult/ResultPage.vue'),
   },
   {
     path: '/:pathMatch(.*)*',
