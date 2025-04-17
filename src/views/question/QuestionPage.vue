@@ -1,3 +1,173 @@
+<script setup>
+import SubHeader from '@/components/SubHeader.vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import QuestionItem from '@/views/question/components/QuestionItem.vue'
+import { formatTime } from '@/utils/dateUtils.js'
+import { useRoute } from 'vue-router'
+import { getNextQuestion, handleGetAndSubmitQuestion, getSimilarQuestion,postSameQs } from '@/api/question.js'
+import { useUserStore } from '@/stores/index.js'
+import HeaderCm from '@/components/HeaderCm.vue'
+import { to404 } from '@/router/index.js'
+import LLMTalk from '@/views/knowledge/components/LLMTalk'
+import ProblemViewDot from '@/components/problemViewDot.vue'
+import { useRouter} from 'vue-router'
+
+const userStore = useUserStore()
+const route = useRoute()
+const router = useRouter()
+
+const questionInfo = ref()
+
+// 题目
+const question = computed(() => {
+  if (questionInfo.value?.showTopicResultList && questionInfo.value?.showTopicResultList.length > 0) {
+    return questionInfo.value.showTopicResultList[questionInfo.value.showTopicResultList.length - 1]
+  }
+  return {}
+})
+// 相同类型的题目
+const similarQuestion = ref()
+const handleSimilarQuestion = async () => {
+ 
+}
+// if (route.query.topicId) {
+  
+// }
+// 答案
+const answer = ref()
+// 是否已提交
+const submitted = ref(false)
+// 题目的回答状态
+const questionStatus = ref(Array(10).fill(false));
+// 是否存在下一题
+const hasNext = ref(true);
+// 时间相关逻辑
+const time = ref(0)
+const showTimeString = computed(() => formatTime(time.value))
+const timeInterval = ref()
+
+const restartTiming = () => {
+  time.value = 1
+  clearInterval(timeInterval.value)
+  timeInterval.value = setInterval(() => {
+    time.value += 1
+  }, 1000)
+}
+
+// 停止计时函数
+const stopTiming = () => {
+  clearInterval(timeInterval.value)
+}
+// 重置计时器方法
+const resetTimer = () => {
+  stopTiming()
+  restartTiming()
+}
+defineExpose({
+  resetTimer,
+})
+
+onMounted(() => {
+  getQuestion()
+})
+
+onUnmounted(() => {
+  clearInterval(timeInterval.value)
+})
+// 获取题目
+const getQuestion = async () => {
+  if (route.query.sectionId && route.query.pointId) {
+    questionInfo.value = await handleGetAndSubmitQuestion({
+      sectionId: route.query.sectionId,
+      knowPointId: route.query.pointId ?? 1,
+      answerTime: route.query.answerTime,
+      stuAnswer: route.query.stuAnswer,
+      topicId: route.query.topicId ?? 0,
+      studentId: userStore.studentId,
+    })
+    hasNext.value = questionInfo.value.hasNext
+    answer.value = ''
+    resetTimer()
+  } else if (route.query.sectionId) {
+    questionInfo.value = await handleGetAndSubmitQuestion({
+      sectionId: route.query.sectionId,
+      knowPointId: route.query.pointId ?? 1,
+      answerTime: route.query.answerTime,
+      stuAnswer: route.query.stuAnswer,
+      topicId: route.query.topicId ?? 0,
+      studentId: userStore.studentId,
+    })
+    hasNext.value = questionInfo.value.hasNext
+    answer.value = ''
+    resetTimer()
+  }
+  else {
+    
+    to404()  
+  }
+}
+watch(() => route.query.topicId,getQuestion)
+
+// 下一题
+const nextQuestion = () => {
+  router.push({
+    path: '/question',
+    query: {
+      ...route.query,
+      topicId: question.value.id,
+      stuAnswer: answer.value,
+      answerTime: time.value
+    }
+  })
+}
+
+const submit = async () => {
+  userStore.changeCeshi()
+  // 提交最后一题答案
+  // await handleGetAndSubmitQuestion({
+  //   ...route.query,
+  //   stuAnswer: answer.value,
+  //   answerTime: time.value,
+  //   topicId: question.value.id,
+  //   studentId: userStore.studentId,
+  // })
+  router.replace({
+    path: '/result',
+    query: {
+      ...route.query,
+      stuAnswer: answer.value,
+      knowPointId: route.query.pointId,
+      time: time.value,
+    },
+  })
+}
+// 底部题号设置
+// 固定题号数组
+const fixedQuestionNumbers = Array.from({ length: 10 }, (_, i) => i + 1);
+
+// 动态计算每个题号的状态
+const questionStatusList = computed(() => {
+  const statusList = [];
+  for (let i = 0; i < fixedQuestionNumbers.length; i++) {
+    if (i < questionInfo.value?.showTopicResultList?.length) {
+      // 已加载的题目
+      statusList.push({
+        number: i + 1,
+        isCurrent: i === questionInfo.value.showTopicResultList.length - 1,
+        isCompleted: true,
+      });
+    } else {
+      // 尚未加载的题目
+      statusList.push({
+        number: i + 1,
+        isCurrent: false,
+        isCompleted: false,
+      });
+    }
+  }
+  return statusList;
+});
+</script>
 <template>
   <HeaderCm />
   <SubHeader title="测试中" exit-text="退出答题">
@@ -7,18 +177,16 @@
   </SubHeader>
   <main>
     <div class="questionBox">
-      <QuestionItem
-        v-model="answer"
-        :option="question"
-        :disabled="submitted"
-      >
-        <div class="answer" v-if="submitted">
-          <div class="judge">正确答案:{{result?.showTopicResponses[0]?.answer}};你的答案:{{result?.showTopicResponses[0]?.studentAnswer}}</div>
-          <div class="analysis">AI:解析:{{result?.showTopicResponses[0]?.analysis}}</div>
-        </div>
-        <div style="display: flex;justify-content: right">
-          <el-button :disabled="!answer || submitted" @click="submit">提交</el-button>
-          <el-button :disabled="!submitted" @click="nextQuestion">下一题</el-button>
+      <QuestionItem v-model="answer" :option="question" :disabled="submitted">
+        <!--        <div class="answer" v-if="submitted">-->
+        <!--          <div class="judge">正确答案:{{result?.showTopicResponses[0]?.answer}};你的答案:{{result?.showTopicResponses[0]?.studentAnswer}}</div>-->
+        <!--          <div class="analysis">AI:解析:{{result?.showTopicResponses[0]?.analysis}}</div>-->
+        <!--        </div>-->
+        <div style="display: flex; justify-content: right">
+          <el-button v-show="!hasNext" @click="submit">提交</el-button>
+          <el-button v-show="hasNext" :disabled="!answer" @click="nextQuestion"
+            >下一题</el-button
+          >
         </div>
       </QuestionItem>
     </div>
@@ -31,9 +199,10 @@
       <div class="left">
         <div class="viewDotBox">
           <ProblemViewDot
-            v-for="(status, index) in questionStatus"
+            v-for="(status, index) in questionInfo?.showTopicResultList"
             :key="index"
-            :value="status"
+            :value="index !== questionInfo.showTopicResultList.length - 1"
+            :index="index"
           >
             {{ index + 1 }}
           </ProblemViewDot>
@@ -53,124 +222,7 @@
       </div>
     </div>
   </footer>
-
 </template>
-
-<script setup>
-import SubHeader from '@/components/SubHeader.vue'
-import { computed, onMounted, onUnmounted, ref } from 'vue'
-import QuestionItem from '@/views/question/components/QuestionItem.vue'
-import { formatTime } from '@/utils/dateUtils.js'
-import { useRoute } from 'vue-router'
-import { getAnswer, getNextQuestion } from '@/api/question.js'
-import { useUserStore } from '@/stores/index.js'
-import HeaderCm from '@/components/HeaderCm.vue'
-import { to404 } from '@/router/index.js'
-import LLMTalk from '@/views/knowledge/components/LLMTalk'
-import ProblemViewDot from '@/components/problemViewDot.vue'
-import { ElMessage } from 'element-plus'
-
-const userStore = useUserStore()
-const route = useRoute()
-
-// 题目
-const question = ref()
-// 答案
-const answer = ref()
-// 是否已提交
-const submitted = ref(false)
-// 结果
-const result = ref()
-// 题目的回答状态
-const questionStatus = ref(Array(10).fill(false));
-// 答题数量
-const count = ref(1);
-
-// 时间相关逻辑
-const time = ref(0)
-const showTimeString = computed(() => formatTime(time.value))
-const timeInterval = ref()
-
-const startTiming = () => {
-  time.value = 1
-  clearInterval(timeInterval.value)
-  timeInterval.value = setInterval(() => {
-    time.value += 1
-  }, 1000)
-}
-
-// 停止计时函数
-const stopTiming = () => {
-  clearInterval(timeInterval.value)
-}
-// 重置计时器方法
-const resetTimer = () => {
-  stopTiming()
-  question.value.timeSpent = time.value
-  // startTiming()
-}
-defineExpose({
-  resetTimer,
-})
-
-onMounted(() => {
-  getQuestion()
-  startTiming()
-})
-
-onUnmounted(() => {
-  clearInterval(timeInterval.value)
-})
-// 获取第一道题目
-const getQuestion = async topicId => {
-  if (route.query.sectionId && route.query.pointId) {
-    question.value = await getNextQuestion({
-      sectionId: route.query.sectionId,
-      knowPointId: route.query.pointId,
-      answerTime: 0,
-      stuAnswer: '',
-      topicId: topicId ?? 0,
-      studentId: userStore.studentId,
-    })
-  }else {
-    to404()
-  }
-}
-
-// 下一题
-const nextQuestion = async () => {
-    count.value += 1
-    answer.value = ''
-    submitted.value = false
-
-    await getQuestion(question.value.id)
-    startTiming()
-}
-
-const submit = async () => {
-  const data = {
-    answerTime: time.value,
-    knowPointId: route.query.pointId,
-    sectionId: route.query.sectionId,
-    studentId: userStore.studentId,
-    stuAnswer: answer.value,
-    topicId: question.value.id
-  }
-  result.value = await getAnswer(data)
-  submitted.value = true
-  stopTiming()
-  // 更新当前题目状态
-  const currentIndex = questionStatus.value.findIndex(status => !status);
-  if (currentIndex !== -1) {
-    questionStatus.value[currentIndex] = true;
-  }
-  if (count.value === 10) {
-    ElMessage.success("以完成所有题目");
-    submitted.value = false;
-  }
-}
-
-</script>
 
 <style lang="scss" scoped>
 main {
@@ -181,7 +233,7 @@ main {
   margin-bottom: 128px;
 
   .questionBox {
-    float:left;
+    float: left;
     width: 400px;
     height: 500px;
     display: flex;
@@ -199,10 +251,10 @@ main {
 }
 .LL-Talk {
   position: absolute;
-  top: 160px;
-  right: 10px;
+  top: 150px;
+  right: 20px;
   height: 100px;
-  width: 27%;
+  width: 25%;
   margin-bottom: 100px;
 }
 
@@ -252,8 +304,9 @@ footer {
   width: 100%;
   font-size: 16px;
   margin-top: $padding-xxl;
-.judge,.analysis {
-  margin: $padding-xxl;
-}
+  .judge,
+  .analysis {
+    margin: $padding-xxl;
+  }
 }
 </style>
