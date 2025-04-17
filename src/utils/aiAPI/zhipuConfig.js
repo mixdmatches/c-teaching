@@ -1,6 +1,6 @@
 /**接口地址 */
 export const APIURL = 'https://open.bigmodel.cn/api/paas/v4/chat/completions'
-/**密钥 */
+/**个人密钥 */
 export const KEY = '5ef6700d3aed4bd192c04cbdf9d3557c.MEinVhw1wqamua0W'
 
 export const modelType = 'glm-4-plus'
@@ -393,21 +393,6 @@ const chapters = [
   },
 ]
 
-const question = {
-  title: '',
-  options: [
-    { key: 'A', value: '' },
-    { key: 'B', value: '' },
-    { key: 'C', value: '' },
-    { key: 'D', value: '' },
-  ],
-  answer: '',
-  hierarchy: '',
-  difficulty: '',
-  analysis: '',
-  chapter: '',
-  topic: '',
-}
 // 按知识点生成题目的提示信息
 export const TOOL_MESSAGE = {
   /**生成题目信息--按章节和知识点 */
@@ -450,7 +435,22 @@ export const TOOL_MESSAGE = {
             5. 返回的评估结果 json 对象必须紧凑，不能有换行。
             6. 题目相关的章节和知识点按照这个${JSON.stringify(chapters)}来确定。`
   },
-  /** 对话 **/
+  analyze: () => {
+    return `'你会根据学生错题信息给出详细的分析：1.优势领域，2.待提升方向，3.学习建议,给出的json格式为：[
+    {
+      "title": "错误原因分析",
+      "contentText": ""
+    },
+    {
+      title: '待提升方向',
+      contentText: '',
+    },
+    {
+      title: '学习建议',
+      contentText:'',
+    },
+  ]',其中title是标题，contentText是具体内容，返回的json对象必须紧凑，不能有换行。title标题我已给出，你给出contentText具体内容，100字以内'`
+  },
 }
 
 /**
@@ -554,4 +554,23 @@ export const generateConfigTalk = question => {
     ],
     stream: true,
   })
+}
+
+export const analyzeConfig = errQsList => {
+  return {
+    model: modelType,
+    messages: [
+      {
+        role: 'system',
+        content: TOOL_MESSAGE.analyze(),
+      },
+      {
+        role: 'user',
+        content: `请你根据下面的错题信息给出详细的分析：${JSON.stringify(errQsList)}`,
+      },
+    ],
+    response_format: {
+      type: 'json_object',
+    },
+  }
 }

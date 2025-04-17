@@ -11,5 +11,29 @@ export const getAnswer = async data => {
 export const getNextQuestion = async data => {
   return (await service.post('/api/topic/nextTopic', data)).data
 }
+export const handleGetAndSubmitQuestion = params => {
+  return getNextQuestion({
+    ...params,
+    topicId: params.topicId ?? 0,
+    knowPointId: params.pointId ?? 1,
+  })
+}
+export const getSimilarQuestion = async data => {
+  return (await service.post('/api/topic/sameType', {topicId:data})).data
+}
+/**
+ * 获取错题
+ */
 export const getErrorQuestion = async params =>
   service.get('/api/topic/wrong', { params })
+/**
+ * 获取相似题
+ * @param {*} topicId 
+ * @returns 
+ */
+export const postSameQs = topicId =>
+  service.post(`/api/topic/sameType?topicId=${topicId}`)
+// 提交错题
+export const submitSameTypeResult = async data => {
+  return (await service.post('/api/topic/sameTypeResult', data)).data
+}
