@@ -175,7 +175,7 @@ const markdownToHtml = computed(() => {
 // 复制按钮回调
 const handleCopy = async () => {
   try {
-    await navigator.clipboard.writeText(pointDetail.value.aiSummary)
+    await navigator.clipboard.writeText(pointDetail.value.summary)
     ElMessage.success('复制成功')
   } catch (err) {
     ElMessage.error('复制失败，请手动选择文本复制')
