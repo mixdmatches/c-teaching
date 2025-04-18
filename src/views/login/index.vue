@@ -56,7 +56,7 @@ const handleLogin = async () => {
   } = await apiPostLogin(formData.value)
   localStorage.setItem('token', jwt)
   localStorage.setItem('authority', authority)
-  userStore.setUserInfo({ ...formData.value })
+  
   router.push('/')
 }
 </script>

@@ -19,3 +19,6 @@ export const apiPostLogin = ({ studentId, password }) =>
   service.post(`/api/student/login?studentId=${studentId}&password=${password}`)
 
 export const apiPostOutLogin = () => service.get('/api/student/logout')
+
+// 查看学生状态
+export const apiGetStauts = () => service.get('/api/student/authority')
