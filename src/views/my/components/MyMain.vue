@@ -29,7 +29,7 @@
       </div>
     </el-card>
     <!-- 错题本 -->
-    <ErrorQustion />
+    <!-- <ErrorQustion /> -->
   </main>
 </template>
 
