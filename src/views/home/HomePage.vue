@@ -1,6 +1,6 @@
 <template>
   <HeaderCm />
-  <MainCm v-if="userStore.isCeshi">
+  <MainCm v-if="Number(auth)">
     <div class="top">
       <h2>上次学到</h2>
       <span class="study">
@@ -47,7 +47,7 @@
 import MainCm from '../../components/MainCm.vue'
 import OneCom from './components/OneCom.vue'
 import TowCom from './components/TowCom.vue'
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/index.js'
 // api
@@ -72,16 +72,6 @@ const getStudyStatus = async () => {
   const res = await apiGetStudyStatus(210047301)
   studentStatus.value = res.data
 }
-getStudyStatus()
-
-// const chapters = ref([])
-// const chapterId = ref('')
-// // 2.获取章节列表
-// const getChapters = async () => {
-//   const res = await apiGetAllChapters()
-//   chapters.value = res.chapters
-// }
-// getChapters()
 
 // 3.获取所有知识点列表
 const points = ref([])
@@ -89,7 +79,6 @@ const getAllPoints = async () => {
   const res = await apiGetAllPoints(210047301)
   points.value = res.data.knowPointList
 }
-getAllPoints()
 
 // 4.获取已学知识点列表
 const studyPoints = ref([])
@@ -97,7 +86,6 @@ const getStudyPoints = async () => {
   const res = await apiGetStudyPoints(210047301)
   studyPoints.value = res.data
 }
-getStudyPoints()
 
 // 继续学习按钮
 const handleStudy = () => {
@@ -127,6 +115,16 @@ const mini = computed(() => {
     return (minutes / 60).toFixed(1) + 'h'
   }
   return minutes + 'min'
+})
+const auth = localStorage.getItem('authority')
+console.log(auth, 'auth')
+
+onMounted(() => {
+  if (Number(auth) == 1) {
+    getStudyStatus()
+    getAllPoints()
+    getStudyPoints()
+  }
 })
 </script>
 
