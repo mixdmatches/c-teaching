@@ -2,10 +2,10 @@
   <HeaderCm />
   <SubHeader title="测试中" exit-text="退出答题">
     <template #right>
-      {{ showTimeString }}
+      
     </template>
   </SubHeader>
-  <main v-loading="isLoading" element-loading-text="拼命加载中..." style="min-height: 200px;">
+  <main v-loading="isLoading" element-loading-text="加载中..." style="min-height: 200px;">
     <el-scrollbar v-if="!isLoading">
       <div class="questionBox">
         <QuestionItem
@@ -93,6 +93,7 @@ const handleGetQuestionList = async () => {
       const list = await postSameQs(route.query.topicId)
       questionList.value = list.data
       console.log(questionList.value, "questionList")
+      isLoading.value = false
     }
   } catch (error) {
     console.error('获取题目失败:', error)

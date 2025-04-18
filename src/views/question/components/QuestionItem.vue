@@ -74,19 +74,11 @@ onMounted(() => {
       </div> -->
     </div>
   
-    <div v-if="options.topicType == 0">
+    <div>
        <div class="title">{{options?.title}}</div>
         <el-radio-group v-model="model" class="radioGroup" :disabled="disabled">
           <el-radio v-for="(item,index) in options?.option" :key="index" :label="item.key + ':  ' + item.value" :value="item.key" />
         </el-radio-group>
-    </div>
-    <div class="" v-else>
-      <div class="title">
-         <div v-for="(item,index) in options.title" :key="index" class="title_item">
-          <span v-html="item"></span>
-        </div>
-        <div class="Answer">请输入答案:<el-input v-model="model" class="answerInput"></el-input></div>
-      </div>
     </div>
     <slot>
 
