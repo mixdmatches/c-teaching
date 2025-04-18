@@ -26,7 +26,7 @@ const getRadioClassName = (key) =>{
 <template>
   <div class="questionItem">
     <div class="info">
-      <div class="type">{{option.type === 'radio' ? '单选题' : ''}}</div>
+      <div class="type">{{option.type === 'radio' ? '单选题' : '填空题'}}</div>
       <div class="starBox">
         <div class="label">难度：</div>
         <Stars :num="option.difficulty" />
