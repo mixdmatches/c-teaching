@@ -132,12 +132,12 @@ const handleResetTest = () => {
       </div>
       <div style="display: flex; gap: 20px">
         <LButton @click="() => router.push('/')" border>返回首页</LButton>
-        <LButton
-          v-if="result?.maturity == 1"
+        <!-- <LButton
+          v-if="result?.maturity >= 0.8"
           @click="() => router.push('/course')"
           border
           >学习下一章</LButton
-        >
+        > -->
       </div>
     </div>
   </footer>

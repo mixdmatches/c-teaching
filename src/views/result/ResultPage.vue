@@ -148,7 +148,7 @@ const getNextKnowledgePoint = async () => {
       <div style="display: flex; gap: 20px">
         <LButton @click="() => router.push('/')" border>返回首页</LButton>
         <LButton
-          v-if="result?.maturity == 1"
+          v-if="result?.maturity >= 0.8"
           @click="getNextKnowledgePoint"
           border
           >学习下一章</LButton
