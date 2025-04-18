@@ -39,3 +39,11 @@ export const postSameQs = topicId =>
 export const submitSameTypeResult = async data => {
   return (await service.post('/api/topic/sameTypeResult', data)).data
 }
+// 获取下一章知识点
+export const getNextKnowledge = async (knowPointId, sectionId) => {
+  const params = {
+    knowPointId,
+    sectionId
+  };
+  return (await service.get('/api/knowPoint/next', { params })).data;
+}

@@ -45,7 +45,7 @@ import { useUserStore } from '@/stores/index.js'
 const userStore = useUserStore()
 const userInfo = ref({})
 const handleGetUserInfo = async () => {
-  userInfo.value = await getUserInfo('210047301')
+  userInfo.value = await getUserInfo()
 }
 const userInfoFiled = [
   {

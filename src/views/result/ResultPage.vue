@@ -5,7 +5,7 @@ import { onMounted, ref } from 'vue'
 import QuestionResultItem from '@/views/result/components/QuestionResultItem.vue'
 import ProblemViewDot from '@/components/problemViewDot.vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getAnswer, handleGetAndSubmitQuestion } from '@/api/question.js'
+import { getAnswer, handleGetAndSubmitQuestion,getNextKnowledge } from '@/api/question.js'
 import { useUserStore } from '@/stores/index.js'
 import { formatToMinute } from '@/utils/dateUtils.js'
 import LLMTalk from '@/views/knowledge/components/LLMTalk.vue'
@@ -45,23 +45,28 @@ const handleResetTest = () => {
     },
   })
 }
+
 // 学习下一个知识点
-const goToKnowledgeDetail = () => {
-  const pointId = route.query.pointId;
-  const sectionId = route.query.sectionId;
-  if (pointId && sectionId) {
-    router.push({
-      path: '/knowledgeDetail',
-      query: {
-        pointId: pointId + 1,
-        sectionId: sectionId,
-        studentId: userStore.studentId,
-      },
-    });
-  } else {
-    console.error('缺少必要的参数 pointId 或 sectionId');
-  }
-};
+const nextPointId = ref();
+const nextSectionId = ref();
+const getNextKnowledgePoint = async () => {
+  const currentPointId = route.query.pointId;
+  const currentSectionId = route.query.sectionId;
+  const response = await getNextKnowledge({
+    sectionId: currentSectionId,
+    knowPointId: currentPointId,
+  });
+  nextPointId.value = response.pointId;
+  nextSectionId.value = response.sectionId;
+  router.push({
+    path: '/knowledgeDetail',
+    query: {
+      pointId: nextPointId.value,
+      sectionId: nextSectionId.value,
+      studentId: userStore.studentId,
+    },
+  });
+}
 
 </script>
 
@@ -144,7 +149,7 @@ const goToKnowledgeDetail = () => {
         <LButton @click="() => router.push('/')" border>返回首页</LButton>
         <LButton
           v-if="result?.maturity == 1"
-          @click="goToKnowledgeDetail"
+          @click="getNextKnowledgePoint"
           border
           >学习下一章</LButton
         >
