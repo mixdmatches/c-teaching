@@ -40,7 +40,7 @@
       ></el-tab-pane>
       <el-tab-pane label="视频" name="video">
         <div class="play-video">
-          <video class="video" controls src=""></video>
+          <video class="video" controls src="@/assets/video/c语言.mp4"></video>
         </div>
       </el-tab-pane>
     </el-tabs>
@@ -160,10 +160,10 @@ const getPointDetail = async () => {
     studentId: userStore.studentId,
   })
   pointDetail.value = res.data
-  let arr = pointDetail.value.course.split('')
-  arr.splice(0, 33)
-  arr.splice(arr.length - 12, 12)
-  pointDetail.value.course = fixMarkdown(arr.join(''))
+  // let arr = pointDetail.value.course.split('')
+  // arr.splice(0, 33)
+  // arr.splice(arr.length - 12, 12)
+  // pointDetail.value.course = fixMarkdown(arr.join(''))
 }
 getPointDetail()
 
@@ -184,8 +184,7 @@ const handleCopy = async () => {
 
 // 去测试按钮回调
 const handleTest = () => {
-
-  router.push({ path: '/question', query: { pointId:pointId , sectionId } })
+  router.push({ path: '/question', query: { pointId: pointId, sectionId } })
 }
 
 const activeName = ref('text')
@@ -312,7 +311,7 @@ onUnmounted(() => {
   }
   .play-video {
     width: 100%;
-    height: 400px;
+    height: 450px;
     background-color: #ffffff;
     padding: 0 $padding-xl;
     video {

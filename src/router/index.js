@@ -84,7 +84,8 @@ const router = createRouter({
 
 // 在路由配置中添加
 router.beforeEach((to, from) => {
-  if (to.path === '/cources' && !userStore.isCeshi) {
+  const path = ['/cources', '/errorquestion', '/notes']
+  if (path.includes(to.path) && !Number(localStorage.getItem('authority'))) {
     ElMessage.warning('还未测试，请先去测试！')
     return false
   }
@@ -93,6 +94,7 @@ router.beforeEach((to, from) => {
     router.push('/login')
     return false
   }
+  return true
 })
 
 export const to404 = () => {
