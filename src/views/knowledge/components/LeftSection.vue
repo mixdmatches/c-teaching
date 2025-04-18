@@ -40,7 +40,7 @@
       ></el-tab-pane>
       <el-tab-pane label="视频" name="video">
         <div class="play-video">
-          <video class="video" controls src="@/assets/video/c语言.mp4"></video>
+          <video class="video" controls :src="pointDetail.context"></video>
         </div>
       </el-tab-pane>
     </el-tabs>
