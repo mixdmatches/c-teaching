@@ -45,6 +45,23 @@ const handleResetTest = () => {
     },
   })
 }
+// 学习下一个知识点
+const goToKnowledgeDetail = () => {
+  const pointId = route.query.pointId;
+  const sectionId = route.query.sectionId;
+  if (pointId && sectionId) {
+    router.push({
+      path: '/knowledgeDetail',
+      query: {
+        pointId: pointId + 1,
+        sectionId: sectionId,
+        studentId: userStore.studentId,
+      },
+    });
+  } else {
+    console.error('缺少必要的参数 pointId 或 sectionId');
+  }
+};
 
 </script>
 
@@ -72,7 +89,7 @@ const handleResetTest = () => {
           <div>答对题数</div>
         </div>
         <div class="box">
-          <div>{{ route.query.time }}min</div>
+          <div>{{ route.query.time }}s</div>
           <div>用时</div>
         </div>
         <div class="box">
@@ -127,7 +144,7 @@ const handleResetTest = () => {
         <LButton @click="() => router.push('/')" border>返回首页</LButton>
         <LButton
           v-if="result?.maturity == 1"
-          @click="() => router.push('/course')"
+          @click="goToKnowledgeDetail"
           border
           >学习下一章</LButton
         >

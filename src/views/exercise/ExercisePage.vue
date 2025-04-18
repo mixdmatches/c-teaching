@@ -75,6 +75,9 @@ const status = ref(false)
 const questionList = ref([])
 // 加载状态
 const isLoading = ref(true)
+
+// 做题总时间
+const totalTime = ref(0);
 // 时间相关逻辑
 const time = ref(0)
 const showTimeString = computed(() => formatTime(time.value))
@@ -101,9 +104,11 @@ const handleGetQuestionList = async () => {
 
 // 开始计时
 const startTiming = () => {
-  timeInterval.value = setInterval(() => {
-    time.value += 1
-  }, 1000)
+  if (!timeInterval.value) {
+    timeInterval.value = setInterval(() => {
+      totalTime.value += 1
+    }, 1000)
+  }
 }
 
 onMounted(async () => {
