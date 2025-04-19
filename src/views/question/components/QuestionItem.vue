@@ -37,8 +37,8 @@ watch(
           title[index] = item.replace(/\\\\\"/g, "");
           title[index] = item.replace('```', "");
           title[index] = item.replace(/\\\\\\/g, "");
-          title[index] = item.replace(/\\\\/g, "")
-          title[index] = item.replace(/\\/g, "")
+          title[index] = item.replace(/\\\\/g, "");
+          title[index] = item.replace(/\\/g, "");
         })
          options.value = {
           ...info,
