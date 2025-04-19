@@ -96,6 +96,7 @@ const getQuestion = async () => {
     questionInfo.value = await handleGetAndSubmitQuestion({
       sectionId: route.query.sectionId,
       knowPointId: route.query.pointId,
+      pointId: route.query.pointId,
       answerTime: route.query.answerTime,
       stuAnswer: route.query.stuAnswer,
       // stuAnswer: route.query.topicType == 0? route.query.stuAnswer:'',
@@ -109,6 +110,7 @@ const getQuestion = async () => {
   } else if (route.query.sectionId) {
     questionInfo.value = await handleGetAndSubmitQuestion({
       sectionId: route.query.sectionId,
+      pointId: 0,
       knowPointId: route.query.pointId,
       answerTime: totalTime.value,
       stuAnswer: route.query.stuAnswer,

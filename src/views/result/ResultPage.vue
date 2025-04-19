@@ -47,21 +47,21 @@ const handleResetTest = () => {
 }
 
 // 学习下一个知识点
-const nextPointId = ref();
+const nextknowPointId = ref();
 const nextSectionId = ref();
 const getNextKnowledgePoint = async () => {
-  const currentPointId = route.query.pointId;
-  const currentSectionId = route.query.sectionId;
-  const response = await getNextKnowledge({
-    sectionId: currentSectionId,
-    knowPointId: currentPointId,
-  });
-  nextPointId.value = response.pointId;
-  nextSectionId.value = response.sectionId;
+  const data = {
+    knowPointId: route.query.pointId,
+    sectionId: route.query.sectionId,
+  }
+  const response = await getNextKnowledge(data)
+  console.log(response);
+  nextknowPointId.value = response?.knowPointId;
+  nextSectionId.value = response?.sectionId
   router.push({
     path: '/knowledgeDetail',
     query: {
-      pointId: nextPointId.value,
+      pointId: nextknowPointId.value,
       sectionId: nextSectionId.value,
       studentId: userStore.studentId,
     },
