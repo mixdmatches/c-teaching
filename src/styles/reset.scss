@@ -138,12 +138,12 @@ span,
 applet,
 object,
 iframe,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
+// h1,
+// h2,
+// h3,
+// h4,
+// h5,
+// h6,
 p,
 blockquote,
 pre,
@@ -343,12 +343,12 @@ pre {
   h6 {
     // font-size: revert;
     // 恢复字体大小
-    margin: 1em 0;
+    // margin: 1em 0;
     font-weight: bold; // 恢复标题加粗
   }
   // 添加具体字号设置（浏览器默认值）
   h1 {
-    font-size: 32px;
+    // font-size: 32px;
   } // 32px
   h2 {
     font-size: 24px;

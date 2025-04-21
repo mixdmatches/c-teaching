@@ -1,6 +1,7 @@
 <script setup>
 import Stars from "@/components/Stars.vue";
 import Tag from "@/components/Tag.vue";
+import { onMounted, watch,ref } from "vue";
 
 const props = defineProps({
   option: {
@@ -22,6 +23,38 @@ const props = defineProps({
   disabled: Boolean
 });
 const model = defineModel()
+const options = ref("");
+watch(
+  () => props.option,
+  (newVal, oldVal) => {
+    if(newVal.id) {
+        if(newVal.topicType == 0){
+      options.value = newVal
+      } else {
+        let info = { ...newVal }
+        let title = info.title.split("\\\\n");
+        title.forEach((item,index) => {
+          title[index] = item.replace(/\\\\\"/g, "");
+          title[index] = item.replace('```', "");
+          title[index] = item.replace(/\\\\\\/g, "");
+          title[index] = item.replace(/\\\\/g, "");
+          title[index] = item.replace(/\\/g, "");
+        })
+         options.value = {
+          ...info,
+          title:title
+         }
+      }
+    }
+   
+  },
+  {
+    immediate: true
+  }
+)
+onMounted(() => {
+    
+})
 </script>
 
 <template>
@@ -30,21 +63,23 @@ const model = defineModel()
       <div class="type">单选题</div>
       <div class="starBox">
         <div class="label">难度：</div>
-        <Stars :num="option?.difficulty" />
+        <Stars :num="options?.difficulty" />
       </div>
       <div class="starBox">
         <div class="label">重点：</div>
-        <Stars :num="option?.hierarchy" />
+        <Stars :num="options?.hierarchy" />
       </div>
-
       <!-- <div class="tagBox">
         <Tag :text="option?.knowPointName" />
       </div> -->
     </div>
-    <div class="title">{{option?.title}}</div>
-    <el-radio-group v-model="model" class="radioGroup" :disabled="disabled">
-      <el-radio v-for="(item,index) in option?.option" :key="index" :label="item.key + ':  ' + item.value" :value="item.key" />
-    </el-radio-group>
+  
+    <div>
+       <div class="title">{{options?.title}}</div>
+        <el-radio-group v-model="model" class="radioGroup" :disabled="disabled">
+          <el-radio v-for="(item,index) in options?.option" :key="index" :label="item.key + ':  ' + item.value" :value="item.key" />
+        </el-radio-group>
+    </div>
     <slot>
 
     </slot>
@@ -111,5 +146,17 @@ const model = defineModel()
   font-size: $margin-l;
   line-height: 25px;
   margin-top: 50px;
+}
+.title_item{
+  margin-bottom: 4px;
+}
+.Answer{
+  display: flex;
+  align-items: center;
+  gap: $padding-s;
+  margin-top: 20px;
+}
+.answerInput{
+  width: 300px;
 }
 </style>

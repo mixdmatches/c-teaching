@@ -12,10 +12,12 @@ export const getNextQuestion = async data => {
   return (await service.post('/api/topic/nextTopic', data)).data
 }
 export const handleGetAndSubmitQuestion = params => {
+  console.log(params.knowPointId)
+
   return getNextQuestion({
     ...params,
     topicId: params.topicId ?? 0,
-    knowPointId: params.pointId ?? 1,
+    knowPointId: params.knowPointId,
   })
 }
 export const getSimilarQuestion = async data => {
@@ -36,4 +38,8 @@ export const postSameQs = topicId =>
 // 提交错题
 export const submitSameTypeResult = async data => {
   return (await service.post('/api/topic/sameTypeResult', data)).data
+}
+// 获取下一章知识点
+export const getNextKnowledge = async (data) => {
+  return (await service.post('/api/knowPoint/next',data)).data;
 }

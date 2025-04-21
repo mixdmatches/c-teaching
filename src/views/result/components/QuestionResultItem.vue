@@ -47,7 +47,7 @@ const getRadioClassName = (key) =>{
 
     <div class="analysisBox">
       <div class="top">
-        <span>正确答案:{{option.answer}}</span>
+        <span>正确答案:{{option.answer??option.fillAnswer}}</span>
         <span>你的答案:{{option.studentAnswer}}</span>
       </div>
       <div>

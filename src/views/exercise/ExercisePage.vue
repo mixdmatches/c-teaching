@@ -2,11 +2,11 @@
   <HeaderCm />
   <SubHeader title="测试中" exit-text="退出答题">
     <template #right>
-      {{ showTimeString }}
+      
     </template>
   </SubHeader>
-  <main>
-    <el-scrollbar>
+  <main v-loading="isLoading" element-loading-text="加载中..." style="min-height: 200px;">
+    <el-scrollbar v-if="!isLoading">
       <div class="questionBox">
         <QuestionItem
           v-for="(item, index) in questionList"
@@ -29,7 +29,7 @@
           <ProblemViewDot
             v-for="(item, index) in questionList"
             :key="item.id"
-            :value="questionList[index].studentAnswer "
+            :value="questionList[index].studentAnswer"
           >
             {{ index + 1 }}
           </ProblemViewDot>
@@ -59,79 +59,68 @@ import { formatTime } from '@/utils/dateUtils.js'
 import HeaderCm from '@/components/HeaderCm.vue'
 import { useRoute, useRouter } from 'vue-router'
 import ProblemViewDot from '@/components/problemViewDot.vue'
-import LLMTalk from '@/views/knowledge/components/LLMTalk'
 import {
-  getQuestionByKnowledge,
-  getQuestionBySectionId,
   postSameQs,
-  submitSameTypeResult
 } from '@/api/question.js'
 import { useUserStore } from '@/stores/index.js'
 
 const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
-// 获取同类型的题目
-// 相同类型的题目
-const similarQuestion = ref()
-
 
 // 定义状态变量
 const status = ref(false)
 
 // 题目列表
 const questionList = ref([])
-const handleGetQuestionList = async () => {
+// 加载状态
+const isLoading = ref(true)
 
-  if (route.query.topicId) {
-    questionList.length = 0 
-    const list = await postSameQs(route.query.topicId)
-     questionList.value = list.data;
-    console.log(questionList.value,"questionList")
-    }
-}
-
+// 做题总时间
+const totalTime = ref(0);
 // 时间相关逻辑
 const time = ref(0)
 const showTimeString = computed(() => formatTime(time.value))
 const timeInterval = ref()
-const startTiming = () => {
-  timeInterval.value = setInterval(() => {
-    time.value += 1
-  }, 1000)
-}
-onMounted(() => {
-  handleGetQuestionList()
-  startTiming()
-})
 
-const fetchQuestions = async pointId => {
+// 获取题目列表
+const handleGetQuestionList = async () => {
   try {
-    const data = await getQuestionListByPointId(pointId)
-    questionList.splice(
-      0,
-      questionList.length,
-      ...data.map((item, index) => ({
-        no: index + 1,
-        type: item.type || 'radio',
-        difficulty: item.difficulty || 3,
-        emphasis: item.emphasis || 4,
-        tags: item.tags || [],
-        title: item.title || '题目描述',
-        options: item.options || [
-          { id: 'A', text: '选项一' },
-          { id: 'B', text: '选项二' },
-          { id: 'C', text: '选项三' },
-          { id: 'D', text: '选项四' },
-        ],
-        selectId: '',
-      }))
-    )
+    // 显示加载状态
+    isLoading.value = true
+
+    if (route.query.topicId) {
+      const list = await postSameQs(route.query.topicId)
+      questionList.value = list.data
+      console.log(questionList.value, "questionList")
+      isLoading.value = false
+    }
   } catch (error) {
-    console.error('请求错误:', error.message)
-    console.error('请求详情:', error.config)
+    console.error('获取题目失败:', error)
+  } finally {
+    // 隐藏加载状态
+    isLoading.value = false
   }
 }
+
+// 开始计时
+const startTiming = () => {
+  if (!timeInterval.value) {
+    timeInterval.value = setInterval(() => {
+      totalTime.value += 1
+    }, 1000)
+  }
+}
+
+onMounted(async () => {
+  // 获取题目数据
+  await handleGetQuestionList()
+
+  // 数据加载完成后开始计时
+  if (!isLoading.value) {
+    startTiming()
+  }
+})
 
 onUnmounted(() => {
   clearInterval(timeInterval.value)
@@ -139,27 +128,24 @@ onUnmounted(() => {
 
 // 提交测试
 const submitTest = async () => {
-  // 检查是否有未完成的题目
-
   // 更新状态为 true
   status.value = true
   userStore.changeCeshi()
 
   // 将状态传递到其他页面
   router.push({
-    path: '/samequestion',
-    query: {
-
-      showMistakesInfos: JSON.stringify(
-       questionList.value.map(item => {
-          return {
-            topicId: route.query.topicId,
-            studentAnswer: item.studentAnswer,
-          }
-        })
-      ),
-    },
-  })
+  path: '/samequestion',
+  query: {
+    showMistakesInfos: JSON.stringify(
+      questionList.value.map((item, index) => {
+        return {
+          topicId: index + 1, // 固定生成 topicId，从 1 开始递增
+          studentAnswer: item.studentAnswer,
+        };
+      })
+    ),
+  },
+});
 }
 </script>
 
@@ -193,7 +179,6 @@ footer {
     align-items: center;
     width: $main-width;
     margin: 0 auto;
-    
 
     .left {
       display: flex;

@@ -7,11 +7,13 @@
           :class="{ active: r.path === $route.path }"
           v-for="r in headRoutes"
           :key="r.path"
+          @click="handleToPath(r.path)"
         >
-          <el-icon v-if="r.meta.icon">
+          <!-- <el-icon v-if="r.meta.icon">
             <component :is="r.meta.icon" />
-          </el-icon>
-          <router-link :to="r.path">{{ r.meta.title }}</router-link>
+          </el-icon> -->
+          <!-- <router-link></router-link> -->
+          {{ r.meta.title }}
         </li>
       </ul>
     </nav>
@@ -54,6 +56,10 @@ const headRoutes = computed(() => {
 const userInfo = ref()
 const handleGetUserInfo = async () => {
   userInfo.value = await getUserInfo('210047301')
+}
+
+const handleToPath = path => {
+  router.push(path)
 }
 
 // 退出登录
