@@ -17,21 +17,26 @@ const route = useRoute()
 const router = useRouter()
 
 const questionInfo = ref()
+// 做题总时间
+const totalTime = ref(0);
 
 // 题目
 const question = computed(() => {
   if (questionInfo.value?.showTopicResultList && questionInfo.value?.showTopicResultList.length > 0) {
-    return questionInfo.value.showTopicResultList[questionInfo.value.showTopicResultList.length - 1]
+    return {
+      topicType:questionInfo.value.topicType,
+      ...questionInfo.value.showTopicResultList[questionInfo.value.showTopicResultList.length - 1]
+    }
   }
   return {}
 })
 // 相同类型的题目
 const similarQuestion = ref()
 const handleSimilarQuestion = async () => {
- 
+
 }
 // if (route.query.topicId) {
-  
+
 // }
 // 答案
 const answer = ref()
@@ -43,32 +48,41 @@ const questionStatus = ref(Array(10).fill(false));
 const hasNext = ref(true);
 // 时间相关逻辑
 const time = ref(0)
-const showTimeString = computed(() => formatTime(time.value))
+const showTimeString = computed(() => formatTime(totalTime.value))
 const timeInterval = ref()
 
-const restartTiming = () => {
-  time.value = 1
-  clearInterval(timeInterval.value)
-  timeInterval.value = setInterval(() => {
-    time.value += 1
-  }, 1000)
+// const restartTiming = () => {
+//   totalTime.value = 1
+//   clearInterval(timeInterval.value)
+//   timeInterval.value = setInterval(() => {
+//     totalTime.value += 1
+//   }, 1000)
+// }
+// 启动计时器
+const startTiming = () => {
+  if (!timeInterval.value) {
+    timeInterval.value = setInterval(() => {
+      totalTime.value += 1
+    }, 1000)
+  }
 }
-
 // 停止计时函数
 const stopTiming = () => {
   clearInterval(timeInterval.value)
 }
 // 重置计时器方法
-const resetTimer = () => {
-  stopTiming()
-  restartTiming()
-}
-defineExpose({
-  resetTimer,
-})
+// const resetTimer = () => {
+//   stopTiming()
+//   restartTiming()
+// }
+// defineExpose({
+//   resetTimer,
+// })
 
 onMounted(() => {
   getQuestion()
+  totalTime.value = 1
+  startTiming()
 })
 
 onUnmounted(() => {
@@ -77,29 +91,35 @@ onUnmounted(() => {
 // 获取题目
 const getQuestion = async () => {
   if (route.query.sectionId && route.query.pointId) {
+    console.log(typeof route.query.pointId)
+
     questionInfo.value = await handleGetAndSubmitQuestion({
       sectionId: route.query.sectionId,
-      knowPointId: route.query.pointId ?? 1,
+      knowPointId: route.query.pointId,
+      pointId: route.query.pointId,
       answerTime: route.query.answerTime,
       stuAnswer: route.query.stuAnswer,
+      // stuAnswer: route.query.topicType == 0? route.query.stuAnswer:'',
+      // fillAnswer: route.query.topicType == 1?route.query.stuAnswer:'',
       topicId: route.query.topicId ?? 0,
       studentId: userStore.studentId,
     })
     hasNext.value = questionInfo.value.hasNext
     answer.value = ''
-    resetTimer()
+    //resetTimer()
   } else if (route.query.sectionId) {
     questionInfo.value = await handleGetAndSubmitQuestion({
       sectionId: route.query.sectionId,
-      knowPointId: route.query.pointId ?? 1,
-      answerTime: route.query.answerTime,
+      pointId: 0,
+      knowPointId: route.query.pointId,
+      answerTime: totalTime.value,
       stuAnswer: route.query.stuAnswer,
       topicId: route.query.topicId ?? 0,
       studentId: userStore.studentId,
     })
     hasNext.value = questionInfo.value.hasNext
     answer.value = ''
-    resetTimer()
+    //resetTimer()
   }
   else {
     
@@ -115,14 +135,14 @@ const nextQuestion = () => {
     query: {
       ...route.query,
       topicId: question.value.id,
+      topicType: questionInfo.value.topicType,
       stuAnswer: answer.value,
-      answerTime: time.value
+      answerTime: totalTime.value
     }
   })
 }
 
 const submit = async () => {
-  userStore.changeCeshi()
   // 提交最后一题答案
   // await handleGetAndSubmitQuestion({
   //   ...route.query,
@@ -136,10 +156,12 @@ const submit = async () => {
     query: {
       ...route.query,
       stuAnswer: answer.value,
+      topicType: questionInfo.value.topicType,
       knowPointId: route.query.pointId,
-      time: time.value,
+      time: totalTime.value,
     },
   })
+  console.log(userStore.isCeshi.value)
 }
 // 底部题号设置
 // 固定题号数组
@@ -235,7 +257,7 @@ main {
   .questionBox {
     float: left;
     width: 400px;
-    height: 500px;
+    height: 700px;
     display: flex;
     flex-direction: column;
     gap: $padding-xxl;

@@ -17,20 +17,28 @@ const userStore = useUserStore()
 const result = ref()
 
 const handleGetAnswer = async () => {
-  // 调用接口获取结果
-  const query = JSON.parse(
-    route.query.showMistakesInfos
-)
-  const data = await submitSameTypeResult({showMistakesInfos:query})
-  data.showTopicResponses = data.showTopicResponses?.map((item, index) => {
-    return {
-      ...item,
-      no: index + 1,
-      type: 'radio',
-    }
-  })
-  result.value = data
-}
+  // 解析路由参数
+  const query = JSON.parse(route.query.showMistakesInfos);
+
+  // 强制设置 topicId 为 1, 2, 3, 4, 5
+  const fixedQuery = query.map((item, index) => ({
+    ...item,
+    topicId: index + 1, // 强制设置 topicId
+  }));
+
+  // 调用接口
+  const data = await submitSameTypeResult({ showMistakesInfos: fixedQuery });
+
+  // 处理返回数据
+  data.showTopicResponses = data.showTopicResponses?.map((item, index) => ({
+    ...item,
+    no: index + 1,
+    type: 'radio',
+  }));
+
+  // 存储结果
+  result.value = data;
+};
 
 onMounted(() => handleGetAnswer());
 // 重新测试回调函数
@@ -59,7 +67,7 @@ const handleResetTest = () => {
 
   <main>
     <el-scrollbar>
-      <div class="topBox" style="margin-left: 60px">
+      <!-- <div class="topBox" style="margin-left: 60px">
         <div class="box">
           <div>{{ (result?.correctRate * 100).toFixed(0) }}%</div>
           <div>正确率</div>
@@ -78,7 +86,7 @@ const handleResetTest = () => {
           <div>{{ (result?.maturity * 100 ?? 0).toFixed(1) }}%</div>
           <div>熟练程度</div>
         </div>
-      </div>
+      </div> -->
       <div class="questionBox">
         <QuestionResultItem
           v-for="(item, index) in result?.showTopicResponses"
@@ -124,12 +132,12 @@ const handleResetTest = () => {
       </div>
       <div style="display: flex; gap: 20px">
         <LButton @click="() => router.push('/')" border>返回首页</LButton>
-        <LButton
-          v-if="result?.maturity == 1"
+        <!-- <LButton
+          v-if="result?.maturity >= 0.8"
           @click="() => router.push('/course')"
           border
           >学习下一章</LButton
-        >
+        > -->
       </div>
     </div>
   </footer>

@@ -5,7 +5,7 @@ import { onMounted, ref } from 'vue'
 import QuestionResultItem from '@/views/result/components/QuestionResultItem.vue'
 import ProblemViewDot from '@/components/problemViewDot.vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getAnswer, handleGetAndSubmitQuestion } from '@/api/question.js'
+import { getAnswer, handleGetAndSubmitQuestion,getNextKnowledge } from '@/api/question.js'
 import { useUserStore } from '@/stores/index.js'
 import { formatToMinute } from '@/utils/dateUtils.js'
 import LLMTalk from '@/views/knowledge/components/LLMTalk.vue'
@@ -46,6 +46,28 @@ const handleResetTest = () => {
   })
 }
 
+// 学习下一个知识点
+const nextknowPointId = ref();
+const nextSectionId = ref();
+const getNextKnowledgePoint = async () => {
+  const data = {
+    knowPointId: route.query.pointId,
+    sectionId: route.query.sectionId,
+  }
+  const response = await getNextKnowledge(data)
+  console.log(response);
+  nextknowPointId.value = response?.knowPointId;
+  nextSectionId.value = response?.sectionId
+  router.push({
+    path: '/knowledgeDetail',
+    query: {
+      pointId: nextknowPointId.value,
+      sectionId: nextSectionId.value,
+      studentId: userStore.studentId,
+    },
+  });
+}
+
 </script>
 
 <template>
@@ -72,7 +94,7 @@ const handleResetTest = () => {
           <div>答对题数</div>
         </div>
         <div class="box">
-          <div>{{ route.query.time }}min</div>
+          <div>{{ route.query.time }}s</div>
           <div>用时</div>
         </div>
         <div class="box">
@@ -126,8 +148,8 @@ const handleResetTest = () => {
       <div style="display: flex; gap: 20px">
         <LButton @click="() => router.push('/')" border>返回首页</LButton>
         <LButton
-          v-if="result?.maturity == 1"
-          @click="() => router.push('/course')"
+          v-if="result?.maturity >= 0.8"
+          @click="getNextKnowledgePoint"
           border
           >学习下一章</LButton
         >

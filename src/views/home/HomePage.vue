@@ -1,13 +1,21 @@
 <template>
   <HeaderCm />
-  <MainCm v-if="userStore.isCeshi">
+  <MainCm v-if="Number(authority)">
     <div class="top">
-      <h2>上次学到</h2>
+      <h2 v-if="studentStatus?.pointName">上次学到</h2>
+      <h2 v-else>先去课程页看看吧</h2>
       <span class="study">
-        <p>{{ studentStatus.pointName }}</p>
-        <el-button type="primary" @click="handleStudy">继续学习</el-button>
+        <p>{{ studentStatus?.pointName || '无' }}</p>
+        <el-button
+          type="primary"
+          @click="handleStudy"
+          v-show="studentStatus?.pointName"
+          >继续学习</el-button
+        >
       </span>
-      <p class="next-study">下一个知识点：{{ studentStatus.nextPointName }}</p>
+      <p class="next-study">
+        下一个知识点：{{ studentStatus?.nextPointName || '无' }}
+      </p>
     </div>
     <div class="four-data">
       <div class="item">
@@ -47,14 +55,16 @@
 import MainCm from '../../components/MainCm.vue'
 import OneCom from './components/OneCom.vue'
 import TowCom from './components/TowCom.vue'
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/index.js'
 // api
 import { apiGetStudyStatus, apiGetStudyPoints } from '@/api/home.js'
-import { apiGetAllChapters, apiGetAllPoints } from '@/api/chapters.js'
+import { apiGetAllPoints } from '@/api/chapters.js'
+import { apiGetStauts, getUserInfo } from '@/api/user.js'
 const router = useRouter()
 const userStore = useUserStore()
+const userInfo = ref({})
 
 // 进入测试按钮
 const handleTest = () => {
@@ -69,35 +79,35 @@ const handleTest = () => {
 const studentStatus = ref({})
 // 1.获取学生学习情况
 const getStudyStatus = async () => {
-  const res = await apiGetStudyStatus(210047301)
+  const res = await apiGetStudyStatus(userInfo.value.stuNum)
+  console.log(res)
+
   studentStatus.value = res.data
 }
-getStudyStatus()
-
-// const chapters = ref([])
-// const chapterId = ref('')
-// // 2.获取章节列表
-// const getChapters = async () => {
-//   const res = await apiGetAllChapters()
-//   chapters.value = res.chapters
-// }
-// getChapters()
 
 // 3.获取所有知识点列表
 const points = ref([])
 const getAllPoints = async () => {
-  const res = await apiGetAllPoints(210047301)
+  const res = await apiGetAllPoints(userInfo.value.stuNum)
   points.value = res.data.knowPointList
+  console.log(points.value, 'points')
 }
-getAllPoints()
 
 // 4.获取已学知识点列表
 const studyPoints = ref([])
 const getStudyPoints = async () => {
-  const res = await apiGetStudyPoints(210047301)
+  const res = await apiGetStudyPoints(userInfo.value.stuNum)
   studyPoints.value = res.data
 }
-getStudyPoints()
+
+// 获取学生信息
+const getStudentInfo = async () => {
+  const res = await getUserInfo()
+  userInfo.value = res
+  localStorage.setItem('userInfo', JSON.stringify(res))
+  userStore.setUserInfo(res)
+  console.log(userInfo.value.stuNum, 'num')
+}
 
 // 继续学习按钮
 const handleStudy = () => {
@@ -127,6 +137,24 @@ const mini = computed(() => {
     return (minutes / 60).toFixed(1) + 'h'
   }
   return minutes + 'min'
+})
+
+const authority = ref()
+// 获取学生状态
+const getStatus = async () => {
+  const { data } = await apiGetStauts()
+  authority.value = data
+  localStorage.setItem('authority', data)
+}
+
+onMounted(async () => {
+  await getStudentInfo()
+  getStatus()
+  if (authority.value !== 1) {
+    getStudyStatus()
+    getAllPoints()
+    getStudyPoints()
+  }
 })
 </script>
 

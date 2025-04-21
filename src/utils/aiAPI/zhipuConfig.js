@@ -1,7 +1,7 @@
 /**接口地址 */
 export const APIURL = 'https://open.bigmodel.cn/api/paas/v4/chat/completions'
 /**个人密钥 */
-export const KEY = '5ef6700d3aed4bd192c04cbdf9d3557c.MEinVhw1wqamua0W'
+export const KEY = 'cd2dda64609046a789dd1c9c79b73b5e.RSrzZGtiEse1uICY'
 
 export const modelType = 'glm-4-plus'
 // 模拟章节和知识点数据
