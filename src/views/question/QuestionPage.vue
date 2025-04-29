@@ -91,8 +91,6 @@ onUnmounted(() => {
 // 获取题目
 const getQuestion = async () => {
   if (route.query.sectionId && route.query.pointId) {
-    console.log(typeof route.query.pointId)
-
     questionInfo.value = await handleGetAndSubmitQuestion({
       sectionId: route.query.sectionId,
       knowPointId: route.query.pointId,
@@ -161,7 +159,6 @@ const submit = async () => {
       time: totalTime.value,
     },
   })
-  console.log(userStore.isCeshi.value)
 }
 // 底部题号设置
 // 固定题号数组

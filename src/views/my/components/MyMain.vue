@@ -99,7 +99,8 @@ const cancelEdit = () => {
 
 <style lang="scss" scoped>
 // 引入全局变量
-@import '@/styles/variables.scss';
+// @import '@/styles/variables.scss';
+@use 'sass:math';
 
 main {
   width: 100%;

@@ -80,8 +80,6 @@ const studentStatus = ref({})
 // 1.获取学生学习情况
 const getStudyStatus = async () => {
   const res = await apiGetStudyStatus(userInfo.value.stuNum)
-  console.log(res)
-
   studentStatus.value = res.data
 }
 
@@ -90,7 +88,6 @@ const points = ref([])
 const getAllPoints = async () => {
   const res = await apiGetAllPoints(userInfo.value.stuNum)
   points.value = res.data.knowPointList
-  console.log(points.value, 'points')
 }
 
 // 4.获取已学知识点列表
@@ -106,7 +103,6 @@ const getStudentInfo = async () => {
   userInfo.value = res
   localStorage.setItem('userInfo', JSON.stringify(res))
   userStore.setUserInfo(res)
-  console.log(userInfo.value.stuNum, 'num')
 }
 
 // 继续学习按钮

@@ -12,8 +12,6 @@ export const getNextQuestion = async data => {
   return (await service.post('/api/topic/nextTopic', data)).data
 }
 export const handleGetAndSubmitQuestion = params => {
-  console.log(params.knowPointId)
-
   return getNextQuestion({
     ...params,
     topicId: params.topicId ?? 0,

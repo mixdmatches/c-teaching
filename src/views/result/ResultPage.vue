@@ -55,7 +55,6 @@ const getNextKnowledgePoint = async () => {
     sectionId: route.query.sectionId,
   }
   const response = await getNextKnowledge(data)
-  console.log(response);
   nextknowPointId.value = response?.knowPointId;
   nextSectionId.value = response?.sectionId
   router.push({

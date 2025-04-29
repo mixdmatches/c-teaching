@@ -165,7 +165,6 @@ const handleSendQuestion = async (event, selectedText) => {
     )
     isLoading.value = false
   } catch (err) {
-    console.log(err)
     const htmlStr = `<div class="error">糟糕出错了！请重试！</div>`
     talkGroupArr.value[talkGroupArr.value.length - 1].answer += htmlStr
     isLoading.value = false

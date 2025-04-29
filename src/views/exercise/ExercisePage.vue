@@ -92,7 +92,6 @@ const handleGetQuestionList = async () => {
     if (route.query.topicId) {
       const list = await postSameQs(route.query.topicId)
       questionList.value = list.data
-      console.log(questionList.value, "questionList")
       isLoading.value = false
     }
   } catch (error) {

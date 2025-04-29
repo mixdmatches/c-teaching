@@ -24,11 +24,9 @@ service.interceptors.request.use(config => {
 // 响应拦截器
 service.interceptors.response.use(
   response => {
-    console.log('响应数据:', response.data.choices[0].message)
     return response.data.choices[0].message.content
   },
   error => {
-    console.error('请求错误:', error)
     ElMessage({
       type: 'error',
       message: '请求错误',

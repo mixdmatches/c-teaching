@@ -1,9 +1,10 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import vueDevTools from 'vite-plugin-vue-devtools'
 import path from 'path'
-// https://vite.dev/config/
+
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [vue(), vueDevTools()],
   build: {
     minify: 'terser',
     terserOptions: {
@@ -17,18 +18,20 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
-    // 添加 extensions 配置
     extensions: ['.js', '.vue', '.json', '.ts'],
   },
   css: {
     preprocessorOptions: {
       scss: {
-        // additionalData: `@import "@/assets/scss/variables.scss";`,
         additionalData: `
           @use "sass:math";
           @use "@/styles/variables.scss" as *;
         `,
       },
     },
+  },
+  server: {
+    host: '0.0.0.0',
+    open: true,
   },
 })

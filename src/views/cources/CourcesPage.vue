@@ -187,7 +187,6 @@ const debouncedWarning = debounce(() => {
 }, 500)
 // 跳转到知识点详情页
 const goToDetail = (pointId, sectionId, knowState) => {
-  console.log(knowState)
   if (knowState == 2) {
     // 调用防抖函数
     debouncedWarning()

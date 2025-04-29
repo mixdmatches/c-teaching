@@ -11,7 +11,7 @@ const props = defineProps({
   pointList: Array,
 })
 const one = ref()
-let myChart // 定义 myChart 变量
+
 onMounted(() => {
   const myChart = echarts.init(one.value)
   const option = {

@@ -146,8 +146,6 @@ const handleVisibelity = row => {
 }
 // 做同类型函数
 const handleWordSameQs = row => {
-  // 跳转题目页面
-  console.log('row', row)
   router.push({
     path: '/exercise',
     query: {
