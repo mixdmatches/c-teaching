@@ -177,4 +177,51 @@ main {
     }
   }
 }
+
+// 移动端样式调整
+@media screen and (max-width: 768px) {
+  main {
+    padding: $padding-s;
+  }
+
+  .info-card {
+    padding: $padding-l;
+  }
+
+  .info-card .filed {
+    margin-top: $margin-m; // 调整字段之间的间距
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $padding-m;
+  }
+
+  .info-card .filed .label {
+    width: auto;
+    font-size: $font-size-l;
+  }
+
+  .info-card .filed .input-field,
+  .info-card .filed .display-field {
+    min-width: auto;
+    width: 100%;
+    font-size: $font-size-m;
+    padding: $padding-s $padding-m;
+  }
+
+  .info-card .buttonDiv {
+    justify-content: center;
+  }
+
+  .info-card .buttonDiv .edit-button {
+    width: 100%;
+  }
+
+  .info-card .buttonDiv .el-button {
+    font-size: $font-size-m;
+    padding: $padding-s $padding-m;
+  }
+  .buttonDiv {
+    margin-top: $margin-xl;
+  }
+}
 </style>

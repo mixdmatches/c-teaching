@@ -3,7 +3,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, onMounted, computed, watch, onUnmounted } from 'vue'
 import * as echarts from 'echarts'
 const props = defineProps({
   pointList: Array,
@@ -17,6 +17,10 @@ const option = ref({
     text: '知识点难度分布', // 标题文本
     left: 'center', // 标题位置
     top: '5%', // 调整标题垂直位置
+    // 移动端标题字体变小
+    textStyle: {
+      fontSize: window.innerWidth < 768 ? 14 : 18
+    }
   },
   tooltip: {
     trigger: 'item',
@@ -24,12 +28,16 @@ const option = ref({
   legend: {
     left: 'center',
     top: '85%',
+    // 移动端图例字体变小
+    textStyle: {
+      fontSize: window.innerWidth < 768 ? 10 : 12
+    }
   },
   series: [
     {
       name: '难度分布',
       type: 'pie',
-      radius: ['40%', '70%'],
+      radius: window.innerWidth < 768 ? ['30%', '60%'] : ['40%', '70%'],
       avoidLabelOverlap: false,
       itemStyle: {
         borderRadius: 10,
@@ -43,7 +51,7 @@ const option = ref({
       emphasis: {
         label: {
           show: true,
-          fontSize: 40,
+          fontSize: window.innerWidth < 768 ? 20 : 40,
           fontWeight: 'bold',
         },
       },
@@ -101,12 +109,20 @@ const filterPoints = () => {
 // 初始化图表
 onMounted(() => {
   myChart = echarts.init(tow.value)
+  window.addEventListener('resize', function () {
+    myChart.resize()
+  })
   filterPoints() // 初始化时调用 filterPoints 函数
 })
 
 // 当 points 变化时更新图表
 watch(points, () => {
   filterPoints()
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', function () {}) // 移除事件监听器
+  myChart.dispose() // 销毁图表实例
 })
 </script>
 
@@ -115,5 +131,11 @@ watch(points, () => {
   // 占去剩下的空间
   flex: 1;
   height: 300px;
+}
+
+@media screen and (max-width: 768px) {
+  .chart-tow {
+    height: 200px;
+  }
 }
 </style>

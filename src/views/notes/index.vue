@@ -502,4 +502,32 @@ onMounted(() => {
     }
   }
 }
+
+// 移动端样式适配
+@media screen and (max-width: 768px) {
+  .noteContent {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .noteContent .left,
+  .noteContent .center,
+  .noteContent .right {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .noteContent .left {
+    width: 100%;
+  }
+
+  .noteContent .center .notes .note-item .content {
+    height: auto;
+    -webkit-line-clamp: 2;
+  }
+
+  .noteContent .right .v-md-editor {
+    height: 400px;
+  }
+}
 </style>

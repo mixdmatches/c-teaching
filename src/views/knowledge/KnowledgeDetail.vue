@@ -1,7 +1,7 @@
 <template>
   <HeaderCm></HeaderCm>
   <div class="content-box">
-    <LeftStudy></LeftStudy>
+    <LeftStudy v-if="!isMobile"></LeftStudy>
     <LeftSection @send-question="callChildMethod"></LeftSection>
     <div class="aiTalk">
       <LLMTalk ref="llmTalkRef"></LLMTalk>
@@ -15,7 +15,7 @@ import HeaderCm from '../../components/HeaderCm.vue'
 import LeftStudy from '@/views/knowledge/components/LeftStudy.vue'
 import LLMTalk from '@/views/knowledge/components/LLMTalk'
 import LeftSection from '@/views/knowledge/components/LeftSection'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 // 引入图标
 import { marked } from 'marked'
 import hljs from 'highlight.js'
@@ -35,6 +35,8 @@ const callChildMethod = selectText => {
     llmTalkRef.value.handleSendQuestion(null, `解释：${selectText}`)
   }
 }
+// 检测是否为移动端
+const isMobile = computed(() => window.innerWidth <= 768)
 </script>
 
 <style scoped lang="scss">
@@ -107,6 +109,23 @@ const callChildMethod = selectText => {
       opacity: 1;
       visibility: visible;
     }
+  }
+}
+
+@media (max-width: 768px) {
+  .content-box {
+    flex-direction: column;
+    padding: 0 $padding-s;
+    margin-top: $margin-l;
+  }
+
+  .aiTalk {
+    width: 100%;
+  }
+
+  .ai-help {
+    right: 20px;
+    font-size: 1.5 * $font-size-xl;
   }
 }
 </style>

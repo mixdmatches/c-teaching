@@ -81,4 +81,23 @@ h2 {
     }
   }
 }
+
+@media screen and (max-width: 768px) {
+  .ai-content {
+    flex-direction: column;
+    margin-top: $margin-s;
+    gap: $margin-m;
+    .item {
+      padding: 16px;
+      h5 {
+        font-size: 14px;
+        line-height: 20px;
+      }
+      p {
+        font-size: 14px;
+        line-height: 20px;
+      }
+    }
+  }
+}
 </style>

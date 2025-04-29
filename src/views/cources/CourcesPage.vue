@@ -331,4 +331,26 @@ const filter = (sectionId, knowState) => {
     }
   }
 }
+
+// 移动端样式调整
+@media screen and (max-width: 768px) {
+  .main {
+    padding: 0 $padding-xl;
+  }
+  .select-box {
+    flex-direction: column;
+  }
+  .select-box .section {
+    flex-wrap: wrap;
+    gap: $margin-m;
+    justify-content: stretch;
+  }
+  .knowledges .knowledge-card {
+    width: 100%;
+    .card-header {
+      flex-direction: column;
+      gap: $margin-s;
+    }
+  }
+}
 </style>

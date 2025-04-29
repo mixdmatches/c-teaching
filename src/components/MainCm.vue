@@ -15,4 +15,9 @@ main {
   margin-top: $margin-xl;
   margin-bottom: $header-height;
 }
+@media screen and (max-width: 768px) {
+  main {
+    width: auto;
+  }
+}
 </style>

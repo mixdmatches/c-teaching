@@ -155,6 +155,11 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
+@media screen and (max-width: 768px) {
+  .data {
+    flex-wrap: wrap;
+  }
+}
 @mixin top-flex {
   width: 100%;
   height: 200px;
@@ -210,13 +215,12 @@ onMounted(async () => {
 }
 .four-data {
   width: 100%;
-  height: 200px;
   margin-top: $margin-xl;
   background-color: $base-bg-color;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: $padding-xxl;
+  padding: $padding-xl;
   border-radius: $border-radius-m;
   .el-row {
     width: 100%;

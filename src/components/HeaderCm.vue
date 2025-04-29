@@ -74,6 +74,12 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
+@media screen and (max-width: 768px) {
+  .logo {
+    display: none;
+  }
+}
+
 @font-face {
   font-family: 'DingTalk'; // 自定义字体名称
   src: url('@/assets/fonts/DingTalk-JinBuTi.ttf') format('truetype');
@@ -93,12 +99,12 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: space-around;
-  padding: 0 4 * $padding-xl;
+  padding: 0 $padding-xl;
   gap: 3 * $margin-xxl;
 }
 .logo {
   color: $primary-color;
-  font-size: 4rem;
+  font-size: 4em;
   font-family: 'DingTalk';
 }
 nav {
@@ -109,7 +115,7 @@ nav {
     justify-content: start;
     gap: 2 * $margin-xl;
     li {
-      font-size: $font-size-xl;
+      font-size: $font-size-l;
       display: flex;
       align-items: center;
       justify-content: center;

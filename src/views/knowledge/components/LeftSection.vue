@@ -345,4 +345,19 @@ onUnmounted(() => {
     }
   }
 }
+
+@media (max-width: 768px) {
+  .left {
+    max-width: 100%;
+    max-height: none;
+  }
+
+  .play-video {
+    height: auto;
+  }
+
+  .video {
+    height: auto;
+  }
+}
 </style>
