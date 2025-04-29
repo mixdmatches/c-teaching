@@ -13,6 +13,22 @@ export default defineConfig({
         drop_debugger: true,
       },
     },
+    // 配置打包后的资源目录
+    assetsDir: 'assets',
+    rollupOptions: {
+      output: {
+        // 配置 JS 文件输出目录
+        chunkFileNames: 'js/[name]-[hash].js',
+        entryFileNames: 'js/[name]-[hash].js',
+        // 配置 CSS 文件输出目录
+        assetFileNames: chunkInfo => {
+          if (chunkInfo.name && chunkInfo.name.endsWith('.css')) {
+            return 'css/[name]-[hash][extname]'
+          }
+          return 'assets/[name]-[hash][extname]'
+        },
+      },
+    },
   },
   resolve: {
     alias: {
@@ -24,7 +40,6 @@ export default defineConfig({
     preprocessorOptions: {
       scss: {
         additionalData: `
-          @use "sass:math";
           @use "@/styles/variables.scss" as *;
         `,
       },

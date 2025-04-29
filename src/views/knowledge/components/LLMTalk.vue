@@ -50,6 +50,7 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
+import { Bubble } from 'ant-design-x-vue'
 // 引入api
 import { apiPostAiTalk, apiPostAiTalkNode, apiPostTalk } from '@/api/aiTalk.js'
 import { marked } from 'marked'

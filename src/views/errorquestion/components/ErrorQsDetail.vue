@@ -33,7 +33,7 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, computed, toRef } from 'vue'
+import { computed, toRef } from 'vue'
 const props = defineProps({
   visible: Boolean,
   currentRow: Object,

@@ -98,8 +98,6 @@ const cancelEdit = () => {
 </script>
 
 <style lang="scss" scoped>
-// 引入全局变量
-// @import '@/styles/variables.scss';
 @use 'sass:math';
 
 main {
@@ -142,7 +140,7 @@ main {
     }
 
     .input-field {
-      background-color: lighten($main-bg-color, 5%);
+      // background-color: lighten($main-bg-color, 5%);
       border: 1px solid $base-border-color;
       outline: none;
       transition: border-color 0.3s ease;
