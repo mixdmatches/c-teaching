@@ -10,7 +10,7 @@ export default {
   printWidth: 80,
   arrowParens: 'avoid',
   proseWrap: 'always',
-  endOfLine: 'lf',
+  endOfLine: 'auto',
   experimentalTernaries: false,
   tabWidth: 2,
   jsxSingleQuote: false,

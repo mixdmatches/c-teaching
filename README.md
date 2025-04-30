@@ -1,9 +1,14 @@
 # Vue 3 + Vite c语言教学管理系统前台项目
 
 ## 项目简介
-本项目是一个基于Vue 3 + Vite构建的C语言教学管理系统前端项目，旨在为学生提供便捷的C语言学习体验。系统包含课程学习、知识点练习、错题管理等功能模块。项目已全面适配移动端，提供良好的跨设备使用体验。
+
+本项目是一个基于Vue 3 +
+Vite构建的C语言教学管理系统前端项目，旨在为学生提供便捷的C语言学习体验。系统包含课程学习、知识点练习、错题管理等功能模块。项目已适配移动端，提供良好的跨设备使用体验。
+
+**移动端apk包在apk目录下，可自行下载体验。**
 
 ## 技术栈
+
 - 前端框架：Vue 3
 - 构建工具：Vite
 - UI组件库：Element Plus
@@ -13,10 +18,14 @@
 - Markdown解析：marked
 
 ## 项目启动步骤
+
 1. `pnpm install` 安装依赖
 2. `pnpm dev` 运行开发服务器
-3. `pnpm build` 打包生产环境代码
-4. `pnpm preview` 预览打包后的代码
+
+## 其他命令
+1. `pnpm lint` 代码检查
+2. `pnpm build` 打包生产环境代码
+3. `pnpm preview` 预览打包后的代码
 
 ## 项目结构
 
@@ -82,6 +91,7 @@ src
 ```
 
 ## 主要功能
+
 - 视频课程学习
 - 知识点练习
 - 错题收集与复习
@@ -90,51 +100,65 @@ src
 - 移动端适配：支持手机、平板等设备
 
 ## 开发环境配置
+
 - Node.js版本：>=16.0.0
 - pnpm版本：>=8.0.0
 
 ## 项目构建
+
 - 开发环境：`pnpm dev`
 - 生产环境：`pnpm build`
 - 测试环境：`pnpm build:test`
 
 ## 代码规范
+
 - ESLint：用于JavaScript/TypeScript代码检查
 - Prettier：用于代码格式化
 
 ## 项目依赖
+
 - 详见`package.json`文件
 
 ## 项目截图（pc端）
 
 ### 登录页
+
 ![登录页](./src/assets/images/pc/登录页.png)
 
 ### 首页
+
 ![首页](./src/assets/images/pc/首页.png)
 
 ### 课程列表页
+
 ![课程列表页](./src/assets/images/pc/课程页.png)
 
 ### 知识点详情页
+
 ![知识点详情页](./src/assets/images/pc/知识点详情页.png)
 
 ### 答题页
+
 ![答题页](./src/assets/images/pc/答题页.png)
 
 ### 题目解析页
+
 ![题目解析页](./src/assets/images/pc/题目解析页.png)
 
 ### 笔记页
+
 ![笔记页](./src/assets/images/pc/笔记页.png)
 
 ### 错题页
+
 ![错题页](./src/assets/images/pc/错题页.png)
 
 ### 个人中心页
+
 ![个人中心页](./src/assets/images/pc/个人中心页.png)
 
 ## 贡献指南
+
 1. Fork项目
 2. 创建新的功能分支
 3. 提交代码变更
