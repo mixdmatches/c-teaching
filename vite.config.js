@@ -1,9 +1,16 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import vueDevTools from 'vite-plugin-vue-devtools'
 import path from 'path'
-// https://vite.dev/config/
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
 export default defineConfig({
-  plugins: [vue()],
+  base: './',
+  publishPath: './',
+  plugins: [vue(), vueDevTools()],
   build: {
     minify: 'terser',
     terserOptions: {
@@ -12,23 +19,40 @@ export default defineConfig({
         drop_debugger: true,
       },
     },
+    // 配置打包后的资源目录
+    assetsDir: 'assets',
+    rollupOptions: {
+      output: {
+        // 配置 JS 文件输出目录
+        chunkFileNames: 'js/[name]-[hash].js',
+        entryFileNames: 'js/[name]-[hash].js',
+        // 配置 CSS 文件输出目录
+        assetFileNames: chunkInfo => {
+          if (chunkInfo.name && chunkInfo.name.endsWith('.css')) {
+            return 'css/[name]-[hash][extname]'
+          }
+          return 'assets/[name]-[hash][extname]'
+        },
+      },
+    },
   },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
-    // 添加 extensions 配置
     extensions: ['.js', '.vue', '.json', '.ts'],
   },
   css: {
     preprocessorOptions: {
       scss: {
-        // additionalData: `@import "@/assets/scss/variables.scss";`,
         additionalData: `
-          @use "sass:math";
           @use "@/styles/variables.scss" as *;
         `,
       },
     },
+  },
+  server: {
+    host: '0.0.0.0',
+    open: true,
   },
 })

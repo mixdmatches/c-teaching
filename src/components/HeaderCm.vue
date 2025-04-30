@@ -4,9 +4,9 @@
     <nav>
       <ul>
         <li
-          :class="{ active: r.path === $route.path }"
           v-for="r in headRoutes"
           :key="r.path"
+          :class="{ active: r.path === $route.path }"
           @click="handleToPath(r.path)"
         >
           <!-- <el-icon v-if="r.meta.icon">
@@ -44,7 +44,7 @@
 <script setup>
 import { getUserInfo, apiPostOutLogin } from '@/api/user.js'
 import { ref, onMounted, computed } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 const router = useRouter()
 const dropdownRoutes = computed(() => {
   return router.getRoutes().filter(r => r.meta && r.meta.show === 'dropdown')
@@ -74,6 +74,12 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
+@media screen and (max-width: 768px) {
+  .logo {
+    display: none;
+  }
+}
+
 @font-face {
   font-family: 'DingTalk'; // 自定义字体名称
   src: url('@/assets/fonts/DingTalk-JinBuTi.ttf') format('truetype');
@@ -93,12 +99,12 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: space-around;
-  padding: 0 4 * $padding-xl;
+  padding: 0 $padding-xl;
   gap: 3 * $margin-xxl;
 }
 .logo {
   color: $primary-color;
-  font-size: 4rem;
+  font-size: 4em;
   font-family: 'DingTalk';
 }
 nav {
@@ -109,7 +115,7 @@ nav {
     justify-content: start;
     gap: 2 * $margin-xl;
     li {
-      font-size: $font-size-xl;
+      font-size: $font-size-l;
       display: flex;
       align-items: center;
       justify-content: center;

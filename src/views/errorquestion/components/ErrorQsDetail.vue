@@ -1,8 +1,13 @@
 <template>
-  <el-dialog v-model="visible" title="题目详情" width="800">
+  <!-- 修改对话框宽度为响应式 -->
+  <el-dialog
+    v-model="visible"
+    title="题目详情"
+    :width="isMobile ? '90%' : '800px'"
+  >
     <div class="questionItem border">
       <div class="title">{{ currentRow.title }}</div>
-      <ul class="options" v-for="op in currentRow.option" :key="op.key">
+      <ul v-for="op in currentRow.option" :key="op.key" class="options">
         <li
           class="option"
           :class="{
@@ -33,7 +38,7 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, computed, toRef } from 'vue'
+import { computed, toRef, ref, onMounted, onUnmounted } from 'vue'
 const props = defineProps({
   visible: Boolean,
   currentRow: Object,
@@ -43,6 +48,21 @@ const emits = defineEmits(['update:visible'])
 const visible = computed({
   get: () => props.visible,
   set: value => emits('update:visible', value),
+})
+
+// 判断是否为移动端
+const isMobile = ref(window.innerWidth < 768)
+
+const checkMobile = () => {
+  isMobile.value = window.innerWidth < 768
+}
+
+onMounted(() => {
+  window.addEventListener('resize', checkMobile)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkMobile)
 })
 </script>
 
@@ -55,9 +75,6 @@ const visible = computed({
   margin-top: $margin-xl;
 }
 .questionItem {
-  // width: 1200px;
-  // height: 400px;
-  // margin-top: $margin-s;
   background-color: $base-bg-color;
   border-radius: $border-radius-m;
   padding: $padding-xl;
@@ -146,6 +163,29 @@ const visible = computed({
       font-weight: 400;
       color: $info-color;
     }
+  }
+}
+
+// 移动端样式适配
+@media screen and (max-width: 768px) {
+  .questionItem {
+    padding: $padding-m;
+  }
+
+  .questionItem .title {
+    font-size: $font-size-xl;
+  }
+
+  .questionItem .options .option {
+    font-size: $font-size-m;
+  }
+
+  .result {
+    font-size: $font-size-m;
+  }
+
+  .result p {
+    font-size: $font-size-s;
   }
 }
 </style>

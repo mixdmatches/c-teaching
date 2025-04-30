@@ -10,15 +10,15 @@
         </div>
       </template>
       <el-select
+        v-model="selectOption"
         style="width: 200px"
         @change="handleChangeChapter"
-        v-model="selectOption"
       >
         <el-option
           v-for="item in chapter"
+          :key="item.id"
           :label="item.text"
           :value="item.id"
-          :key="item.id"
         ></el-option>
       </el-select>
       <el-table
@@ -36,12 +36,12 @@
         </el-table-column>
         <el-table-column prop="difficulty" label="难度">
           <template #default="scope">
-            <el-rate disabled v-model="scope.row.difficulty" />
+            <el-rate v-model="scope.row.difficulty" disabled />
           </template>
         </el-table-column>
         <el-table-column prop="hierarchy" label="重点">
           <template #default="scope">
-            <el-rate disabled v-model="scope.row.hierarchy" />
+            <el-rate v-model="scope.row.hierarchy" disabled />
           </template>
         </el-table-column>
         <el-table-column fixed="right" label="操作">
@@ -66,7 +66,7 @@
       </el-table>
       <ErrorQsDetail
         :visible="dialogTableVisible"
-        :currentRow="currentRow"
+        :current-row="currentRow"
         @update:visible="dialogTableVisible = $event"
       />
     </el-card>
@@ -146,8 +146,6 @@ const handleVisibelity = row => {
 }
 // 做同类型函数
 const handleWordSameQs = row => {
-  // 跳转题目页面
-  console.log('row', row)
   router.push({
     path: '/exercise',
     query: {

@@ -12,8 +12,6 @@ export const getNextQuestion = async data => {
   return (await service.post('/api/topic/nextTopic', data)).data
 }
 export const handleGetAndSubmitQuestion = params => {
-  console.log(params.knowPointId)
-
   return getNextQuestion({
     ...params,
     topicId: params.topicId ?? 0,
@@ -21,7 +19,7 @@ export const handleGetAndSubmitQuestion = params => {
   })
 }
 export const getSimilarQuestion = async data => {
-  return (await service.post('/api/topic/sameType', {topicId:data})).data
+  return (await service.post('/api/topic/sameType', { topicId: data })).data
 }
 /**
  * 获取错题
@@ -30,8 +28,8 @@ export const getErrorQuestion = async params =>
   service.get('/api/topic/wrong', { params })
 /**
  * 获取相似题
- * @param {*} topicId 
- * @returns 
+ * @param {*} topicId
+ * @returns
  */
 export const postSameQs = topicId =>
   service.post(`/api/topic/sameType?topicId=${topicId}`)
@@ -40,6 +38,6 @@ export const submitSameTypeResult = async data => {
   return (await service.post('/api/topic/sameTypeResult', data)).data
 }
 // 获取下一章知识点
-export const getNextKnowledge = async (data) => {
-  return (await service.post('/api/knowPoint/next',data)).data;
+export const getNextKnowledge = async data => {
+  return (await service.post('/api/knowPoint/next', data)).data
 }

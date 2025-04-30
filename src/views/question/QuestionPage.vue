@@ -4,13 +4,13 @@ import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import QuestionItem from '@/views/question/components/QuestionItem.vue'
 import { formatTime } from '@/utils/dateUtils.js'
 import { useRoute } from 'vue-router'
-import { getNextQuestion, handleGetAndSubmitQuestion, getSimilarQuestion,postSameQs } from '@/api/question.js'
+import { handleGetAndSubmitQuestion } from '@/api/question.js'
 import { useUserStore } from '@/stores/index.js'
 import HeaderCm from '@/components/HeaderCm.vue'
 import { to404 } from '@/router/index.js'
 import LLMTalk from '@/views/knowledge/components/LLMTalk'
 import ProblemViewDot from '@/components/problemViewDot.vue'
-import { useRouter} from 'vue-router'
+import { useRouter } from 'vue-router'
 
 const userStore = useUserStore()
 const route = useRoute()
@@ -18,23 +18,26 @@ const router = useRouter()
 
 const questionInfo = ref()
 // 做题总时间
-const totalTime = ref(0);
+const totalTime = ref(0)
 
 // 题目
 const question = computed(() => {
-  if (questionInfo.value?.showTopicResultList && questionInfo.value?.showTopicResultList.length > 0) {
+  if (
+    questionInfo.value?.showTopicResultList &&
+    questionInfo.value?.showTopicResultList.length > 0
+  ) {
     return {
-      topicType:questionInfo.value.topicType,
-      ...questionInfo.value.showTopicResultList[questionInfo.value.showTopicResultList.length - 1]
+      topicType: questionInfo.value.topicType,
+      ...questionInfo.value.showTopicResultList[
+        questionInfo.value.showTopicResultList.length - 1
+      ],
     }
   }
   return {}
 })
 // 相同类型的题目
-const similarQuestion = ref()
-const handleSimilarQuestion = async () => {
-
-}
+const _similarQuestion = ref()
+const _handleSimilarQuestion = async () => {}
 // if (route.query.topicId) {
 
 // }
@@ -43,11 +46,11 @@ const answer = ref()
 // 是否已提交
 const submitted = ref(false)
 // 题目的回答状态
-const questionStatus = ref(Array(10).fill(false));
+const _questionStatus = ref(Array(10).fill(false))
 // 是否存在下一题
-const hasNext = ref(true);
+const hasNext = ref(true)
 // 时间相关逻辑
-const time = ref(0)
+const _time = ref(0)
 const showTimeString = computed(() => formatTime(totalTime.value))
 const timeInterval = ref()
 
@@ -67,7 +70,7 @@ const startTiming = () => {
   }
 }
 // 停止计时函数
-const stopTiming = () => {
+const _stopTiming = () => {
   clearInterval(timeInterval.value)
 }
 // 重置计时器方法
@@ -91,8 +94,6 @@ onUnmounted(() => {
 // 获取题目
 const getQuestion = async () => {
   if (route.query.sectionId && route.query.pointId) {
-    console.log(typeof route.query.pointId)
-
     questionInfo.value = await handleGetAndSubmitQuestion({
       sectionId: route.query.sectionId,
       knowPointId: route.query.pointId,
@@ -120,13 +121,11 @@ const getQuestion = async () => {
     hasNext.value = questionInfo.value.hasNext
     answer.value = ''
     //resetTimer()
-  }
-  else {
-    
-    to404()  
+  } else {
+    to404()
   }
 }
-watch(() => route.query.topicId,getQuestion)
+watch(() => route.query.topicId, getQuestion)
 
 // 下一题
 const nextQuestion = () => {
@@ -137,8 +136,8 @@ const nextQuestion = () => {
       topicId: question.value.id,
       topicType: questionInfo.value.topicType,
       stuAnswer: answer.value,
-      answerTime: totalTime.value
-    }
+      answerTime: totalTime.value,
+    },
   })
 }
 
@@ -161,15 +160,15 @@ const submit = async () => {
       time: totalTime.value,
     },
   })
-  console.log(userStore.isCeshi.value)
 }
 // 底部题号设置
 // 固定题号数组
-const fixedQuestionNumbers = Array.from({ length: 10 }, (_, i) => i + 1);
+const fixedQuestionNumbers = Array.from({ length: 10 }, (_, i) => i + 1)
 
 // 动态计算每个题号的状态
-const questionStatusList = computed(() => {
-  const statusList = [];
+// 由于 questionStatusList 未被使用，根据规则将变量名改为以 _ 开头
+const _questionStatusList = computed(() => {
+  const statusList = []
   for (let i = 0; i < fixedQuestionNumbers.length; i++) {
     if (i < questionInfo.value?.showTopicResultList?.length) {
       // 已加载的题目
@@ -177,18 +176,18 @@ const questionStatusList = computed(() => {
         number: i + 1,
         isCurrent: i === questionInfo.value.showTopicResultList.length - 1,
         isCompleted: true,
-      });
+      })
     } else {
       // 尚未加载的题目
       statusList.push({
         number: i + 1,
         isCurrent: false,
         isCompleted: false,
-      });
+      })
     }
   }
-  return statusList;
-});
+  return statusList
+})
 </script>
 <template>
   <HeaderCm />
@@ -329,6 +328,49 @@ footer {
   .judge,
   .analysis {
     margin: $padding-xxl;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  main {
+    width: 100%;
+    height: auto;
+    margin: 0;
+    padding: 16px;
+
+    .questionBox {
+      width: 100%;
+      height: auto;
+      float: none;
+    }
+  }
+
+  .LL-Talk {
+    position: static;
+    width: 100%;
+    height: 300px;
+    margin: 16px 0;
+  }
+
+  footer {
+    position: static;
+    height: auto;
+    padding: 16px;
+
+    .footerBox {
+      width: 100%;
+      flex-direction: column;
+      align-items: flex-start;
+
+      .left {
+        flex-direction: column;
+        align-items: flex-start;
+
+        .viewDotBox {
+          margin-bottom: 16px;
+        }
+      }
+    }
   }
 }
 </style>

@@ -1,3 +1,39 @@
+<template>
+  <div class="left-study">
+    <!-- 学习时长 -->
+    <div class="study-time">
+      <span class="time-header">学习时长</span>
+      <span class="time">{{ formattedStudyTime }}</span>
+    </div>
+    <!-- 推荐学习 -->
+    <div class="study-recommend">
+      <span class="recommend-header">推荐学习</span>
+      <ul>
+        <a
+          href="https://juejin.cn/post/6892199770106888199?searchId=202503231848084FC53F1486D15F276CEA"
+          target="_blank"
+          >C语言重点——指针篇（一文让你完全搞懂指针）</a
+        >
+        <a
+          href="https://juejin.cn/post/7317844669228695587?searchId=202503231858287EB9E6C0F622602EC3F6"
+          target="_blank"
+          >深入解析 C 语言中的 for 循环、break 和 continue</a
+        >
+        <a
+          href="https://juejin.cn/post/7239715208791736376?searchId=20250323190133350B50620458903FA56A"
+          target="_blank"
+          >C语言编程-结构体</a
+        >
+        <a
+          href="https://juejin.cn/post/7033711811006464030?searchId=202503231903006C5AAC599A4B8E37E9EB"
+          target="_blank"
+          >漫谈C语言内存管理</a
+        >
+      </ul>
+    </div>
+  </div>
+</template>
+
 <script setup>
 import { onMounted, onUnmounted, ref, computed } from 'vue'
 import { useUserStore } from '@/stores/index'
@@ -36,42 +72,6 @@ onUnmounted(() => {
   }
 })
 </script>
-
-<template>
-  <div class="left-study">
-    <!-- 学习时长 -->
-    <div class="study-time">
-      <span class="time-header">学习时长</span>
-      <span class="time">{{ formattedStudyTime }}</span>
-    </div>
-    <!-- 推荐学习 -->
-    <div class="study-recommend">
-      <span class="recommend-header">推荐学习</span>
-      <ul>
-        <a
-          href="https://juejin.cn/post/6892199770106888199?searchId=202503231848084FC53F1486D15F276CEA"
-          target="_blank"
-          >C语言重点——指针篇（一文让你完全搞懂指针）</a
-        >
-        <a
-          href="https://juejin.cn/post/7317844669228695587?searchId=202503231858287EB9E6C0F622602EC3F6"
-          target="_blank"
-          >深入解析 C 语言中的 for 循环、break 和 continue</a
-        >
-        <a
-          href="https://juejin.cn/post/7239715208791736376?searchId=20250323190133350B50620458903FA56A"
-          target="_blank"
-          >C语言编程-结构体</a
-        >
-        <a
-          href="https://juejin.cn/post/7033711811006464030?searchId=202503231903006C5AAC599A4B8E37E9EB"
-          target="_blank"
-          >漫谈C语言内存管理</a
-        >
-      </ul>
-    </div>
-  </div>
-</template>
 
 <style lang="scss" scoped>
 .left-study {
@@ -131,6 +131,19 @@ onUnmounted(() => {
         color: $primary-color;
       }
     }
+  }
+}
+
+@media (max-width: 768px) {
+  .left-study {
+    width: 100%;
+    height: auto;
+  }
+
+  .study-recommend ul a {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
   }
 }
 </style>

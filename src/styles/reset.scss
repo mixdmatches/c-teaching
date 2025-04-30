@@ -1,3 +1,5 @@
+@use './variables.scss' as *;
+
 // 重置初始样式
 *:not(.markdown-container, .markdown-container *),
 *:after,
@@ -322,7 +324,7 @@ pre {
     color: inherit;
   }
   // 添加行高恢复
-  line-height: 1.6;
+  // line-height: 1.6;
   ol,
   ul {
     list-style: disc; // 恢复列表符号
