@@ -7,7 +7,7 @@
   >
     <div class="questionItem border">
       <div class="title">{{ currentRow.title }}</div>
-      <ul class="options" v-for="op in currentRow.option" :key="op.key">
+      <ul v-for="op in currentRow.option" :key="op.key" class="options">
         <li
           class="option"
           :class="{

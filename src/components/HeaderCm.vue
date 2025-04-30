@@ -4,9 +4,9 @@
     <nav>
       <ul>
         <li
-          :class="{ active: r.path === $route.path }"
           v-for="r in headRoutes"
           :key="r.path"
+          :class="{ active: r.path === $route.path }"
           @click="handleToPath(r.path)"
         >
           <!-- <el-icon v-if="r.meta.icon">
@@ -44,7 +44,7 @@
 <script setup>
 import { getUserInfo, apiPostOutLogin } from '@/api/user.js'
 import { ref, onMounted, computed } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 const router = useRouter()
 const dropdownRoutes = computed(() => {
   return router.getRoutes().filter(r => r.meta && r.meta.show === 'dropdown')

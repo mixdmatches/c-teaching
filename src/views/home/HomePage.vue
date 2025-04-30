@@ -7,9 +7,9 @@
       <span class="study">
         <p>{{ studentStatus?.pointName || '无' }}</p>
         <el-button
+          v-show="studentStatus?.pointName"
           type="primary"
           @click="handleStudy"
-          v-show="studentStatus?.pointName"
           >继续学习</el-button
         >
       </span>
@@ -33,9 +33,9 @@
     </div>
     <div class="data">
       <!-- 折线图 -->
-      <OneCom :pointList="points" />
+      <OneCom :point-list="points" />
       <!-- 圆环 进度-->
-      <TowCom :pointList="points" />
+      <TowCom :point-list="points" />
     </div>
   </MainCm>
   <MainCm v-else>

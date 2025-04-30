@@ -9,7 +9,7 @@
       class="ai-content"
       :style="{ height: isLoading ? '150px' : 'auto' }"
     >
-      <div class="item" v-for="item in aiAnaArr" :key="item">
+      <div v-for="item in aiAnaArr" :key="item" class="item">
         <h5>{{ item.title }}</h5>
         <p>{{ item.contentText }}</p>
       </div>

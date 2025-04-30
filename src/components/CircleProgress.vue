@@ -4,12 +4,18 @@ defineProps({
   borderWidth: { type: Number, default: 20 },
   progress: { type: Number, default: 0 },
   color: { type: String, default: '#ff4d4f' },
-});
+})
 </script>
 
 <template>
-  <div class="progress-ring" :style="{ '--progress': progress, '--size': size + 'px', '--color': color }">
-    <div class="progress-inner" :style="{ '--innerSize': (size - borderWidth) + 'px' }">
+  <div
+    class="progress-ring"
+    :style="{ '--progress': progress, '--size': size + 'px', '--color': color }"
+  >
+    <div
+      class="progress-inner"
+      :style="{ '--innerSize': size - borderWidth + 'px' }"
+    >
       <slot></slot>
     </div>
   </div>
@@ -20,7 +26,10 @@ defineProps({
   width: var(--size);
   height: var(--size);
   border-radius: 50%;
-  background: conic-gradient(var(--color) calc(var(--progress) * 3.6deg), #f3f3f3 0deg);
+  background: conic-gradient(
+    var(--color) calc(var(--progress) * 3.6deg),
+    #f3f3f3 0deg
+  );
   display: flex;
   align-items: center;
   justify-content: center;

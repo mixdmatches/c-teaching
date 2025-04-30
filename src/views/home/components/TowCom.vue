@@ -1,5 +1,5 @@
 <template>
-  <div class="chart-tow" ref="tow"></div>
+  <div ref="tow" class="chart-tow"></div>
 </template>
 
 <script setup>
@@ -19,8 +19,8 @@ const option = ref({
     top: '5%', // 调整标题垂直位置
     // 移动端标题字体变小
     textStyle: {
-      fontSize: window.innerWidth < 768 ? 14 : 18
-    }
+      fontSize: window.innerWidth < 768 ? 14 : 18,
+    },
   },
   tooltip: {
     trigger: 'item',
@@ -30,8 +30,8 @@ const option = ref({
     top: '85%',
     // 移动端图例字体变小
     textStyle: {
-      fontSize: window.innerWidth < 768 ? 10 : 12
-    }
+      fontSize: window.innerWidth < 768 ? 10 : 12,
+    },
   },
   series: [
     {

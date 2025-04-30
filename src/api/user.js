@@ -4,7 +4,7 @@ import service from '../utils/request'
 export const apiGetUserInfo = () => service.get('/api/user')
 export const apiPostAiTopic = data => service.post('/api/ai/topic', data)
 export const apiGetStudentInfo = () => service.get('/api/student/info/100001')
-export const getUserInfo = async() => {
+export const getUserInfo = async () => {
   return (await service.get(`/api/student/info`)).data
 }
 export const updateUserInfo = async data => {

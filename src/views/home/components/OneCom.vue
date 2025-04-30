@@ -1,19 +1,20 @@
 <template>
   <!-- 折线图 -->
-  <div class="chart-one" ref="one"></div>
+  <div ref="one" class="chart-one"></div>
 </template>
 
 <script setup>
 // 每一章知识点数量的分布
 import { ref, onMounted, onUnmounted } from 'vue'
 import * as echarts from 'echarts'
-const props = defineProps({
+defineProps({
   pointList: Array,
 })
 const one = ref()
 
+let myChart
 onMounted(() => {
-  const myChart = echarts.init(one.value)
+  myChart = echarts.init(one.value)
   window.addEventListener('resize', function () {
     myChart.resize()
   })
@@ -23,8 +24,8 @@ onMounted(() => {
       left: 'center',
       // 移动端标题字体变小
       textStyle: {
-        fontSize: window.innerWidth < 768 ? 14 : 18
-      }
+        fontSize: window.innerWidth < 768 ? 14 : 18,
+      },
     },
     tooltip: {
       trigger: 'axis',
@@ -38,8 +39,8 @@ onMounted(() => {
       top: '85%',
       // 移动端图例字体变小
       textStyle: {
-        fontSize: window.innerWidth < 768 ? 10 : 12
-      }
+        fontSize: window.innerWidth < 768 ? 10 : 12,
+      },
     },
     grid: {
       left: window.innerWidth < 768 ? '5%' : '3%',
@@ -52,15 +53,15 @@ onMounted(() => {
       data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
       // 移动端 x 轴字体变小
       axisLabel: {
-        fontSize: window.innerWidth < 768 ? 10 : 12
-      }
+        fontSize: window.innerWidth < 768 ? 10 : 12,
+      },
     },
     yAxis: {
       type: 'value',
       // 移动端 y 轴字体变小
       axisLabel: {
-        fontSize: window.innerWidth < 768 ? 10 : 12
-      }
+        fontSize: window.innerWidth < 768 ? 10 : 12,
+      },
     },
     series: [
       {

@@ -1,8 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { useUserStore } from '@/stores/index.js'
-import pinia from '@/stores/index.js'
-const userStore = useUserStore(pinia)
 
 const routes = [
   {
@@ -83,7 +80,7 @@ const router = createRouter({
 })
 
 // 在路由配置中添加
-router.beforeEach((to, from) => {
+router.beforeEach((to, _from) => {
   const path = ['/cources', '/errorquestion', '/notes']
   if (path.includes(to.path) && !Number(localStorage.getItem('authority'))) {
     ElMessage.warning('还未测试，请先去测试！')

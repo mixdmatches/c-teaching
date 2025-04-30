@@ -1,17 +1,19 @@
 <template>
   <HeaderCm />
   <SubHeader title="测试中" exit-text="退出答题">
-    <template #right>
-      
-    </template>
+    <template #right> </template>
   </SubHeader>
-  <main v-loading="isLoading" element-loading-text="加载中..." style="min-height: 200px;">
+  <main
+    v-loading="isLoading"
+    element-loading-text="加载中..."
+    style="min-height: 200px"
+  >
     <el-scrollbar v-if="!isLoading">
       <div class="questionBox">
         <QuestionItem
           v-for="(item, index) in questionList"
-          v-model="questionList[index].studentAnswer"
           :key="item.id"
+          v-model="questionList[index].studentAnswer"
           :option="item"
         />
       </div>
@@ -52,16 +54,14 @@
 
 <script setup>
 import SubHeader from '@/components/SubHeader.vue'
-import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import QuestionItem from '@/views/question/components/QuestionItem.vue'
 import LButton from '@/components/LButton.vue'
 import { formatTime } from '@/utils/dateUtils.js'
 import HeaderCm from '@/components/HeaderCm.vue'
 import { useRoute, useRouter } from 'vue-router'
 import ProblemViewDot from '@/components/problemViewDot.vue'
-import {
-  postSameQs,
-} from '@/api/question.js'
+import { postSameQs } from '@/api/question.js'
 import { useUserStore } from '@/stores/index.js'
 
 const router = useRouter()
@@ -77,10 +77,10 @@ const questionList = ref([])
 const isLoading = ref(true)
 
 // 做题总时间
-const totalTime = ref(0);
+const totalTime = ref(0)
 // 时间相关逻辑
 const time = ref(0)
-const showTimeString = computed(() => formatTime(time.value))
+const _showTimeString = computed(() => formatTime(time.value))
 const timeInterval = ref()
 
 // 获取题目列表
@@ -94,8 +94,6 @@ const handleGetQuestionList = async () => {
       questionList.value = list.data
       isLoading.value = false
     }
-  } catch (error) {
-    console.error('获取题目失败:', error)
   } finally {
     // 隐藏加载状态
     isLoading.value = false
@@ -133,18 +131,18 @@ const submitTest = async () => {
 
   // 将状态传递到其他页面
   router.push({
-  path: '/samequestion',
-  query: {
-    showMistakesInfos: JSON.stringify(
-      questionList.value.map((item, index) => {
-        return {
-          topicId: index + 1, // 固定生成 topicId，从 1 开始递增
-          studentAnswer: item.studentAnswer,
-        };
-      })
-    ),
-  },
-});
+    path: '/samequestion',
+    query: {
+      showMistakesInfos: JSON.stringify(
+        questionList.value.map((item, index) => {
+          return {
+            topicId: index + 1, // 固定生成 topicId，从 1 开始递增
+            studentAnswer: item.studentAnswer,
+          }
+        }),
+      ),
+    },
+  })
 }
 </script>
 

@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { APIURL, KEY, modelType } from '@/utils/aiAPI/zhipuConfig.js'
+import { KEY, modelType } from '@/utils/aiAPI/zhipuConfig.js'
 import { ElMessage } from 'element-plus'
 const service = axios.create({
   baseURL: 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
@@ -32,7 +32,7 @@ service.interceptors.response.use(
       message: '请求错误',
     })
     return Promise.reject(error)
-  }
+  },
 )
 
 export default service

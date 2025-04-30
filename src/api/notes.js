@@ -18,8 +18,7 @@ export const apiAddNotes = data => service.post('/api/notes', data)
  * @param {*} ids 数组
  * @returns
  */
-export const apiDeleteNote = ids =>
-  service.post(`/api/notes/delete`, { ids })
+export const apiDeleteNote = ids => service.post(`/api/notes/delete`, { ids })
 
 /**
  * 更新笔记

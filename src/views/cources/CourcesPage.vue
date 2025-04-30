@@ -4,10 +4,10 @@
     <div class="select-box">
       <ul class="section">
         <el-button
-          :class="{ active: i === currentSection }"
-          round
           v-for="(item, i) in sections"
           :key="item.sectionId"
+          :class="{ active: i === currentSection }"
+          round
           @click="handleSectionClick(i, item.sectionId)"
           >{{
             item.sectionId == 0
@@ -16,22 +16,22 @@
           }}</el-button
         >
       </ul>
-      <ul class="status" v-if="courcesReq.sectionId == 0">
+      <ul v-if="courcesReq.sectionId == 0" class="status">
         <el-button
-          :class="{ active: i === currentStatus }"
-          round
           v-for="(item, i) in status"
           :key="item.knowState"
+          :class="{ active: i === currentStatus }"
+          round
           @click="handleStatusClick(i, item.knowState)"
           >{{ item.stateName }}</el-button
         >
       </ul>
     </div>
-    <div class="knowledges" v-if="filterKnowledges.length !== 0">
+    <div v-if="filterKnowledges.length !== 0" class="knowledges">
       <div
-        class="knowledge-card"
         v-for="item in filterKnowledges"
         :key="item.id"
+        class="knowledge-card"
         @click="goToDetail(item.knowId, item.sectionId, item.knowState)"
       >
         <span class="card-header">

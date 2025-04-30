@@ -2,7 +2,7 @@
   <main>
     <!-- 用户信息卡片 -->
     <el-card shadow="never" class="info-card">
-      <div class="filed" v-for="filed in userInfoFiled" :key="filed.value">
+      <div v-for="filed in userInfoFiled" :key="filed.value" class="filed">
         <div class="label">{{ filed.label }}</div>
         <input
           v-if="isEditing"
@@ -17,8 +17,8 @@
         <el-button
           v-if="!isEditing"
           type="primary"
-          @click="startEditing"
           class="edit-button"
+          @click="startEditing"
         >
           修改个人信息
         </el-button>
@@ -34,7 +34,7 @@
 </template>
 
 <script setup>
-import ErrorQustion from './ErrorQustion.vue'
+// import ErrorQustion from './ErrorQustion.vue'
 import { reactive, ref, onMounted } from 'vue'
 import { ElButton } from 'element-plus'
 

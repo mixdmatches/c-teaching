@@ -5,9 +5,8 @@ import { onMounted, ref } from 'vue'
 import QuestionResultItem from '@/views/result/components/QuestionResultItem.vue'
 import ProblemViewDot from '@/components/problemViewDot.vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getAnswer, handleGetAndSubmitQuestion,getNextKnowledge } from '@/api/question.js'
+import { getAnswer, getNextKnowledge } from '@/api/question.js'
 import { useUserStore } from '@/stores/index.js'
-import { formatToMinute } from '@/utils/dateUtils.js'
 import LLMTalk from '@/views/knowledge/components/LLMTalk.vue'
 
 const router = useRouter()
@@ -17,7 +16,6 @@ const userStore = useUserStore()
 const result = ref()
 
 const handleGetAnswer = async () => {
-
   const data = await getAnswer({
     ...route.query,
     studentId: userStore.studentId,
@@ -33,7 +31,7 @@ const handleGetAnswer = async () => {
   result.value = data
 }
 
-onMounted(() => handleGetAnswer());
+onMounted(() => handleGetAnswer())
 // 重新测试回调函数
 const handleResetTest = () => {
   // 传递路由参数并跳转
@@ -47,15 +45,15 @@ const handleResetTest = () => {
 }
 
 // 学习下一个知识点
-const nextknowPointId = ref();
-const nextSectionId = ref();
+const nextknowPointId = ref()
+const nextSectionId = ref()
 const getNextKnowledgePoint = async () => {
   const data = {
     knowPointId: route.query.pointId,
     sectionId: route.query.sectionId,
   }
   const response = await getNextKnowledge(data)
-  nextknowPointId.value = response?.knowPointId;
+  nextknowPointId.value = response?.knowPointId
   nextSectionId.value = response?.sectionId
   router.push({
     path: '/knowledgeDetail',
@@ -64,9 +62,8 @@ const getNextKnowledgePoint = async () => {
       sectionId: nextSectionId.value,
       studentId: userStore.studentId,
     },
-  });
+  })
 }
-
 </script>
 
 <template>
@@ -80,8 +77,8 @@ const getNextKnowledgePoint = async () => {
   </SubHeader>
 
   <main>
-    <el-scrollbar>
-      <div class="topBox" style="margin-left: 60px">
+    <el-scrollbar class="scroll-box">
+      <div class="topBox">
         <div class="box">
           <div>{{ (result?.correctRate * 100).toFixed(0) }}%</div>
           <div>正确率</div>
@@ -109,10 +106,11 @@ const getNextKnowledgePoint = async () => {
         />
       </div>
     </el-scrollbar>
+    <div class="LL-Talk">
+      <LLMTalk />
+    </div>
   </main>
-  <div class="LL-Talk">
-    <LLMTalk style="width: 400px; height: 500px " />
-  </div>
+
   <footer>
     <div class="footerBox">
       <div class="left">
@@ -145,11 +143,11 @@ const getNextKnowledgePoint = async () => {
         </div>
       </div>
       <div style="display: flex; gap: 20px">
-        <LButton @click="() => router.push('/')" border>返回首页</LButton>
+        <LButton border @click="() => router.push('/')">返回首页</LButton>
         <LButton
           v-if="result?.maturity >= 0.8"
-          @click="getNextKnowledgePoint"
           border
+          @click="getNextKnowledgePoint"
           >学习下一章</LButton
         >
       </div>
@@ -164,6 +162,7 @@ const getNextKnowledgePoint = async () => {
   gap: $padding-xl;
 }
 .topBox {
+  width: 100%;
   display: flex;
   justify-content: space-between;
   gap: 2 * $padding-xxl;
@@ -180,29 +179,32 @@ const getNextKnowledgePoint = async () => {
   }
 }
 main {
-  float: left;
-  margin: 0 0 0 60px;
-  width: $main-width;
-  margin: 0 auto;
-  padding: $padding-xl 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: $padding-xl;
   height: calc(100vh - 228px);
-  .questionBox {
-    display: flex;
-    flex-direction: column;
-    gap: $padding-xxl;
-    padding-top: $padding-xxl;
-    margin-left: 50px;
+  padding: $margin-l;
+  .scroll-box {
+    flex: 2;
+    height: calc(100vh - 228px);
+    overflow-y: auto;
+    .questionBox {
+      display: flex;
+      flex-direction: column;
+      gap: $padding-xxl;
+      padding-top: $padding-xxl;
+    }
+  }
+  .LL-Talk {
+    height: 100%;
   }
 }
-.LL-Talk {
-  float:right;
-  height: 100px;
-  margin: 30px 60px 100px 20px;
-}
+
 footer {
   background-color: $base-bg-color;
-  padding: $padding-xxl 0;
-  height: 128px;
+  padding: $padding-xl 0;
+  height: 100px;
   position: fixed;
   bottom: 0;
   left: 0;
@@ -231,6 +233,50 @@ footer {
           display: flex;
           align-items: center;
           gap: $padding-s;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .headerRight {
+    flex-direction: column;
+    gap: $padding-s;
+  }
+
+  .topBox {
+    flex-direction: column;
+    gap: $padding-m;
+    padding: 0 $padding-s;
+
+    .box {
+      width: 100%;
+      font-size: $font-size-xl;
+      padding: $padding-m;
+    }
+  }
+
+  main {
+    gap: 0;
+  }
+
+  footer {
+    height: auto;
+    padding: $padding-m;
+
+    .footerBox {
+      flex-direction: column;
+      gap: $padding-m;
+      width: 100%;
+
+      .left {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: $padding-m;
+
+        .viewDotBox {
+          min-width: auto;
         }
       }
     }

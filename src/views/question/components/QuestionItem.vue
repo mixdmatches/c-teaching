@@ -1,60 +1,60 @@
 <script setup>
-import Stars from "@/components/Stars.vue";
-import Tag from "@/components/Tag.vue";
-import { onMounted, watch,ref } from "vue";
+import Stars from '@/components/Stars.vue'
+import { onMounted, watch, ref } from 'vue'
 
 const props = defineProps({
   option: {
     type: Object,
-    required: true
+    required: true,
   },
   spentTime: {
     type: Number,
-    required: false
+    required: false,
   },
   resetTimer: {
     type: Function,
-    required: false
+    required: false,
   },
   isLastQuestion: {
     type: Boolean,
-    default: false
+    default: false,
   },
-  disabled: Boolean
-});
-const model = defineModel()
-const options = ref("");
+  disabled: Boolean,
+})
+// 定义 model，指定 modelValue 的类型为字符串，因为在模板中使用的是单选框，值通常为字符串类型
+const model = defineModel({
+  type: String,
+  required: false,
+})
+const options = ref('')
 watch(
   () => props.option,
-  (newVal, oldVal) => {
-    if(newVal.id) {
-        if(newVal.topicType == 0){
-      options.value = newVal
+  (newVal, _oldVal) => {
+    if (newVal.id) {
+      if (newVal.topicType == 0) {
+        options.value = newVal
       } else {
         let info = { ...newVal }
-        let title = info.title.split("\\\\n");
-        title.forEach((item,index) => {
-          title[index] = item.replace(/\\\\\"/g, "");
-          title[index] = item.replace('```', "");
-          title[index] = item.replace(/\\\\\\/g, "");
-          title[index] = item.replace(/\\\\/g, "");
-          title[index] = item.replace(/\\/g, "");
+        let title = info.title.split('\\\\n')
+        title.forEach((item, index) => {
+          title[index] = item.replace(/\\\\\\"/g, '')
+          title[index] = item.replace('```', '')
+          title[index] = item.replace(/\\\\\\/g, '')
+          title[index] = item.replace(/\\\\/g, '')
+          title[index] = item.replace(/\\/g, '')
         })
-         options.value = {
+        options.value = {
           ...info,
-          title:title
-         }
+          title: title,
+        }
       }
     }
-   
   },
   {
-    immediate: true
-  }
+    immediate: true,
+  },
 )
-onMounted(() => {
-    
-})
+onMounted(() => {})
 </script>
 
 <template>
@@ -73,58 +73,61 @@ onMounted(() => {
         <Tag :text="option?.knowPointName" />
       </div> -->
     </div>
-  
-    <div>
-       <div class="title">{{options?.title}}</div>
-        <el-radio-group v-model="model" class="radioGroup" :disabled="disabled">
-          <el-radio v-for="(item,index) in options?.option" :key="index" :label="item.key + ':  ' + item.value" :value="item.key" />
-        </el-radio-group>
-    </div>
-    <slot>
 
-    </slot>
+    <div>
+      <div class="title">{{ options?.title }}</div>
+      <el-radio-group v-model="model" class="radioGroup" :disabled="disabled">
+        <el-radio
+          v-for="(item, index) in options?.option"
+          :key="index"
+          :label="item.key + ':  ' + item.value"
+          :value="item.key"
+        />
+      </el-radio-group>
+    </div>
+    <slot> </slot>
   </div>
 </template>
 
 <style scoped lang="scss">
-.questionItem{
-  float:left;
+.questionItem {
+  float: left;
   width: 1000px;
-  //height: 400px;
+  // height: 400px;
   background-color: $base-bg-color;
   border-radius: $border-radius-m;
   padding: $padding-xl;
-  .info{
+  .info {
     display: flex;
     align-items: center;
     gap: $padding-xxl;
-    .type{
+    .type {
       background-color: $primary-color;
       color: white;
       font-size: $font-size-xl;
       padding: $padding-s;
       border-radius: 9999px;
     }
-    .starBox{
+    .starBox {
       display: flex;
       align-items: center;
-      .label{
+      .label {
         color: $primary-color;
         font-size: $font-size-xxl;
       }
     }
-    .tagBox{
+    .tagBox {
       display: flex;
       align-items: center;
       gap: $padding-s;
     }
   }
-  .title{
+  .title {
     margin: $padding-xl 0;
     color: $primary-color;
     font-size: $font-size-xxl;
   }
-  .radioGroup{
+  .radioGroup {
     display: flex;
     flex-direction: column;
     align-items: start;
@@ -147,16 +150,47 @@ onMounted(() => {
   line-height: 25px;
   margin-top: 50px;
 }
-.title_item{
+.title_item {
   margin-bottom: 4px;
 }
-.Answer{
+.Answer {
   display: flex;
   align-items: center;
   gap: $padding-s;
   margin-top: 20px;
 }
-.answerInput{
+.answerInput {
   width: 300px;
+}
+
+@media screen and (max-width: 768px) {
+  .questionItem {
+    width: 100%;
+    padding: 16px;
+
+    .info {
+      flex-wrap: wrap;
+      gap: 8px;
+
+      .type {
+        font-size: 14px;
+      }
+
+      .starBox {
+        .label {
+          font-size: 14px;
+        }
+      }
+    }
+
+    .title {
+      font-size: 16px;
+      margin: 16px 0;
+    }
+
+    .radioGroup {
+      padding-left: 0;
+    }
+  }
 }
 </style>

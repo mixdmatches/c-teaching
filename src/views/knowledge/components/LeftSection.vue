@@ -1,5 +1,5 @@
 <template>
-  <div class="left" ref="leftDom">
+  <div ref="leftDom" class="left">
     <!-- ai总结 -->
     <div class="ai-summary">
       <div class="top">
@@ -30,8 +30,8 @@
     </div>
     <!-- 教程内容 -->
     <el-tabs
-      style="background: white"
       v-model="activeName"
+      style="background: white"
       class="demo-tabs"
       @tab-click="handleClickTab"
     >
@@ -48,9 +48,9 @@
     <footer>
       <span
         >关联知识：<el-tag
-          style="margin-right: 5px"
           v-for="tag in pointDetail.relationName"
           :key="tag"
+          style="margin-right: 5px"
           >{{ tag }}</el-tag
         ></span
       >
@@ -72,7 +72,7 @@
 </template>
 
 <script setup>
-import { ref, watch, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useUserStore } from '@/stores/index'
 import { ElMessage } from 'element-plus'
 // 引入api
@@ -84,7 +84,7 @@ import hljs from 'highlight.js'
 import 'highlight.js/styles/monokai-sublime.css'
 // 配置marked高亮
 marked.setOptions({
-  highlight: function (code, lang) {
+  highlight: function (code, _lang) {
     return hljs.highlightAuto(code).value
   },
 })
@@ -125,32 +125,32 @@ const pointDetail = ref({
   relationName: [],
 })
 
-// 修复marke语法
-function fixMarkdown(md) {
-  // 1. 匹配代码块并临时存储
-  const codeBlocks = []
-  const mdWithCode = md.replace(/```([^]*?)```/g, (match, content) => {
-    const placeholder = `[CODE_BLOCK_${codeBlocks.length}]`
-    codeBlocks.push(content)
-    return placeholder
-  })
+// // 修复marke语法
+// function fixMarkdown(md) {
+//   // 1. 匹配代码块并临时存储
+//   const codeBlocks = []
+//   const mdWithCode = md.replace(/```([^]*?)```/g, (match, content) => {
+//     const placeholder = `[CODE_BLOCK_${codeBlocks.length}]`
+//     codeBlocks.push(content)
+//     return placeholder
+//   })
 
-  // 2. 替换非代码块的 \\n 为实际换行符
-  const fixedMd = mdWithCode.replace(/\\\\n/g, '\n')
+//   // 2. 替换非代码块的 \\n 为实际换行符
+//   const fixedMd = mdWithCode.replace(/\\\\n/g, '\n')
 
-  // 3. 恢复代码块并保留原转义符
-  let finalMd = fixedMd
-  codeBlocks.forEach((block, index) => {
-    // 将代码块里的 \\n 转为 \n
-    const processedBlock = block.replace(/\\\\n/g, '\n')
-    finalMd = finalMd.replace(
-      `[CODE_BLOCK_${index}]`,
-      `\n\`\`\`\n${processedBlock}\n\`\`\`\n`
-    )
-  })
+//   // 3. 恢复代码块并保留原转义符
+//   let finalMd = fixedMd
+//   codeBlocks.forEach((block, index) => {
+//     // 将代码块里的 \\n 转为 \n
+//     const processedBlock = block.replace(/\\\\n/g, '\n')
+//     finalMd = finalMd.replace(
+//       `[CODE_BLOCK_${index}]`,
+//       `\n\`\`\`\n${processedBlock}\n\`\`\`\n`,
+//     )
+//   })
 
-  return finalMd
-}
+//   return finalMd
+// }
 
 // 获取知识点详情教程
 const getPointDetail = async () => {
@@ -177,7 +177,7 @@ const handleCopy = async () => {
   try {
     await navigator.clipboard.writeText(pointDetail.value.summary)
     ElMessage.success('复制成功')
-  } catch (err) {
+  } catch (_err) {
     ElMessage.error('复制失败，请手动选择文本复制')
   }
 }
@@ -188,7 +188,7 @@ const handleTest = () => {
 }
 
 const activeName = ref('text')
-const handleClickTab = (tab, event) => {
+const handleClickTab = tab => {
   activeName.value = tab.name
 }
 onMounted(() => {

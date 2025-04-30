@@ -23,7 +23,7 @@ import hljs from 'highlight.js'
 import 'highlight.js/styles/monokai-sublime.css'
 // 配置marked高亮
 marked.setOptions({
-  highlight: function (code, lang) {
+  highlight: function (code, _lang) {
     return hljs.highlightAuto(code).value
   },
 })
