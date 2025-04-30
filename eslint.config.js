@@ -39,6 +39,7 @@ export default [
           caughtErrorsIgnorePattern: '^_', // 忽略以 _ 开头的 catch 参数
         },
       ],
+      'prettier/prettier': ['error', { endOfLine: 'auto' }],
     },
   },
 
@@ -86,6 +87,7 @@ export default [
       'vue/multi-word-component-names': 'off',
       // 允许props参数没有默认值
       'vue/require-default-prop': 'off',
+      'prettier/prettier': ['error', { endOfLine: 'auto' }],
     },
   },
 
