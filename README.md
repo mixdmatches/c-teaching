@@ -155,7 +155,7 @@ src
 
 ### 个人中心页
 
-![个人中心页](./src/assets/images/pc/个人中心页.png)
+![个人中心页](./src/assets/images/pc/个人中心.png)
 
 ## 贡献指南
 
