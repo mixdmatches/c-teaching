@@ -1,23 +1,27 @@
 <script setup>
-import Stars from "@/components/Stars.vue";
-import Tag from "@/components/Tag.vue";
-import CircleProgress from "@/components/CircleProgress.vue";
-import {Check} from "@element-plus/icons-vue";
+import Stars from '@/components/Stars.vue'
+import Tag from '@/components/Tag.vue'
+import CircleProgress from '@/components/CircleProgress.vue'
+import { Check } from '@element-plus/icons-vue'
 
 const props = defineProps({
-  option: {required:true}
-});
-const model = defineModel()
-const getRadioClassName = (key) =>{
-  if (props.option.studentAnswer === key){
-    if (props.option.answer === key){
+  option: { type: Object, required: true },
+})
+// 定义 model 时指定 modelValue 的类型，这里假设为字符串类型，可根据实际情况修改
+const model = defineModel({
+  type: String,
+  default: undefined,
+})
+const getRadioClassName = key => {
+  if (props.option.studentAnswer === key) {
+    if (props.option.answer === key) {
       return 'right'
-    }else {
+    } else {
       return 'error'
     }
-  }else if (props.option.answer === key){
+  } else if (props.option.answer === key) {
     return 'right'
-  }else {
+  } else {
     return ''
   }
 }
@@ -26,7 +30,7 @@ const getRadioClassName = (key) =>{
 <template>
   <div class="questionItem">
     <div class="info">
-      <div class="type">{{option.type === 'radio' ? '单选题' : ''}}</div>
+      <div class="type">{{ option.type === 'radio' ? '单选题' : '' }}</div>
       <div class="starBox">
         <div class="label">难度：</div>
         <Stars :num="option.difficulty" />
@@ -37,88 +41,110 @@ const getRadioClassName = (key) =>{
       </div>
 
       <div class="tagBox">
-        <Tag v-for="(item,index) in option.tags" :key="index" :text="item.tagName" />
+        <Tag
+          v-for="(item, index) in option.tags"
+          :key="index"
+          :text="item.tagName"
+        />
       </div>
     </div>
-    <div class="title">{{option.title}}</div>
+    <div class="title">{{ option.title }}</div>
     <el-radio-group v-model="model" class="radioGroup">
-      <el-radio :class="getRadioClassName(item.key)" v-for="(item,index) in option.option" :key="index" :label="item.value" :value="item.key" />
+      <el-radio
+        v-for="(item, index) in option.option"
+        :key="index"
+        :class="getRadioClassName(item.key)"
+        :label="item.value"
+        :value="item.key"
+      />
     </el-radio-group>
 
     <div class="analysisBox">
       <div class="top">
-        <span>正确答案:{{option.answer??option.fillAnswer}}</span>
-        <span>你的答案:{{option.studentAnswer}}</span>
+        <span>正确答案:{{ option.answer ?? option.fillAnswer }}</span>
+        <span>你的答案:{{ option.studentAnswer }}</span>
       </div>
-      <div>
-        AI解析:{{option.analysis}}
-      </div>
+      <div>AI解析:{{ option.analysis }}</div>
     </div>
-    <CircleProgress class="progress" :size="44" :border-width="6" :progress="70" v-if="option.answer !== option.studentAnswer">!</CircleProgress>
-    <CircleProgress class="progress" :size="44" :border-width="6" :progress="70" v-else color="#52c41a" ><el-icon><Check /></el-icon></CircleProgress>
+    <CircleProgress
+      v-if="option.answer !== option.studentAnswer"
+      class="progress"
+      :size="44"
+      :border-width="6"
+      :progress="70"
+      >!</CircleProgress
+    >
+    <CircleProgress
+      v-else
+      class="progress"
+      :size="44"
+      :border-width="6"
+      :progress="70"
+      color="#52c41a"
+      ><el-icon><Check /></el-icon
+    ></CircleProgress>
   </div>
-
 </template>
 
 <style scoped lang="scss">
-.questionItem{
+.questionItem {
   background-color: $base-bg-color;
   border-radius: $border-radius-m;
   padding: $padding-xl;
   position: relative;
-  .info{
+  .info {
     display: flex;
     align-items: center;
     gap: $padding-xxl;
-    .type{
+    .type {
       background-color: $primary-color;
       color: white;
       font-size: $font-size-xl;
       padding: $padding-s;
       border-radius: 9999px;
     }
-    .starBox{
+    .starBox {
       display: flex;
       align-items: center;
-      .label{
+      .label {
         color: $primary-color;
         font-size: $font-size-xxl;
       }
     }
-    .tagBox{
+    .tagBox {
       display: flex;
       align-items: center;
       gap: $padding-s;
     }
   }
-  .title{
+  .title {
     margin: $padding-xl 0;
     color: $primary-color;
     font-size: $font-size-xxl;
   }
-  .radioGroup{
+  .radioGroup {
     display: flex;
     flex-direction: column;
     align-items: start;
     padding-left: 20px;
     pointer-events: none;
-    .el-radio{
-      :deep(.el-radio__input){
-        .el-radio__inner::after{
+    .el-radio {
+      :deep(.el-radio__input) {
+        .el-radio__inner::after {
           transform: translate(-50%, -50%) scale(1);
         }
       }
-      &.error{
-        :deep(.el-radio__input){
-          .el-radio__inner{
+      &.error {
+        :deep(.el-radio__input) {
+          .el-radio__inner {
             background-color: #ff0000;
             border: none;
           }
         }
       }
-      &.right{
-        :deep(.el-radio__input){
-          .el-radio__inner{
+      &.right {
+        :deep(.el-radio__input) {
+          .el-radio__inner {
             background-color: #00ff52;
             border: none;
           }
@@ -126,12 +152,12 @@ const getRadioClassName = (key) =>{
       }
     }
   }
-  .progress{
+  .progress {
     position: absolute;
     top: 20px;
     right: 100px;
   }
-  .analysisBox{
+  .analysisBox {
     font-size: $font-size-xxl;
     border-radius: $border-radius-m;
     background-color: #f2f3f5;
@@ -140,9 +166,59 @@ const getRadioClassName = (key) =>{
     flex-direction: column;
     gap: 2 * $padding-xl;
     margin-top: 30px;
-    .top{
+    .top {
       display: flex;
       gap: 2 * $padding-xl;
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .questionItem {
+    padding: $padding-m;
+
+    .info {
+      flex-wrap: wrap;
+      gap: $padding-s;
+
+      .type {
+        font-size: $font-size-m;
+      }
+
+      .starBox {
+        .label {
+          font-size: $font-size-xl;
+        }
+      }
+
+      .tagBox {
+        flex-wrap: wrap;
+      }
+    }
+
+    .title {
+      font-size: $font-size-xl;
+      margin: $padding-m 0;
+    }
+
+    .radioGroup {
+      padding-left: 0;
+    }
+
+    .analysisBox {
+      padding: $padding-m;
+      font-size: $font-size-xl;
+      margin-top: $padding-m;
+
+      .top {
+        flex-direction: column;
+        gap: $padding-s;
+      }
+    }
+
+    .progress {
+      top: 10px;
+      right: 10px;
     }
   }
 }

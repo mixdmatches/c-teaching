@@ -4,10 +4,10 @@
     <div class="select-box">
       <ul class="section">
         <el-button
-          :class="{ active: i === currentSection }"
-          round
           v-for="(item, i) in sections"
           :key="item.sectionId"
+          :class="{ active: i === currentSection }"
+          round
           @click="handleSectionClick(i, item.sectionId)"
           >{{
             item.sectionId == 0
@@ -16,22 +16,22 @@
           }}</el-button
         >
       </ul>
-      <ul class="status" v-if="courcesReq.sectionId == 0">
+      <ul v-if="courcesReq.sectionId == 0" class="status">
         <el-button
-          :class="{ active: i === currentStatus }"
-          round
           v-for="(item, i) in status"
           :key="item.knowState"
+          :class="{ active: i === currentStatus }"
+          round
           @click="handleStatusClick(i, item.knowState)"
           >{{ item.stateName }}</el-button
         >
       </ul>
     </div>
-    <div class="knowledges" v-if="filterKnowledges.length !== 0">
+    <div v-if="filterKnowledges.length !== 0" class="knowledges">
       <div
-        class="knowledge-card"
         v-for="item in filterKnowledges"
         :key="item.id"
+        class="knowledge-card"
         @click="goToDetail(item.knowId, item.sectionId, item.knowState)"
       >
         <span class="card-header">
@@ -187,7 +187,6 @@ const debouncedWarning = debounce(() => {
 }, 500)
 // 跳转到知识点详情页
 const goToDetail = (pointId, sectionId, knowState) => {
-  console.log(knowState)
   if (knowState == 2) {
     // 调用防抖函数
     debouncedWarning()
@@ -329,6 +328,28 @@ const filter = (sectionId, knowState) => {
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
+    }
+  }
+}
+
+// 移动端样式调整
+@media screen and (max-width: 768px) {
+  .main {
+    padding: 0 $padding-xl;
+  }
+  .select-box {
+    flex-direction: column;
+  }
+  .select-box .section {
+    flex-wrap: wrap;
+    gap: $margin-m;
+    justify-content: stretch;
+  }
+  .knowledges .knowledge-card {
+    width: 100%;
+    .card-header {
+      flex-direction: column;
+      gap: $margin-s;
     }
   }
 }

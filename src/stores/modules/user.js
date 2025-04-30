@@ -1,8 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { apiPostLogin } from '@/api/user.js'
 export const useUserStore = defineStore('user', () => {
-  const isCeshi = ref(false || localStorage.getItem('isCeshi'))
+  const isCeshi = ref(localStorage.getItem('isCeshi') || false)
   const authority = ref()
   const totalTime = ref(Number(localStorage.getItem('totalTime')) || 0)
   const changeCeshi = () => {
@@ -13,7 +12,7 @@ export const useUserStore = defineStore('user', () => {
     totalTime.value += studyTime
     localStorage.setItem('totalTime', totalTime.value)
   }
-  const userInfo = ref({} || JSON.parse(localStorage.getItem('userInfo')))
+  const userInfo = ref(JSON.parse(localStorage.getItem('userInfo')) || {})
   const setUserInfo = newuserInfo => {
     userInfo.value = newuserInfo
     localStorage.setItem('userInfo', JSON.stringify(userInfo.value))

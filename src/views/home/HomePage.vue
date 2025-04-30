@@ -7,9 +7,9 @@
       <span class="study">
         <p>{{ studentStatus?.pointName || '无' }}</p>
         <el-button
+          v-show="studentStatus?.pointName"
           type="primary"
           @click="handleStudy"
-          v-show="studentStatus?.pointName"
           >继续学习</el-button
         >
       </span>
@@ -33,9 +33,9 @@
     </div>
     <div class="data">
       <!-- 折线图 -->
-      <OneCom :pointList="points" />
+      <OneCom :point-list="points" />
       <!-- 圆环 进度-->
-      <TowCom :pointList="points" />
+      <TowCom :point-list="points" />
     </div>
   </MainCm>
   <MainCm v-else>
@@ -80,8 +80,6 @@ const studentStatus = ref({})
 // 1.获取学生学习情况
 const getStudyStatus = async () => {
   const res = await apiGetStudyStatus(userInfo.value.stuNum)
-  console.log(res)
-
   studentStatus.value = res.data
 }
 
@@ -90,7 +88,6 @@ const points = ref([])
 const getAllPoints = async () => {
   const res = await apiGetAllPoints(userInfo.value.stuNum)
   points.value = res.data.knowPointList
-  console.log(points.value, 'points')
 }
 
 // 4.获取已学知识点列表
@@ -106,7 +103,6 @@ const getStudentInfo = async () => {
   userInfo.value = res
   localStorage.setItem('userInfo', JSON.stringify(res))
   userStore.setUserInfo(res)
-  console.log(userInfo.value.stuNum, 'num')
 }
 
 // 继续学习按钮
@@ -159,6 +155,11 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
+@media screen and (max-width: 768px) {
+  .data {
+    flex-wrap: wrap;
+  }
+}
 @mixin top-flex {
   width: 100%;
   height: 200px;
@@ -214,13 +215,12 @@ onMounted(async () => {
 }
 .four-data {
   width: 100%;
-  height: 200px;
   margin-top: $margin-xl;
   background-color: $base-bg-color;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: $padding-xxl;
+  padding: $padding-xl;
   border-radius: $border-radius-m;
   .el-row {
     width: 100%;

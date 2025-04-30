@@ -46,8 +46,7 @@ service.interceptors.response.use(
     // return response.data
   },
   error => {
-    console.error('请求错误:', error)
     return Promise.reject(error)
-  }
+  },
 )
 export default service

@@ -140,7 +140,7 @@ const handleEdit = note => {
 }
 
 // 笔记编辑确定按钮回调
-async function editNote(item) {
+async function editNote(_item) {
   isEditor.value = false
   if (postData.value.id === 0) {
     await apiAddNotes(postData.value)
@@ -198,7 +198,7 @@ function downloadMarkdown(note) {
 }
 
 // 分享笔记
-function shareNote(note) {
+function shareNote(_note) {
   ElMessage.info('分享功能还未实现')
 }
 
@@ -247,8 +247,8 @@ onMounted(() => {
           v-for="item in category"
           :key="item.index"
           :index="item.index"
-          @click="switchCategory(item.index)"
           style="display: flex; justify-content: space-between"
+          @click="switchCategory(item.index)"
         >
           <div class="title">
             <el-icon><component :is="item.icon"></component></el-icon>
@@ -262,31 +262,31 @@ onMounted(() => {
       <!-- 搜索笔记 -->
       <el-input
         v-model="inputSerch"
-        @input="getSearchNotes"
         placeholder="搜索笔记"
         prefix-icon="search"
+        @input="getSearchNotes"
       />
       <!-- 仅在最近删除时展示的信息提醒和一键清除按钮 -->
-      <div class="deleteInfo" v-if="currentCategoryIndex === '3'">
+      <div v-if="currentCategoryIndex === '3'" class="deleteInfo">
         <el-button
           type="danger"
           :icon="'delete'"
           size="small"
           plain
-          @click="permanentlyDeleteNote(null)"
           :disabled="notes.length === 0"
+          @click="permanentlyDeleteNote(null)"
           >全部清除</el-button
         >
         <p>被删除的笔记保留30天后将清除</p>
       </div>
       <!-- 笔记列表区域 -->
-      <div class="notes" v-if="notes.length">
+      <div v-if="notes.length" class="notes">
         <div
-          class="note-item"
           v-for="item in notes"
           :key="item"
-          @click="Object.assign(postData, item)"
+          class="note-item"
           :class="{ active: postData.id === item.id }"
+          @click="Object.assign(postData, item)"
         >
           <span class="time">
             <el-icon><Clock /></el-icon>
@@ -341,7 +341,7 @@ onMounted(() => {
         </div>
       </div>
       <!-- 无笔记列表时展示 -->
-      <div class="notes" v-else>
+      <div v-else class="notes">
         <img
           src="https://lf-cdn-tos.bytescm.com/obj/static/xitu_extension/static/inspiration.29187097.svg"
           alt=""
@@ -350,17 +350,17 @@ onMounted(() => {
     </div>
     <div class="right">
       <!-- 操作，删除列表不展示 -->
-      <div class="work" v-if="currentCategoryIndex !== '3'">
-        <span class="work-inline" v-if="!isEditor">
+      <div v-if="currentCategoryIndex !== '3'" class="work">
+        <span v-if="!isEditor" class="work-inline">
           <el-button
             type="primary"
             plain
-            @click="isEditor = true"
             :disabled="!postData.id"
+            @click="isEditor = true"
             ><el-icon><EditPen /></el-icon>编辑</el-button
           >
         </span>
-        <span class="work-inline" v-else>
+        <span v-else class="work-inline">
           <!-- <p>
             保存于2024-03-23 12:22<el-icon><Loading /></el-icon>
           </p> -->
@@ -369,10 +369,10 @@ onMounted(() => {
         </span>
       </div>
       <v-md-editor
+        ref="editorRef"
         v-model="postData.content"
         :mode="isEditor ? 'editable' : 'preview'"
         height="100%"
-        ref="editorRef"
       />
     </div>
   </div>
@@ -459,6 +459,7 @@ onMounted(() => {
           text-overflow: ellipsis;
           display: -webkit-box;
           -webkit-line-clamp: 1; // 控制显示的行数
+          line-clamp: 1; // 定义标准属性，提高兼容性，控制显示的行数
           -webkit-box-orient: vertical;
           p {
             font-size: 14px;
@@ -500,6 +501,35 @@ onMounted(() => {
     .v-md-editor {
       box-shadow: none;
     }
+  }
+}
+
+// 移动端样式适配
+@media screen and (max-width: 768px) {
+  .noteContent {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .noteContent .left,
+  .noteContent .center,
+  .noteContent .right {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .noteContent .left {
+    width: 100%;
+  }
+
+  .noteContent .center .notes .note-item .content {
+    height: auto;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+
+  .noteContent .right .v-md-editor {
+    height: 400px;
   }
 }
 </style>

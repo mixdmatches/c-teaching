@@ -15,7 +15,6 @@ service.interceptors.request.use(config => {
 service.interceptors.response.use(
   response => response.data,
   error => {
-    console.error('请求错误:', error)
     if (error.response) {
       // 处理错误响应
       ElMessage.error(error.response.data.message || '请求失败')
@@ -23,7 +22,7 @@ service.interceptors.response.use(
       ElMessage.error('网络错误')
     }
     return Promise.reject(error)
-  }
+  },
 )
 
 export default service

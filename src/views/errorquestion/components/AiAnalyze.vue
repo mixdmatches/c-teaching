@@ -9,7 +9,7 @@
       class="ai-content"
       :style="{ height: isLoading ? '150px' : 'auto' }"
     >
-      <div class="item" v-for="item in aiAnaArr" :key="item">
+      <div v-for="item in aiAnaArr" :key="item" class="item">
         <h5>{{ item.title }}</h5>
         <p>{{ item.contentText }}</p>
       </div>
@@ -78,6 +78,25 @@ h2 {
       line-height: 24px;
       font-feature-settings: 'kern' on;
       color: #4b5563;
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .ai-content {
+    flex-direction: column;
+    margin-top: $margin-s;
+    gap: $margin-m;
+    .item {
+      padding: 16px;
+      h5 {
+        font-size: 14px;
+        line-height: 20px;
+      }
+      p {
+        font-size: 14px;
+        line-height: 20px;
+      }
     }
   }
 }

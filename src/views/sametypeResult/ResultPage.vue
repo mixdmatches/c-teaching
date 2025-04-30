@@ -5,42 +5,39 @@ import { onMounted, ref } from 'vue'
 import QuestionResultItem from '@/views/result/components/QuestionResultItem.vue'
 import ProblemViewDot from '@/components/problemViewDot.vue'
 import { useRoute, useRouter } from 'vue-router'
-import { submitSameTypeResult, handleGetAndSubmitQuestion } from '@/api/question.js'
-import { useUserStore } from '@/stores/index.js'
-import { formatToMinute } from '@/utils/dateUtils.js'
+import { submitSameTypeResult } from '@/api/question.js'
 import LLMTalk from '@/views/knowledge/components/LLMTalk.vue'
 
 const router = useRouter()
 const route = useRoute()
-const userStore = useUserStore()
 // 结果
 const result = ref()
 
 const handleGetAnswer = async () => {
   // 解析路由参数
-  const query = JSON.parse(route.query.showMistakesInfos);
+  const query = JSON.parse(route.query.showMistakesInfos)
 
   // 强制设置 topicId 为 1, 2, 3, 4, 5
   const fixedQuery = query.map((item, index) => ({
     ...item,
     topicId: index + 1, // 强制设置 topicId
-  }));
+  }))
 
   // 调用接口
-  const data = await submitSameTypeResult({ showMistakesInfos: fixedQuery });
+  const data = await submitSameTypeResult({ showMistakesInfos: fixedQuery })
 
   // 处理返回数据
   data.showTopicResponses = data.showTopicResponses?.map((item, index) => ({
     ...item,
     no: index + 1,
     type: 'radio',
-  }));
+  }))
 
   // 存储结果
-  result.value = data;
-};
+  result.value = data
+}
 
-onMounted(() => handleGetAnswer());
+onMounted(() => handleGetAnswer())
 // 重新测试回调函数
 const handleResetTest = () => {
   // 传递路由参数并跳转
@@ -52,7 +49,6 @@ const handleResetTest = () => {
     },
   })
 }
-
 </script>
 
 <template>
@@ -97,7 +93,7 @@ const handleResetTest = () => {
     </el-scrollbar>
   </main>
   <div class="LL-Talk">
-    <LLMTalk style="width: 400px; height: 500px " />
+    <LLMTalk style="width: 400px; height: 500px" />
   </div>
   <footer>
     <div class="footerBox">
@@ -131,7 +127,7 @@ const handleResetTest = () => {
         </div>
       </div>
       <div style="display: flex; gap: 20px">
-        <LButton @click="() => router.push('/')" border>返回首页</LButton>
+        <LButton border @click="() => router.push('/')">返回首页</LButton>
         <!-- <LButton
           v-if="result?.maturity >= 0.8"
           @click="() => router.push('/course')"
@@ -181,7 +177,7 @@ main {
   }
 }
 .LL-Talk {
-  float:right;
+  float: right;
   height: 100px;
   margin: 30px 60px 100px 20px;
 }

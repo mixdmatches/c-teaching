@@ -19,7 +19,7 @@
       </div>
 
       <!-- 测试题目区域 -->
-      <div class="question" v-if="currentQuestion">
+      <div v-if="currentQuestion" class="question">
         <h3>{{ currentQuestion.title }}</h3>
         <el-radio-group v-model="selectedOption">
           <el-radio
@@ -35,8 +35,10 @@
           <el-button type="primary">问AI</el-button>
         </div>
         <div v-if="showFeedback" class="feedback">
-          <p v-if="isCorrect" style="color: green;">回答正确！</p>
-          <p v-else style="color: red;">回答错误！正确答案是：{{ correctAnswer }}</p>
+          <p v-if="isCorrect" style="color: green">回答正确！</p>
+          <p v-else style="color: red">
+            回答错误！正确答案是：{{ correctAnswer }}
+          </p>
           <p><strong>解析：</strong>{{ currentQuestion.explanation }}</p>
         </div>
       </div>
@@ -67,18 +69,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue';
-import { ElMessage } from 'element-plus';
-import { ArrowLeft, ArrowRight } from '@element-plus/icons-vue';
-import HeaderCm from '@/components/HeaderCm.vue';
-import { marked } from 'marked';
-import hljs from 'highlight.js';
-import 'highlight.js/styles/monokai-sublime.css';
-import { VideoPlayer } from 'vue-video-player';
-import 'video.js/dist/video-js.css';
+import { ref, reactive, computed, onMounted } from 'vue'
+import { ElMessage } from 'element-plus'
+import { ArrowLeft, ArrowRight } from '@element-plus/icons-vue'
+import HeaderCm from '@/components/HeaderCm.vue'
+import { marked } from 'marked'
+import hljs from 'highlight.js'
+import 'highlight.js/styles/monokai-sublime.css'
+import { VideoPlayer } from 'vue-video-player'
+import 'video.js/dist/video-js.css'
 
 // 定义视频播放器的 ref
-const videoRef = ref(null);
+const videoRef = ref(null)
 
 // 配置播放器选项
 const playerOptions = ref({
@@ -92,7 +94,6 @@ const playerOptions = ref({
       src: '/video/cc.mp4',
       type: 'video/mp4',
     },
-
   ],
   poster: '',
   width: 600,
@@ -100,25 +101,24 @@ const playerOptions = ref({
   // controlBar: {
   //   fullscreenToggle: true, // 确保全屏按钮可见
   // },
-});
+})
 
 // 视频播放事件处理函数
 const onVideoPlay = () => {
   if (videoRef.value) {
-    const player = (videoRef.value as any).player;
+    const player = videoRef.value.player
     if (player) {
-      player.requestFullscreen(); // 调用全屏方法
+      player.requestFullscreen() // 调用全屏方法
     }
   }
-};
+}
 // 配置 marked 高亮 -对代码块进行语法高亮
 marked.setOptions({
   // 使用类型断言绕过类型检查
-  highlight: function (code, lang) {
-    return hljs.highlightAuto(code).value;
+  highlight: function (code, _lang) {
+    return hljs.highlightAuto(code).value
   },
-} as any);
-
+})
 
 // 测试题目数据
 const questionList = reactive([
@@ -144,61 +144,64 @@ const questionList = reactive([
     correctAnswer: 'A',
     explanation: '// 是 C 语言中用于注释单行代码的符号。',
   },
-]);
+])
 
 // 当前题目索引
-const currentQuestionIndex = ref(-1);
-const selectedOption = ref('');
-const showFeedback = ref(false);
-const isCorrect = ref(false);
+const currentQuestionIndex = ref(-1)
+const selectedOption = ref('')
+const showFeedback = ref(false)
+const isCorrect = ref(false)
 
 // 获取当前题目
 const currentQuestion = computed(() => {
-  if (currentQuestionIndex.value >= 0 && currentQuestionIndex.value < questionList.length) {
-    return questionList[currentQuestionIndex.value];
+  if (
+    currentQuestionIndex.value >= 0 &&
+    currentQuestionIndex.value < questionList.length
+  ) {
+    return questionList[currentQuestionIndex.value]
   }
-  return null;
-});
+  return null
+})
 
 // 获取正确答案
 const correctAnswer = computed(() => {
-  return currentQuestion.value?.correctAnswer || '';
-});
+  return currentQuestion.value?.correctAnswer || ''
+})
 
 // 开始测试
 const startTest = () => {
-  currentQuestionIndex.value = 0;
-  selectedOption.value = '';
-  showFeedback.value = false;
-};
+  currentQuestionIndex.value = 0
+  selectedOption.value = ''
+  showFeedback.value = false
+}
 
 // 提交答案
 const submitAnswer = () => {
   if (!selectedOption.value) {
-    ElMessage.error('请选择一个选项！');
-    return;
+    ElMessage.error('请选择一个选项！')
+    return
   }
 
   // 判断答案是否正确
-  isCorrect.value = selectedOption.value === correctAnswer.value;
-  showFeedback.value = true;
+  isCorrect.value = selectedOption.value === correctAnswer.value
+  showFeedback.value = true
 
   // 如果还有下一题，等待用户点击继续
   if (currentQuestionIndex.value < questionList.length - 1) {
     setTimeout(() => {
-      nextQuestion();
-    }, 1000); // 延迟 2 秒自动跳到下一题
+      nextQuestion()
+    }, 1000) // 延迟 2 秒自动跳到下一题
   } else {
-    ElMessage.success('测试已完成！');
+    ElMessage.success('测试已完成！')
   }
-};
+}
 
 // 下一题
 const nextQuestion = () => {
-  currentQuestionIndex.value++;
-  selectedOption.value = '';
-  showFeedback.value = false;
-};
+  currentQuestionIndex.value++
+  selectedOption.value = ''
+  showFeedback.value = false
+}
 
 // Markdown 内容
 const markdown = `
@@ -220,19 +223,18 @@ float price;
 \`\`\`c
 float price;
 \`\`\`
-`;
+`
 
 // 使用 computed 计算属性将 Markdown 转换为 HTML
 const markdownToHtml = computed(() => {
-  return marked(markdown);
-});
+  return marked(markdown)
+})
 
 // 在组件挂载时启动测试
 onMounted(() => {
-  startTest();
-});
+  startTest()
+})
 </script>
-
 
 <style scoped lang="scss">
 .c-study-page {
@@ -333,7 +335,7 @@ onMounted(() => {
   left: 20px;
   bottom: 10px;
   h2 {
-    padding-top:10px;
+    padding-top: 10px;
   }
 }
 
@@ -359,5 +361,4 @@ onMounted(() => {
     color: $primary-color;
   }
 }
-
 </style>

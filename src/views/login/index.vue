@@ -10,22 +10,22 @@
       >
         <el-form-item label="学号" prop="studentId">
           <el-input
+            v-model="formData.studentId"
             :prefix-icon="User"
             placeholder="请输入学号"
-            v-model="formData.studentId"
           />
         </el-form-item>
         <el-form-item label="密码" prop="password">
           <el-input
+            v-model="formData.password"
             :prefix-icon="Lock"
             placeholder="请输入密码"
             type="password"
             show-password
-            v-model="formData.password"
           />
         </el-form-item>
         <el-form-item>
-          <el-button @click="handleLogin" type="primary" class="full-width-btn"
+          <el-button type="primary" class="full-width-btn" @click="handleLogin"
             >登录</el-button
           >
         </el-form-item>
@@ -37,10 +37,9 @@
 <script setup>
 import { ref } from 'vue'
 import { User, Lock } from '@element-plus/icons-vue'
-import { useUserStore } from '@/stores/index'
 import { apiPostLogin } from '@/api/user'
 import router from '../../router'
-const userStore = useUserStore()
+
 const formData = ref({
   studentId: '',
   password: '',
@@ -56,7 +55,7 @@ const handleLogin = async () => {
   } = await apiPostLogin(formData.value)
   localStorage.setItem('token', jwt)
   localStorage.setItem('authority', authority)
-  
+
   router.push('/')
 }
 </script>

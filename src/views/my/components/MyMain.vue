@@ -2,7 +2,7 @@
   <main>
     <!-- 用户信息卡片 -->
     <el-card shadow="never" class="info-card">
-      <div class="filed" v-for="filed in userInfoFiled" :key="filed.value">
+      <div v-for="filed in userInfoFiled" :key="filed.value" class="filed">
         <div class="label">{{ filed.label }}</div>
         <input
           v-if="isEditing"
@@ -17,8 +17,8 @@
         <el-button
           v-if="!isEditing"
           type="primary"
-          @click="startEditing"
           class="edit-button"
+          @click="startEditing"
         >
           修改个人信息
         </el-button>
@@ -34,7 +34,7 @@
 </template>
 
 <script setup>
-import ErrorQustion from './ErrorQustion.vue'
+// import ErrorQustion from './ErrorQustion.vue'
 import { reactive, ref, onMounted } from 'vue'
 import { ElButton } from 'element-plus'
 
@@ -98,8 +98,7 @@ const cancelEdit = () => {
 </script>
 
 <style lang="scss" scoped>
-// 引入全局变量
-@import '@/styles/variables.scss';
+@use 'sass:math';
 
 main {
   width: 100%;
@@ -141,7 +140,7 @@ main {
     }
 
     .input-field {
-      background-color: lighten($main-bg-color, 5%);
+      // background-color: lighten($main-bg-color, 5%);
       border: 1px solid $base-border-color;
       outline: none;
       transition: border-color 0.3s ease;
@@ -176,6 +175,53 @@ main {
         transform: scale(1.05);
       }
     }
+  }
+}
+
+// 移动端样式调整
+@media screen and (max-width: 768px) {
+  main {
+    padding: $padding-s;
+  }
+
+  .info-card {
+    padding: $padding-l;
+  }
+
+  .info-card .filed {
+    margin-top: $margin-m; // 调整字段之间的间距
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $padding-m;
+  }
+
+  .info-card .filed .label {
+    width: auto;
+    font-size: $font-size-l;
+  }
+
+  .info-card .filed .input-field,
+  .info-card .filed .display-field {
+    min-width: auto;
+    width: 100%;
+    font-size: $font-size-m;
+    padding: $padding-s $padding-m;
+  }
+
+  .info-card .buttonDiv {
+    justify-content: center;
+  }
+
+  .info-card .buttonDiv .edit-button {
+    width: 100%;
+  }
+
+  .info-card .buttonDiv .el-button {
+    font-size: $font-size-m;
+    padding: $padding-s $padding-m;
+  }
+  .buttonDiv {
+    margin-top: $margin-xl;
   }
 }
 </style>
