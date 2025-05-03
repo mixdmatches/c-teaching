@@ -28,7 +28,11 @@
         style="width: 100%"
         height="550"
       >
-        <el-table-column prop="title" label="题目" />
+        <el-table-column prop="title" label="题目">
+          <template #default="scope">
+            <p v-parsemd="scope.row.title"></p>
+          </template>
+        </el-table-column>
         <el-table-column prop="knowPointName" label="知识点" width="180">
           <template #default="scope">
             <el-tag>{{ scope.row.knowPointName }}</el-tag>

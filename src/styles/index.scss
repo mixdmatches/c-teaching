@@ -18,3 +18,26 @@
   background-color: rgb(228, 230, 235); // 定义滚动条滑块的背景颜色
   border-radius: 5px; // 定义滚动条滑块的圆角半径
 }
+
+@mixin talk-body {
+  flex: 1;
+  padding: $padding-xl;
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  overflow-y: auto;
+}
+
+.code-header {
+  padding: 5px;
+  background-color: #f5f5f5;
+  .code-header__copy-button {
+    border: 0;
+    background-color: transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    &:hover {
+      color: $primary-color;
+    }
+  }
+}

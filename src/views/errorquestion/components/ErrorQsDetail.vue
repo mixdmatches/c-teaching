@@ -6,7 +6,7 @@
     :width="isMobile ? '90%' : '800px'"
   >
     <div class="questionItem border">
-      <div class="title">{{ currentRow.title }}</div>
+      <div v-parsemd="currentRow.title" class="title"></div>
       <ul v-for="op in currentRow.option" :key="op.key" class="options">
         <li
           class="option"

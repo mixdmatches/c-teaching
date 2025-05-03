@@ -6,7 +6,7 @@ import QuestionResultItem from '@/views/result/components/QuestionResultItem.vue
 import ProblemViewDot from '@/components/problemViewDot.vue'
 import { useRoute, useRouter } from 'vue-router'
 import { submitSameTypeResult } from '@/api/question.js'
-import LLMTalk from '@/views/knowledge/components/LLMTalk.vue'
+import LLMTalk from '@/views/knowledge/components/LLMTalk/index.vue'
 
 const router = useRouter()
 const route = useRoute()

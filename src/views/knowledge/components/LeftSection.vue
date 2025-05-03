@@ -4,7 +4,7 @@
     <div class="ai-summary">
       <div class="top">
         <h5>AI智能总结</h5>
-        <span class="icon" @click="handleCopy"
+        <span class="icon" @click="handleCopy(pointDetail.summary)"
           ><el-icon size="20"><CopyDocument /></el-icon>复制</span
         >
       </div>
@@ -36,7 +36,10 @@
       @tab-click="handleClickTab"
     >
       <el-tab-pane label="图文" name="text"
-        ><section class="markdown-container" v-html="markdownToHtml"></section
+        ><section
+          v-parsemd="pointDetail.course"
+          class="markdown-container"
+        ></section
       ></el-tab-pane>
       <el-tab-pane label="视频" name="video">
         <div class="play-video">
@@ -72,22 +75,15 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useUserStore } from '@/stores/index'
-import { ElMessage } from 'element-plus'
+// 引入hooks
+import { useCopy } from '@/hooks/useCopy'
 // 引入api
 import { apiGetPointDetail } from '@/api/chapters'
 import { useRoute, useRouter } from 'vue-router'
-import { marked } from 'marked'
-import hljs from 'highlight.js'
-// 引入高亮样式
-import 'highlight.js/styles/monokai-sublime.css'
-// 配置marked高亮
-marked.setOptions({
-  highlight: function (code, _lang) {
-    return hljs.highlightAuto(code).value
-  },
-})
+
+const { handleCopy } = useCopy()
 // leftDom实例
 const leftDom = ref()
 // 获取路由参数
@@ -125,33 +121,6 @@ const pointDetail = ref({
   relationName: [],
 })
 
-// // 修复marke语法
-// function fixMarkdown(md) {
-//   // 1. 匹配代码块并临时存储
-//   const codeBlocks = []
-//   const mdWithCode = md.replace(/```([^]*?)```/g, (match, content) => {
-//     const placeholder = `[CODE_BLOCK_${codeBlocks.length}]`
-//     codeBlocks.push(content)
-//     return placeholder
-//   })
-
-//   // 2. 替换非代码块的 \\n 为实际换行符
-//   const fixedMd = mdWithCode.replace(/\\\\n/g, '\n')
-
-//   // 3. 恢复代码块并保留原转义符
-//   let finalMd = fixedMd
-//   codeBlocks.forEach((block, index) => {
-//     // 将代码块里的 \\n 转为 \n
-//     const processedBlock = block.replace(/\\\\n/g, '\n')
-//     finalMd = finalMd.replace(
-//       `[CODE_BLOCK_${index}]`,
-//       `\n\`\`\`\n${processedBlock}\n\`\`\`\n`,
-//     )
-//   })
-
-//   return finalMd
-// }
-
 // 获取知识点详情教程
 const getPointDetail = async () => {
   const res = await apiGetPointDetail({
@@ -160,27 +129,8 @@ const getPointDetail = async () => {
     studentId: userStore.studentId,
   })
   pointDetail.value = res.data
-  // let arr = pointDetail.value.course.split('')
-  // arr.splice(0, 33)
-  // arr.splice(arr.length - 12, 12)
-  // pointDetail.value.course = fixMarkdown(arr.join(''))
 }
 getPointDetail()
-
-// markdown转html
-const markdownToHtml = computed(() => {
-  return marked(pointDetail.value.course)
-})
-
-// 复制按钮回调
-const handleCopy = async () => {
-  try {
-    await navigator.clipboard.writeText(pointDetail.value.summary)
-    ElMessage.success('复制成功')
-  } catch (_err) {
-    ElMessage.error('复制失败，请手动选择文本复制')
-  }
-}
 
 // 去测试按钮回调
 const handleTest = () => {
@@ -191,13 +141,6 @@ const activeName = ref('text')
 const handleClickTab = tab => {
   activeName.value = tab.name
 }
-onMounted(() => {
-  // 手动初始化高亮
-  const codeBlocks = document.querySelectorAll('pre code')
-  codeBlocks.forEach(block => {
-    hljs.highlightElement(block)
-  })
-})
 
 // 定义响应式变量来控制按钮的显示和隐藏')
 const showSendButton = ref(false)
@@ -241,8 +184,6 @@ onUnmounted(() => {
 </script>
 
 <style lang="scss" scoped>
-// 引入 highlight.js 的样式
-@import 'highlight.js/styles/vs2015.css';
 .left {
   width: 100%;
   flex: 2;
