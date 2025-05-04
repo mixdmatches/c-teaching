@@ -7,7 +7,7 @@ import ProblemViewDot from '@/components/problemViewDot.vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getAnswer, getNextKnowledge } from '@/api/question.js'
 import { useUserStore } from '@/stores/index.js'
-import LLMTalk from '@/views/knowledge/components/LLMTalk.vue'
+import LLMTalk from '@/views/knowledge/components/LLMTalk/index.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -106,9 +106,7 @@ const getNextKnowledgePoint = async () => {
         />
       </div>
     </el-scrollbar>
-    <div class="LL-Talk">
-      <LLMTalk />
-    </div>
+    <LLMTalk />
   </main>
 
   <footer>
@@ -195,9 +193,6 @@ main {
       gap: $padding-xxl;
       padding-top: $padding-xxl;
     }
-  }
-  .LL-Talk {
-    height: 100%;
   }
 }
 
