@@ -9,128 +9,12 @@
   margin: 0px;
   padding: 0px;
 }
-@mixin highlight-styles {
-  /* 这里复制 highlight.js 的样式代码 */
-  /* 例如 vs2015 样式 */
-  .hljs {
-    display: block;
-    overflow-x: auto;
-    padding: 0.5em;
-    background: #1e1e1e;
-    color: #dcdcdc;
-  }
-
-  .hljs-keyword,
-  .hljs-literal,
-  .hljs-symbol,
-  .hljs-name {
-    color: #569cd6;
-  }
-
-  .hljs-link {
-    color: #569cd6;
-    text-decoration: underline;
-  }
-
-  .hljs-built_in,
-  .hljs-type {
-    color: #4ec9b0;
-  }
-
-  .hljs-number,
-  .hljs-class {
-    color: #b8d7a3;
-  }
-
-  .hljs-string,
-  .hljs-meta-string {
-    color: #d69d85;
-  }
-
-  .hljs-regexp,
-  .hljs-template-tag {
-    color: #9a5334;
-  }
-
-  .hljs-subst,
-  .hljs-function,
-  .hljs-title,
-  .hljs-params,
-  .hljs-formula {
-    color: #dcdcdc;
-  }
-
-  .hljs-comment,
-  .hljs-quote {
-    color: #57a64a;
-    font-style: italic;
-  }
-
-  .hljs-doctag {
-    color: #608b4e;
-  }
-
-  .hljs-meta,
-  .hljs-meta-keyword,
-  .hljs-tag {
-    color: #9b9b9b;
-  }
-
-  .hljs-variable,
-  .hljs-template-variable {
-    color: #bd63c5;
-  }
-
-  .hljs-attr,
-  .hljs-attribute,
-  .hljs-builtin-name {
-    color: #9cdcfe;
-  }
-
-  .hljs-section {
-    color: gold;
-  }
-
-  .hljs-emphasis {
-    font-style: italic;
-  }
-
-  .hljs-strong {
-    font-weight: bold;
-  }
-
-  .hljs-bullet,
-  .hljs-selector-tag,
-  .hljs-selector-id,
-  .hljs-selector-class,
-  .hljs-selector-attr,
-  .hljs-selector-pseudo {
-    color: #d7ba7d;
-  }
-
-  .hljs-addition {
-    background-color: #144212;
-    display: inline-block;
-    width: 100%;
-  }
-
-  .hljs-deletion {
-    background-color: #600;
-    display: inline-block;
-    width: 100%;
-  }
-}
 
 html {
-  // 设置根元素字体大小
-  // 1rem = 10px,取决于html的字体大小
-  // em 单位的值取决于父元素的字体大小
-  font-size: 10px; //设置成10px，方便计算
-  // 高度
+  font-size: 10px;
   height: 100%;
 }
 a {
-  // 去除下划线
   text-decoration: none;
   color: inherit;
 }
@@ -309,8 +193,6 @@ pre {
 
 // 在文件底部添加针对markdown容器的样式恢复
 .markdown-container {
-  @include highlight-styles;
-  // width: 100%;
   height: auto;
   background-color: #ffffff;
   margin: $margin-s 0;
@@ -335,38 +217,35 @@ pre {
   ol {
     list-style-type: decimal;
   }
-  // 恢复代码高亮
-
   h1,
   h2,
   h3,
   h4,
   h5,
   h6 {
-    // font-size: revert;
-    // 恢复字体大小
-    // margin: 1em 0;
+    font-size: revert;
+    margin: 1em 0;
     font-weight: bold; // 恢复标题加粗
   }
   // 添加具体字号设置（浏览器默认值）
   h1 {
     // font-size: 32px;
-  } // 32px
+  }
   h2 {
     font-size: 24px;
-  } // 24px
+  }
   h3 {
     font-size: 18.72px;
-  } // 18.72px
+  }
   h4 {
     font-size: 16px;
-  } // 16px
+  }
   h5 {
     font-size: 13.28px;
-  } // 13.28px
+  }
   h6 {
     font-size: 10.72px;
-  } // 10.72px
+  }
   // 针对特定元素调整
   p {
     line-height: 1.8;

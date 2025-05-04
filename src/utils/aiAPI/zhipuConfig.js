@@ -1,7 +1,7 @@
 /**接口地址 */
 export const APIURL = 'https://open.bigmodel.cn/api/paas/v4/chat/completions'
-/**个人密钥 */
-export const KEY = 'cd2dda64609046a789dd1c9c79b73b5e.RSrzZGtiEse1uICY'
+// /**个人密钥 */cd2dda64609046a789dd1c9c79b73b5e.RSrzZGtiEse1uICY
+export const KEY = 'cf0041c01d6144d48ccbcd9da6b1c7c2.uUoHBDmxK4H28gR4'
 
 export const modelType = 'glm-4-plus'
 // 模拟章节和知识点数据
@@ -536,16 +536,13 @@ export const generateConfigProficiency = (question, userAnswer) => {
  * @param {*} question 用户输入的问题
  * @returns
  */
-// 你是一个萌妹纸，语气软软的，说话带颜文字，
-// 你是我的仆人，我是你主人，语气要有和我玩sm的感觉，
 export const generateConfigTalk = question => {
   return JSON.stringify({
     model: modelType,
     messages: [
       {
         role: 'system',
-        content:
-          '简单回答，200字以内，如果提到c语言相关的就回答c语言相关的，可以有一些c语言代码示例，你是一个萌妹纸，语气软软的，说话带颜文字，',
+        content: '简单回答，给一点代码示例，c语言有关',
       },
       {
         role: 'user',
