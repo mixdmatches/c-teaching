@@ -211,10 +211,9 @@ const _questionStatusList = computed(() => {
         </div>
       </QuestionItem>
     </div>
+    <LLMTalk />
   </main>
-  <div class="LL-Talk">
-    <LLMTalk style="height: 450px" />
-  </div>
+
   <footer>
     <div class="footerBox">
       <div class="left">
@@ -247,20 +246,16 @@ const _questionStatusList = computed(() => {
 
 <style lang="scss" scoped>
 main {
-  position: relative;
-  width: 1000px;
-  height: 600px;
-  margin: 0 15px;
-  margin-bottom: 128px;
-
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  height: calc(100vh - 228px);
+  padding: $margin-l;
   .questionBox {
-    float: left;
-    width: 400px;
-    height: 700px;
+    flex: 2;
     display: flex;
     flex-direction: column;
     gap: $padding-xxl;
-    padding-top: $padding-xxl;
   }
 }
 .question-nav {
@@ -270,19 +265,11 @@ main {
   margin-top: 20px;
   text-align: center;
 }
-.LL-Talk {
-  position: absolute;
-  top: 150px;
-  right: 20px;
-  height: 100px;
-  width: 25%;
-  margin-bottom: 100px;
-}
 
 footer {
   background-color: $base-bg-color;
   padding: $padding-xxl 0;
-  height: 128px;
+  height: 100px;
   position: fixed;
   bottom: 0;
   left: 0;

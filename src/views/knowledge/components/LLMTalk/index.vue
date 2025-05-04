@@ -23,7 +23,6 @@
 
 <script setup>
 import { ref } from 'vue'
-import html2canvas from 'html2canvas'
 // 引入组件
 import TalkHeader from './TalkHeader.vue'
 import TalkNoMsg from './TalkNoMsg.vue'
@@ -120,10 +119,10 @@ defineExpose({ handleSendQuestion })
   overflow-y: auto;
 }
 .right {
-  max-width: 400px;
-  max-height: 600px;
   width: 100%;
-  height: calc(100vh - $header-height);
+  height: 100%;
+  max-width: 400px;
+  max-height: calc(100vh - $header-height - $margin-xxl - 60px);
   display: flex;
   flex-direction: column;
   background-color: rgb(240, 244, 251);
