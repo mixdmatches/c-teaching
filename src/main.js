@@ -3,6 +3,7 @@ import '@/styles/index.scss'
 import App from './App.vue'
 import pinia from '@/stores/index'
 import router from './router'
+import Directive from '@/directives'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 // 图标引入
@@ -14,6 +15,7 @@ import zhCn from 'element-plus/es/locale/lang/zh-cn'
 //引入视频播放组件
 import VueVideoPlayer from 'vue-video-player'
 import 'video.js/dist/video-js.css'
+
 const app = createApp(App)
 
 app.component('HeaderCm', HeaderCm)
@@ -26,6 +28,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 app.use(ElementPlus, {
   locale: zhCn,
 })
+app.use(Directive)
 app.use(pinia)
 app.use(router)
 app.mount('#app')
