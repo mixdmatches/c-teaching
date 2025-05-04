@@ -1,6 +1,5 @@
 <script setup>
 import { ref } from 'vue'
-
 // 定义输入框内容
 const question = ref('')
 // 加载状态

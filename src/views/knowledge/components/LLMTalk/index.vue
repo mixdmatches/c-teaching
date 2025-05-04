@@ -4,6 +4,8 @@
     <div v-if="talkGroupArr.length !== 0" class="talk">
       <TalkGroup
         v-model:talk-group-arr="talkGroupArr"
+        :dialog-visible="dialogVisible"
+        @update:dialog-visible="handleShare"
         @send-question="handleSendQuestion"
       />
     </div>
@@ -12,22 +14,33 @@
     </div>
     <TalkInput @send-question="handleSendQuestion" />
   </div>
+  <SelectMessage
+    v-model:dialog-visible="dialogVisible"
+    :share-index="shareIndex"
+    :talk-group-arr="talkGroupArr"
+  />
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import html2canvas from 'html2canvas'
 // 引入组件
 import TalkHeader from './TalkHeader.vue'
 import TalkNoMsg from './TalkNoMsg.vue'
 import TalkGroup from './TalkGroup.vue'
 import TalkInput from './TalkInput.vue'
+import SelectMessage from './SelectMessage.vue'
 // 引入api
 import { apiPostTalk } from '@/api/aiTalk.js'
+
+const dialogVisible = ref(false)
+
+const shareIndex = ref(-1)
 
 // 发送消息
 const question = ref('')
 // 对话信息
-const talkGroupArr = ref([])
+const talkGroupArr = ref(JSON.parse(localStorage.getItem('talkGroupArr')) || [])
 
 const handleSendQuestion = async selectedText => {
   talkGroupArr.value.push({
@@ -39,6 +52,7 @@ const handleSendQuestion = async selectedText => {
   talkGroupArr.value[talkGroupArr.value.length - 1].answer = ''
   try {
     await getChat(buffQestion)
+    localStorage.setItem('talkGroupArr', JSON.stringify(talkGroupArr.value))
   } catch (_e) {
     const htmlStr = `<div class="error">糟糕出错了！请重试！</div>`
     talkGroupArr.value[talkGroupArr.value.length - 1].answer += htmlStr
@@ -70,6 +84,11 @@ const getChat = async content => {
 // 清空对话
 const handleClearTalk = () => {
   talkGroupArr.value = []
+}
+
+const handleShare = index => {
+  dialogVisible.value = true
+  shareIndex.value = index
 }
 
 defineExpose({ handleSendQuestion })

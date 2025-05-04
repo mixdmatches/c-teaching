@@ -1,6 +1,5 @@
 <script setup>
 import { ref } from 'vue'
-import html2canvas from 'html2canvas'
 // 引入hooks
 import { useCopy } from '@/hooks/useCopy'
 const { handleCopy } = useCopy()
@@ -8,11 +7,14 @@ const { handleCopy } = useCopy()
 const props = defineProps({
   talkGroupArr: {
     type: Array,
-    default: () => [],
+    requeired: true,
+  },
+  dialogVisible: {
+    type: Boolean,
   },
 })
 
-const emit = defineEmits(['send-question'])
+const emit = defineEmits(['send-question', 'update:dialog-visible'])
 
 const editingIndex = ref(-1) // 当前正在编辑的消息索引
 
@@ -30,14 +32,8 @@ const refreshTalk = index => {
   emit('send-question', newQuestion)
 }
 
-const shareAsImage = async () => {
-  const element = document.getElementById('conversation-container')
-  const canvas = await html2canvas(element)
-  const image = canvas.toDataURL('image/png')
-  const link = document.createElement('a')
-  link.href = image
-  link.download = 'conversation.png'
-  link.click()
+const handleShare = index => {
+  emit('update:dialog-visible', index)
 }
 </script>
 
@@ -52,6 +48,7 @@ const shareAsImage = async () => {
       </div>
     </div>
   </div> -->
+
   <div v-for="(item, index) in talkGroupArr" :key="item" class="talk-group">
     <div class="right-box">
       <div v-if="editingIndex !== index">
@@ -86,7 +83,7 @@ const shareAsImage = async () => {
     <div class="left-box">
       <div
         v-parsemd="item.answer"
-        class="message-left font-10 markdown-container"
+        class="message-left markdown-container"
       ></div>
       <span class="works">
         <el-icon class="icon" size="16" @click="handleCopy(item.answer)"
@@ -95,7 +92,7 @@ const shareAsImage = async () => {
         <el-icon class="icon" size="16" @click="refreshTalk(index)"
           ><RefreshRight
         /></el-icon>
-        <el-icon class="icon" size="16" @click="shareAsImage"
+        <el-icon class="icon" size="16" @click="handleShare(index)"
           ><Share
         /></el-icon>
       </span>
@@ -111,72 +108,51 @@ const shareAsImage = async () => {
 .ai-message {
   color: green;
 }
-@mixin talk-body {
-  flex: 1;
-  padding: $padding-xl;
+
+.talk-group {
   display: flex;
+  align-items: flex-start;
   flex-direction: column;
-  gap: 50px;
-  overflow-y: auto;
-}
-.talk {
-  @include talk-body();
-  // 滚动条颜色改变
-  &::-webkit-scrollbar {
-    width: 5px;
+  gap: 10px;
+  .right-box {
+    flex: 1;
+    align-self: flex-end;
+    .message-right {
+      color: #fff;
+      font-size: $font-size-m;
+      line-height: 1.7;
+      background-color: $primary-color;
+      padding: $padding-l;
+      border-radius: $border-radius-l;
+      border-top-right-radius: 0;
+    }
   }
-  &::-webkit-scrollbar-thumb {
-    background-color: rgb($primary-color, 0.1);
-    border-radius: 4px;
-  }
-  &::-webkit-scrollbar-track {
-    background-color: rgb(240, 244, 251);
-  }
-  .talk-group {
+  .left-box {
     display: flex;
-    align-items: flex-start;
     flex-direction: column;
-    gap: 10px;
-    .right-box {
+    .message-left {
       flex: 1;
-      align-self: flex-end;
-      .message-right {
-        color: #fff;
-        font-size: $font-size-m;
-        line-height: 1.7;
-        background-color: $primary-color;
-        padding: $padding-l;
-        border-radius: $border-radius-l;
-        border-top-right-radius: 0;
-      }
+      max-width: 100%;
+      background-color: #fff;
+      padding: $padding-l $padding-m;
+      border-radius: $border-radius-l;
+      border-top-left-radius: 0;
+      color: $text-color;
+      font-size: $font-size-m;
+      line-height: 1.7;
     }
-    .left-box {
-      display: flex;
-      flex-direction: column;
-      .message-left {
-        flex: 1;
-        max-width: 100%;
-        background-color: #fff;
-        padding: $padding-l $padding-m;
-        border-radius: $border-radius-l;
-        border-top-left-radius: 0;
-        color: $text-color;
-        font-size: $font-size-m;
-        line-height: 1.7;
-      }
-    }
-    .works {
-      display: flex;
-      align-items: center;
-      gap: $margin-m;
-      margin-top: $margin-s;
-      padding: $padding-s;
-      .icon {
-        cursor: pointer;
-        transition: all 0.3s ease;
-        &:hover {
-          color: $primary-color;
-        }
+  }
+  .works {
+    display: flex;
+    align-items: center;
+    gap: $margin-m;
+    margin-top: $margin-s;
+    padding: $padding-s;
+    .icon {
+      cursor: pointer;
+      transition: all 0.3s ease;
+      &:hover {
+        color: $primary-color;
       }
     }
   }

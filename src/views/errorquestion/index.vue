@@ -68,11 +68,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <ErrorQsDetail
-        :visible="dialogTableVisible"
-        :current-row="currentRow"
-        @update:visible="dialogTableVisible = $event"
-      />
+      <ErrorQsDetail v-model="dialogTableVisible" :current-row="currentRow" />
     </el-card>
   </div>
 </template>

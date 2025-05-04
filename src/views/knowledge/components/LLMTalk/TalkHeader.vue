@@ -34,6 +34,7 @@ const handleClearTalk = () => {
   .title {
     font-size: $font-size-xl;
     flex: 1;
+    cursor: pointer;
   }
 }
 </style>
