@@ -1,8 +1,8 @@
 import service from '../utils/request'
 
 // 获取学习进度
-export const apiGetStudyStatus = studentId =>
-  service.get(`/api/currentKnow/getstudystatus/${studentId}`)
+export const apiGetStudyStatus = () =>
+  service.get(`/api/currentKnow/getstudystatus`)
 
 // 获取已学的知识点列表
 export const apiGetStudyPoints = stuId =>

@@ -66,6 +66,7 @@ const handleToPath = path => {
 const handleOut = async () => {
   await apiPostOutLogin()
   localStorage.removeItem('token')
+  localStorage.removeItem('userInfo')
   router.push('/login')
 }
 onMounted(async () => {
