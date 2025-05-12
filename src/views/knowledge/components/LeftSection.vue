@@ -37,6 +37,7 @@
     >
       <el-tab-pane label="图文" name="text"
         ><section
+          ref="targetBox"
           v-parsemd="pointDetail.course"
           class="markdown-container"
         ></section
@@ -142,43 +143,65 @@ const handleClickTab = tab => {
   activeName.value = tab.name
 }
 
-// 定义响应式变量来控制按钮的显示和隐藏')
+const targetBox = ref(null)
+
 const showSendButton = ref(false)
 const sendButtonPosition = ref({ x: 0, y: 0 })
 const selectedText = ref('')
-// 定义选中文字事件处理函数
+
 const handleSelectionChange = () => {
   const selection = window.getSelection()
-  const text = selection.toString()
-  if (text) {
-    const range = selection.getRangeAt(0)
-    const rect = range.getBoundingClientRect()
-    sendButtonPosition.value = {
-      x: rect.left + document.documentElement.scrollLeft,
-      y: rect.top + document.documentElement.scrollTop - 130, // 按钮显示在选择文字上方
+  if (!selection.rangeCount) return
+
+  const range = selection.getRangeAt(0)
+  const container = range.commonAncestorContainer
+  const boxElement = targetBox.value
+
+  if (boxElement.contains(container) || boxElement === container) {
+    const text = selection.toString()
+    if (text) {
+      const rect = range.getBoundingClientRect()
+      sendButtonPosition.value = {
+        x: rect.left + document.documentElement.scrollLeft,
+        y: rect.top + document.documentElement.scrollTop - 130,
+      }
+      selectedText.value = text
+      showSendButton.value = true
+    } else {
+      showSendButton.value = false
     }
-    selectedText.value = text
-    showSendButton.value = true
-  } else {
-    showSendButton.value = false
   }
 }
-// 定义可触发的事件
+
 const emits = defineEmits(['send-question'])
-// 发送ai处理函数
+
 const sendQuestion = () => {
   emits('send-question', selectedText.value)
   showSendButton.value = false
   selectedText.value = ''
   window.getSelection().removeAllRanges()
 }
-// 组件挂载时添加事件监听器
-onMounted(() => {
+
+const handleMouseEnter = () => {
   document.addEventListener('selectionchange', handleSelectionChange)
+}
+
+const handleMouseLeave = () => {
+  document.removeEventListener('selectionchange', handleSelectionChange)
+}
+
+onMounted(() => {
+  if (targetBox.value) {
+    targetBox.value.addEventListener('mouseenter', handleMouseEnter)
+    targetBox.value.addEventListener('mouseleave', handleMouseLeave)
+  }
 })
 
-// 组件卸载时移除事件监听器
 onUnmounted(() => {
+  if (targetBox.value) {
+    targetBox.value.removeEventListener('mouseenter', handleMouseEnter)
+    targetBox.value.removeEventListener('mouseleave', handleMouseLeave)
+  }
   document.removeEventListener('selectionchange', handleSelectionChange)
 })
 </script>
