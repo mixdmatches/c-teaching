@@ -37,11 +37,13 @@
     >
       <el-tab-pane label="图文" name="text"
         ><section
+          v-if="pointDetail.course"
           ref="targetBox"
           v-parsemd="pointDetail.course"
           class="markdown-container"
-        ></section
-      ></el-tab-pane>
+        ></section>
+        <el-empty v-else :image="empty" />
+      </el-tab-pane>
       <el-tab-pane label="视频" name="video">
         <div class="play-video">
           <video class="video" controls :src="pointDetail.context"></video>
@@ -83,6 +85,7 @@ import { useCopy } from '@/hooks/useCopy'
 // 引入api
 import { apiGetPointDetail } from '@/api/chapters'
 import { useRoute, useRouter } from 'vue-router'
+import empty from '@/assets/images/empty.png'
 
 const { handleCopy } = useCopy()
 // leftDom实例
@@ -94,25 +97,6 @@ const router = useRouter()
 const { pointId, sectionId } = route.query
 // 获取user仓库
 const userStore = useUserStore()
-// 定义在线学习时间
-const studyTime = ref(0)
-let timer = null
-
-// 在组件挂载后启动计时器
-onMounted(() => {
-  timer = setInterval(() => {
-    studyTime.value++
-  }, 1000)
-})
-
-// 在组件卸载前清除计时器
-onUnmounted(() => {
-  const studyTimeValue = parseInt(studyTime.value) // 确保 studyTime 是数字类型
-  userStore.changeTotalTime(studyTimeValue)
-  if (timer) {
-    clearInterval(timer)
-  }
-})
 
 // 定义知识点详情
 const pointDetail = ref({
@@ -131,7 +115,6 @@ const getPointDetail = async () => {
   })
   pointDetail.value = res.data
 }
-getPointDetail()
 
 // 去测试按钮回调
 const handleTest = () => {
@@ -176,7 +159,7 @@ const handleSelectionChange = () => {
 const emits = defineEmits(['send-question'])
 
 const sendQuestion = () => {
-  emits('send-question', selectedText.value)
+  emits('send-question', `解释：${selectedText.value}`)
   showSendButton.value = false
   selectedText.value = ''
   window.getSelection().removeAllRanges()
@@ -190,8 +173,51 @@ const handleMouseLeave = () => {
   document.removeEventListener('selectionchange', handleSelectionChange)
 }
 
-onMounted(() => {
+const handleAIExplain = code => {
+  emits('send-question', '请解释以下代码' + code)
+}
+
+const handleAddCodeBlock = (targetBox, aiExplainFunc) => {
+  if (!targetBox) return
+
+  const codeBlocks = targetBox.querySelectorAll('pre code')
+
+  codeBlocks.forEach(codeBlock => {
+    let language = codeBlock.classList[1].split('-')[1]
+    const preElement = codeBlock.parentElement
+    const buttonContainer = document.createElement('div')
+    buttonContainer.classList.add('code-actions')
+
+    const copyButton = document.createElement('button')
+    copyButton.classList.add('copy-button')
+    copyButton.textContent = '复制代码'
+    copyButton.addEventListener('click', () => {
+      handleCopy(codeBlock.textContent)
+    })
+
+    const aiExplainButton = document.createElement('button')
+    aiExplainButton.classList.add('explain-button')
+    aiExplainButton.textContent = '代码解读'
+    aiExplainButton.addEventListener('click', () => {
+      aiExplainFunc(codeBlock.textContent)
+    })
+
+    const languageSpan = document.createElement('span')
+    languageSpan.textContent = language
+    languageSpan.classList.add('language')
+
+    buttonContainer.appendChild(languageSpan)
+    buttonContainer.appendChild(copyButton)
+    buttonContainer.appendChild(aiExplainButton)
+    preElement.insertBefore(buttonContainer, preElement.firstChild)
+  })
+}
+
+onMounted(async () => {
+  await getPointDetail()
+
   if (targetBox.value) {
+    handleAddCodeBlock(targetBox.value, handleAIExplain)
     targetBox.value.addEventListener('mouseenter', handleMouseEnter)
     targetBox.value.addEventListener('mouseleave', handleMouseLeave)
   }

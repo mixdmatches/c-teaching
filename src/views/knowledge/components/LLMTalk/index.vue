@@ -1,7 +1,7 @@
 <template>
   <div class="right">
     <TalkHeader @clear-talk="handleClearTalk" />
-    <div v-if="talkGroupArr.length !== 0" class="talk">
+    <div v-if="talkGroupArr.length !== 0" ref="scrollContainer" class="talk">
       <TalkGroup
         v-model:talk-group-arr="talkGroupArr"
         :dialog-visible="dialogVisible"
@@ -22,7 +22,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 // 引入组件
 import TalkHeader from './TalkHeader.vue'
 import TalkNoMsg from './TalkNoMsg.vue'
@@ -36,9 +36,7 @@ const dialogVisible = ref(false)
 
 const shareIndex = ref(-1)
 
-// 发送消息
 const question = ref('')
-// 对话信息
 const talkGroupArr = ref(JSON.parse(localStorage.getItem('talkGroupArr')) || [])
 
 const handleSendQuestion = async selectedText => {
@@ -80,15 +78,33 @@ const getChat = async content => {
   }
 }
 
-// 清空对话
 const handleClearTalk = () => {
   talkGroupArr.value = []
+  localStorage.removeItem('talkGroupArr')
 }
 
 const handleShare = index => {
   dialogVisible.value = true
   shareIndex.value = index
 }
+
+const scrollContainer = ref(null)
+
+watch(
+  () => talkGroupArr.value[talkGroupArr.value.length - 1]?.answer,
+  () => {
+    if (talkGroupArr.value.length > 0 && scrollContainer.value) {
+      scrollContainer.value.scrollTop = scrollContainer.value.scrollHeight
+    }
+  },
+  { deep: true },
+)
+
+onMounted(() => {
+  if (talkGroupArr.value.length > 0 && scrollContainer.value) {
+    scrollContainer.value.scrollTop = scrollContainer.value.scrollHeight
+  }
+})
 
 defineExpose({ handleSendQuestion })
 </script>

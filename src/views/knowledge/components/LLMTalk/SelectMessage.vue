@@ -26,15 +26,14 @@ const visible = computed({
 })
 
 const imgRef = ref(null)
-const checkAll = ref(false) // 全选状态
-const checkedMessages = ref([]) // 选中的消息
+const checkAll = ref(false)
+const checkedMessages = ref([])
 const visibleImg = ref(false)
-// 全选状态变化时触发
+
 const handleCheckAllChange = val => {
   checkedMessages.value = val ? props.talkGroupArr : []
 }
 
-// 选中的消息变化时触发
 const handleCheckedMessagesChange = value => {
   checkedMessages.value = value
   const checkedCount = value.length
@@ -42,12 +41,13 @@ const handleCheckedMessagesChange = value => {
 }
 
 const shareAsImage = async () => {
-  const element = document.querySelector('.img')
+  const element = imgRef.value
   const canvas = await html2canvas(element)
   const image = canvas.toDataURL('image/jpeg')
   const link = document.createElement('a')
   link.href = image
-  link.download = 'message.jpeg'
+  const imageName = checkedMessages.value[0]?.question.slice(0, 10) || 'default'
+  link.download = `${imageName}.jpeg`
   link.click()
 }
 

@@ -21,7 +21,7 @@ const llmTalkRef = ref(null)
 // 定义一个方法来调用子组件的暴露方法
 const callChildMethod = selectText => {
   if (llmTalkRef.value) {
-    llmTalkRef.value.handleSendQuestion(`解释：${selectText}`)
+    llmTalkRef.value.handleSendQuestion(selectText)
   }
 }
 // 检测是否为移动端

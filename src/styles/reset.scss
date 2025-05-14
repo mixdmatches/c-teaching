@@ -205,6 +205,31 @@ pre {
     // 恢复字体颜色
     color: inherit;
   }
+  pre {
+    .code-actions {
+      padding: 0 $padding-xl;
+      background-color: #f0f0f0; // 背景颜色;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+
+      button {
+        padding: 4px 8px;
+        border: none;
+        border-radius: 4px;
+        background-color: #f0f0f0;
+        cursor: pointer;
+        &:nth-child(3) {
+          color: $primary-color;
+        }
+      }
+      .language {
+        flex: 1;
+        font-weight: bold;
+        color: rgb(176, 176, 176);
+      }
+    }
+  }
   // 添加行高恢复
   // line-height: 1.6;
   ol,
@@ -254,7 +279,7 @@ pre {
   code,
   pre {
     font-family: monospace;
-    background: #f6f8fa;
+
     padding: 0.2em 0.4em;
     border-radius: 3px;
     line-height: 1.5; // 代码块行高稍密
@@ -263,6 +288,9 @@ pre {
     white-space: pre-wrap !important; /* 允许长单词换行 */
     word-wrap: break-word !important; /* 强制换行 */
     overflow: hidden;
+  }
+  code {
+    background: #f6f8fa;
   }
   // 可以根据需要继续添加其他需要保留的原始样式
   // 保留表格原始样式

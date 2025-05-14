@@ -31,6 +31,7 @@ export default [
     files: ['**/*.{js,mjs,cjs,vue}'],
     rules: {
       'no-console': 'warn',
+      'no-undef': 'warn', // 禁止使用未定义的变量
       'no-unused-vars': [
         'warn',
         {
