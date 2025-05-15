@@ -22,7 +22,7 @@ service.interceptors.request.use(config => {
     }
   }
   if (config.method === 'put') {
-    config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
+    config.headers['Content-Type'] = 'application/json'
   }
   return config
 })
@@ -48,7 +48,6 @@ service.interceptors.response.use(
       default:
         return Promise.resolve(response.data)
     }
-    // return response.data
   },
   error => {
     return Promise.reject(error)

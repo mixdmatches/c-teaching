@@ -18,6 +18,7 @@ import { Delete } from '@element-plus/icons-vue'
 VMdEditor.use(vuepressTheme, {
   Hljs: hljs,
 })
+
 const targetElement = ref('')
 
 onMounted(() => {
@@ -31,7 +32,6 @@ const editorRef = ref()
 const postData = ref({
   id: 0,
   content: '',
-  date: '',
   isStar: false,
   isDelete: false,
 })
@@ -81,31 +81,46 @@ async function getSearchNotes() {
     return switchCategory(currentCategoryIndex.value)
   }
   const { data } = await apiGetSerchNotes(inputSerch.value)
-  notes.value = data
+  notes.value = data.map(item => ({
+    id: item.id,
+    content: item.context,
+    date: item.createTime,
+    isStar: item.isStar === 1 ? true : false,
+    isDelete: item.orDelete === 1 ? true : false,
+  }))
 }
 
 // 获取笔记列表
-async function getNotes(params = {}) {
+async function getNotes() {
   const {
-    data: {
-      notes: filterNotes,
-      countAll: cAll,
-      countStar: cStar,
-      countDelete: cDet,
-    },
-  } = await apiGetNotes(params)
-  notes.value = filterNotes
-  countAll.value = cAll
-  countStar.value = cStar
+    data: { notebooks, noteCount: cAll, starCount: _cStar, deleteCount: cDet },
+  } = await apiGetNotes()
+  const filterNotes = notebooks.map(item => ({
+    id: item.id,
+    content: item.context,
+    date: formatDate(item.createTime),
+    isStar: item.isStar === 1 ? true : false,
+    isDelete: item.orDelete === 1 ? true : false,
+  }))
+  switch (currentCategoryIndex.value) {
+    case '1':
+      notes.value = filterNotes.filter(item => !item.isDelete)
+      break
+    case '2':
+      notes.value = filterNotes.filter(item => item.isStar && !item.isDelete)
+      break
+    case '3':
+      notes.value = filterNotes.filter(item => item.isDelete)
+      break
+    default:
+      notes.value = filterNotes
+  }
+  countAll.value = cAll - cDet
+  countStar.value = filterNotes.filter(
+    item => item.isStar && !item.isDelete,
+  ).length
   countDelete.value = cDet
   // postData.value = { ...notes.value[0] }
-}
-
-// 映射
-const categoryMap = {
-  1: () => getNotes(),
-  2: () => getNotes({ isStar: true }),
-  3: () => getNotes({ isDelete: true }),
 }
 
 // 删除笔记
@@ -121,16 +136,13 @@ async function deleteNote(item) {
 // 切换分类
 async function switchCategory(index) {
   currentCategoryIndex.value = index
-  const handler = categoryMap[index]
-  if (handler) {
-    await handler()
-  }
+  await getNotes()
 }
 
 // 取消编辑按钮回调
 function handleCancel() {
   isEditor.value = false
-  // postData.value = { ...notes.value[0] }
+  postData.value = { ...notes.value[0] }
 }
 
 // 下拉框的编辑按钮
@@ -161,7 +173,8 @@ async function starNote(item) {
 }
 
 // 格式化日期
-function formatDate(date) {
+function formatDate(isoDate) {
+  const date = new Date(isoDate)
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0')
   const day = String(date.getDate()).padStart(2, '0')
@@ -172,13 +185,21 @@ function formatDate(date) {
 
 // 添加笔记按钮回调
 async function handleAddNote() {
-  Object.assign(postData.value, {
-    id: 0,
-    content: '',
-    date: formatDate(new Date()),
-    isStar: false,
-    isDelete: false,
-  })
+  if (currentCategoryIndex.value == 1) {
+    Object.assign(postData.value, {
+      id: 0,
+      content: '',
+      isStar: false,
+      isDelete: false,
+    })
+  } else if (currentCategoryIndex.value == 2) {
+    Object.assign(postData.value, {
+      id: 0,
+      content: '',
+      isStar: true,
+      isDelete: false,
+    })
+  }
   isEditor.value = true
 }
 
@@ -195,11 +216,6 @@ function downloadMarkdown(note) {
   a.download = `${fileName}.md`
   a.click()
   URL.revokeObjectURL(url)
-}
-
-// 分享笔记
-function shareNote(_note) {
-  ElMessage.info('分享功能还未实现')
 }
 
 // 全部清除按钮/彻底删除按钮函数
@@ -321,9 +337,6 @@ onMounted(() => {
                   </el-dropdown-item>
                   <el-dropdown-item @click="downloadMarkdown(item)">
                     <el-icon><Download /></el-icon>下载
-                  </el-dropdown-item>
-                  <el-dropdown-item @click="shareNote(item)">
-                    <el-icon><Share /></el-icon>分享
                   </el-dropdown-item>
                 </el-dropdown-menu>
                 <!-- 是最近删除显示 -->
