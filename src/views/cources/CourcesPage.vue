@@ -56,13 +56,14 @@
             score-template="难度"
             size="small"
           />
+          <span class="expertly">熟练度：{{ item.expertly }}</span>
         </span>
         <p :style="{ backgroundColor: activeInfoColor[item.knowState] }">
           {{ item.describe }}
         </p>
       </div>
     </div>
-    <el-empty v-else description="什么都没有" />
+    <el-empty v-else style="width: 100%" :image="empty" />
     <el-backtop :right="100" :bottom="100" />
   </div>
 </template>
@@ -72,6 +73,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 // 引入 debounce 函数
 import { debounce } from 'lodash'
+import empty from '@/assets/images/empty_1.png'
 // 导入api
 import { apiGetAllPoints } from '@/api/chapters'
 import { ElMessage } from 'element-plus'
@@ -313,6 +315,10 @@ const filter = (sectionId, knowState) => {
       h5 {
         font-size: $font-size-xl;
         font-weight: bold;
+      }
+      .expertly {
+        font-size: $font-size-l;
+        color: $primary-color;
       }
     }
 

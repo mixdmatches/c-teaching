@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { ElMessage } from 'element-plus'
-
+import { getUserInfo } from '@/api/user'
 const routes = [
   {
     path: '/',
@@ -79,19 +79,33 @@ const router = createRouter({
   routes,
 })
 
-// 在路由配置中添加
-router.beforeEach((to, _from) => {
+// 修改路由导航守卫
+router.beforeEach(async (to, _from) => {
   const path = ['/cources', '/errorquestion', '/notes']
+  const token = localStorage.getItem('token') // 获取 token
+
+  // 检查是否需要登录权限的页面，且没有 token
+  const requiresAuth = !['/login', '/404'].includes(to.path)
+  if (requiresAuth && !token) {
+    ElMessage.warning('请先登录！')
+    return '/login' // 跳转到登录页
+  }
+
+  // 如果有 token，验证 token 是否有效
+  if (requiresAuth && token) {
+    try {
+      await getUserInfo() // 调用获取用户信息接口
+    } catch (_error) {
+      // 接口调用失败，token 可能失效
+      ElMessage.warning('登录状态已失效，请重新登录！')
+      localStorage.removeItem('token') // 移除失效的 token
+      return '/login' // 跳转到登录页
+    }
+  }
+
   if (path.includes(to.path) && !Number(localStorage.getItem('authority'))) {
     ElMessage.warning('还未测试，请先去测试！')
-    return false
   }
-  if (to.path !== '/login' && !localStorage.getItem('token')) {
-    ElMessage.warning('请先登录！')
-    router.push('/login')
-    return false
-  }
-  return true
 })
 
 export const to404 = () => {

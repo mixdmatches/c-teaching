@@ -1,7 +1,7 @@
 <template>
   <el-result title="" sub-title="">
     <template #icon>
-      <el-image src="https://static.hdslb.com/error/very_sorry.png" />
+      <el-image :src="empty" />
     </template>
     <template #extra>
       <el-button type="primary" @click="back()">Back</el-button>
@@ -11,7 +11,7 @@
 
 <script setup>
 import router from '../../router'
-
+import empty from '@/assets/images/empty.png'
 const back = () => {
   router.push({ path: '/' })
 }

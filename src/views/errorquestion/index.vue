@@ -22,6 +22,7 @@
         ></el-option>
       </el-select>
       <el-table
+        v-if="errorQuestionList.length > 0"
         v-loading="isLoading"
         stripe
         :data="errorQuestionList"
@@ -68,6 +69,7 @@
           </template>
         </el-table-column>
       </el-table>
+      <el-empty v-else :image="empty" />
       <ErrorQsDetail v-model="dialogTableVisible" :current-row="currentRow" />
     </el-card>
   </div>
@@ -82,7 +84,7 @@ import AiAnalyze from './components/AiAnalyze.vue'
 import HeaderCm from '@/components/HeaderCm.vue'
 // 引入仓库
 import { useUserStore } from '@/stores/index'
-// 引入hook
+import empty from '@/assets/images/empty_1.png'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()

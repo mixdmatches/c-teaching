@@ -15,10 +15,12 @@ const marked = new Marked(
 
 export default {
   mounted(el, binding) {
+    if (!binding.value) return
     const html = marked.parse(binding.value)
     el.innerHTML = html
   },
   updated(el, binding) {
+    if (!binding.value) return
     const html = marked.parse(binding.value)
     el.innerHTML = html
   },

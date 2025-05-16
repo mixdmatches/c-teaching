@@ -66,6 +66,7 @@ const handleToPath = path => {
 const handleOut = async () => {
   await apiPostOutLogin()
   localStorage.removeItem('token')
+  localStorage.removeItem('userInfo')
   router.push('/login')
 }
 onMounted(async () => {
@@ -91,7 +92,7 @@ onMounted(async () => {
   position: sticky;
   top: 0;
   left: 0;
-  z-index: 999;
+  z-index: 99999;
   width: 100%;
   height: $header-height;
   background-color: $base-bg-color;

@@ -1,30 +1,43 @@
-import service from '../utils/requestNode'
+import service from '../utils/request'
 /**
  * 获取笔记列表
  * @returns
  */
-export const apiGetNotes = (params = {}) =>
-  service.get('/api/notes', { params })
+export const apiGetNotes = () => service.get('/api/notebook/allNotebook')
 
 /**
  * 添加笔记
- * @param {*} data
+ * @param {*} params
  * @returns
  */
-export const apiAddNotes = data => service.post('/api/notes', data)
+export const apiAddNotes = ({ content, isStar }) =>
+  service.post('/api/notebook/addNotebook', {
+    context: content,
+    isStar: isStar ? 1 : 0,
+  })
 
 /**
  * 彻底删除笔记
- * @param {*} ids 数组
+ * @param {*} ids
  * @returns
  */
-export const apiDeleteNote = ids => service.post(`/api/notes/delete`, { ids })
+export const apiDeleteNote = ids =>
+  service.post(`/api/notebook/deleteNotebook`, ids)
 
 /**
  * 更新笔记
+ * @param {*} data
  * @returns
  */
-export const apiPutNote = data => service.put(`/api/notes/${data.id}`, data)
+export const apiPutNote = data => {
+  let updateNote = {
+    id: data.id,
+    context: data.content,
+    isStar: data.isStar ? 1 : 0,
+    isDelete: data.isDelete ? 1 : 0,
+  }
+  return service.put('/api/notebook/updateNotebook', updateNote)
+}
 
 /**
  * 模糊词搜索笔记
@@ -32,4 +45,4 @@ export const apiPutNote = data => service.put(`/api/notes/${data.id}`, data)
  * @returns
  */
 export const apiGetSerchNotes = keyword =>
-  service.get(`/api/notes/search?keyword=${keyword}`)
+  service.get(`/api/notebook/searchNotebook?keyword=${keyword}`)

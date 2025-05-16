@@ -37,10 +37,13 @@
     >
       <el-tab-pane label="图文" name="text"
         ><section
+          v-if="pointDetail.course"
+          ref="targetBox"
           v-parsemd="pointDetail.course"
           class="markdown-container"
-        ></section
-      ></el-tab-pane>
+        ></section>
+        <el-empty v-else :image="empty" />
+      </el-tab-pane>
       <el-tab-pane label="视频" name="video">
         <div class="play-video">
           <video class="video" controls :src="pointDetail.context"></video>
@@ -82,6 +85,7 @@ import { useCopy } from '@/hooks/useCopy'
 // 引入api
 import { apiGetPointDetail } from '@/api/chapters'
 import { useRoute, useRouter } from 'vue-router'
+import empty from '@/assets/images/empty.png'
 
 const { handleCopy } = useCopy()
 // leftDom实例
@@ -93,25 +97,6 @@ const router = useRouter()
 const { pointId, sectionId } = route.query
 // 获取user仓库
 const userStore = useUserStore()
-// 定义在线学习时间
-const studyTime = ref(0)
-let timer = null
-
-// 在组件挂载后启动计时器
-onMounted(() => {
-  timer = setInterval(() => {
-    studyTime.value++
-  }, 1000)
-})
-
-// 在组件卸载前清除计时器
-onUnmounted(() => {
-  const studyTimeValue = parseInt(studyTime.value) // 确保 studyTime 是数字类型
-  userStore.changeTotalTime(studyTimeValue)
-  if (timer) {
-    clearInterval(timer)
-  }
-})
 
 // 定义知识点详情
 const pointDetail = ref({
@@ -130,7 +115,6 @@ const getPointDetail = async () => {
   })
   pointDetail.value = res.data
 }
-getPointDetail()
 
 // 去测试按钮回调
 const handleTest = () => {
@@ -142,43 +126,108 @@ const handleClickTab = tab => {
   activeName.value = tab.name
 }
 
-// 定义响应式变量来控制按钮的显示和隐藏')
+const targetBox = ref(null)
+
 const showSendButton = ref(false)
 const sendButtonPosition = ref({ x: 0, y: 0 })
 const selectedText = ref('')
-// 定义选中文字事件处理函数
+
 const handleSelectionChange = () => {
   const selection = window.getSelection()
-  const text = selection.toString()
-  if (text) {
-    const range = selection.getRangeAt(0)
-    const rect = range.getBoundingClientRect()
-    sendButtonPosition.value = {
-      x: rect.left + document.documentElement.scrollLeft,
-      y: rect.top + document.documentElement.scrollTop - 130, // 按钮显示在选择文字上方
+  if (!selection.rangeCount) return
+
+  const range = selection.getRangeAt(0)
+  const container = range.commonAncestorContainer
+  const boxElement = targetBox.value
+
+  if (boxElement.contains(container) || boxElement === container) {
+    const text = selection.toString()
+    if (text) {
+      const rect = range.getBoundingClientRect()
+      sendButtonPosition.value = {
+        x: rect.left + document.documentElement.scrollLeft,
+        y: rect.top + document.documentElement.scrollTop - 130,
+      }
+      selectedText.value = text
+      showSendButton.value = true
+    } else {
+      showSendButton.value = false
     }
-    selectedText.value = text
-    showSendButton.value = true
-  } else {
-    showSendButton.value = false
   }
 }
-// 定义可触发的事件
+
 const emits = defineEmits(['send-question'])
-// 发送ai处理函数
+
 const sendQuestion = () => {
-  emits('send-question', selectedText.value)
+  emits('send-question', `解释：${selectedText.value}`)
   showSendButton.value = false
   selectedText.value = ''
   window.getSelection().removeAllRanges()
 }
-// 组件挂载时添加事件监听器
-onMounted(() => {
+
+const handleMouseEnter = () => {
   document.addEventListener('selectionchange', handleSelectionChange)
+}
+
+const handleMouseLeave = () => {
+  document.removeEventListener('selectionchange', handleSelectionChange)
+}
+
+const handleAIExplain = code => {
+  emits('send-question', '请解释以下代码' + code)
+}
+
+const handleAddCodeBlock = (targetBox, aiExplainFunc) => {
+  if (!targetBox) return
+
+  const codeBlocks = targetBox.querySelectorAll('pre code')
+
+  codeBlocks.forEach(codeBlock => {
+    let language = codeBlock.classList[1].split('-')[1]
+    const preElement = codeBlock.parentElement
+    const buttonContainer = document.createElement('div')
+    buttonContainer.classList.add('code-actions')
+
+    const copyButton = document.createElement('button')
+    copyButton.classList.add('copy-button')
+    copyButton.textContent = '复制代码'
+    copyButton.addEventListener('click', () => {
+      handleCopy(codeBlock.textContent)
+    })
+
+    const aiExplainButton = document.createElement('button')
+    aiExplainButton.classList.add('explain-button')
+    aiExplainButton.textContent = '代码解读'
+    aiExplainButton.addEventListener('click', () => {
+      aiExplainFunc(codeBlock.textContent)
+    })
+
+    const languageSpan = document.createElement('span')
+    languageSpan.textContent = language
+    languageSpan.classList.add('language')
+
+    buttonContainer.appendChild(languageSpan)
+    buttonContainer.appendChild(copyButton)
+    buttonContainer.appendChild(aiExplainButton)
+    preElement.insertBefore(buttonContainer, preElement.firstChild)
+  })
+}
+
+onMounted(async () => {
+  await getPointDetail()
+
+  if (targetBox.value) {
+    handleAddCodeBlock(targetBox.value, handleAIExplain)
+    targetBox.value.addEventListener('mouseenter', handleMouseEnter)
+    targetBox.value.addEventListener('mouseleave', handleMouseLeave)
+  }
 })
 
-// 组件卸载时移除事件监听器
 onUnmounted(() => {
+  if (targetBox.value) {
+    targetBox.value.removeEventListener('mouseenter', handleMouseEnter)
+    targetBox.value.removeEventListener('mouseleave', handleMouseLeave)
+  }
   document.removeEventListener('selectionchange', handleSelectionChange)
 })
 </script>
