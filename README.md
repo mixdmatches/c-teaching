@@ -5,8 +5,6 @@
 本项目是一个基于Vue 3 +
 Vite构建的C语言教学管理系统前端项目，旨在为学生提供便捷的C语言学习体验。系统包含课程学习、知识点练习、错题管理等功能模块。项目已适配移动端，提供良好的跨设备使用体验。
 
-**移动端apk包在apk目录下，可自行下载体验。**
-
 ## 技术栈
 
 - 前端框架：Vue 3
@@ -23,6 +21,7 @@ Vite构建的C语言教学管理系统前端项目，旨在为学生提供便捷
 2. `pnpm dev` 运行开发服务器
 
 ## 其他命令
+
 1. `pnpm lint` 代码检查
 2. `pnpm build` 打包生产环境代码
 3. `pnpm preview` 预览打包后的代码
@@ -42,6 +41,8 @@ src
 │   ├── fonts/               # 字体文件
 │   ├── images/              # 图片资源
 │   └── vue.svg              # Vue logo
+├── directives/              # 自定义指令
+├── hooks/                   # hoosk函数
 ├── components/              # 公共组件
 │   ├── CircleProgress.vue   # 圆形进度条组件
 │   ├── HeaderCm.vue         # 头部组件
@@ -73,21 +74,19 @@ src
 │   ├── request.js           # 请求工具
 │   └── requestNode.js       # Node请求工具
 └── views/                   # 页面视图
-├── 404/                 # 404页面
-│   └── NotFind.vue      # 404页面组件
-├── cources/             # 课程页面
-│   └── CourcesPage.vue  # 课程页面组件
-├── errorquestion/       # 错题页面
-├── exercise/            # 练习页面
-├── home/                # 首页
-├── knowledge/           # 知识点页面
-├── login/               # 登录页面
-├── my/                  # 个人中心页面
-├── notes/               # 笔记页面
-├── question/            # 题目页面
-├── result/              # 结果页面
-├── sametypeResult/      # 同类题目结果页面
-└── study/               # 学习页面
+    ├── 404/                 # 404页面
+    ├── cources/             # 课程页面
+    ├── errorquestion/       # 错题页面
+    ├── exercise/            # 练习页面
+    ├── home/                # 首页
+    ├── knowledge/           # 知识点页面
+    ├── login/               # 登录页面
+    ├── my/                  # 个人中心页面
+    ├── notes/               # 笔记页面
+    ├── question/            # 题目页面
+    ├── result/              # 结果页面
+    ├── sametypeResult/      # 同类题目结果页面
+    └── study/               # 学习页面
 ```
 
 ## 主要功能

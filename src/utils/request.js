@@ -1,4 +1,5 @@
 import axios from 'axios'
+import router from '@/router/index.js'
 import { ElMessage } from 'element-plus'
 const service = axios.create({
   baseURL: 'http://47.122.30.214:8101',
@@ -8,7 +9,7 @@ const service = axios.create({
 // 请求拦截器
 service.interceptors.request.use(config => {
   // 添加 token 等逻辑
-  config.headers['token'] = localStorage.getItem('token') || ''
+  config.headers['token'] = localStorage.getItem('token')
   if (config.method === 'put' || config.method === 'post') {
     for (let key in config.data) {
       if (
@@ -21,7 +22,7 @@ service.interceptors.request.use(config => {
     }
   }
   if (config.method === 'put') {
-    config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
+    config.headers['Content-Type'] = 'application/json'
   }
   return config
 })
@@ -30,6 +31,10 @@ service.interceptors.request.use(config => {
 service.interceptors.response.use(
   response => {
     switch (response.data?.code) {
+      case 40100:
+        ElMessage.error(response.data.message)
+        router.push('/login')
+        return Promise.reject(response.data.message)
       case 50000:
       case 50001:
         ElMessage.error(response.data.message)
@@ -43,7 +48,6 @@ service.interceptors.response.use(
       default:
         return Promise.resolve(response.data)
     }
-    // return response.data
   },
   error => {
     return Promise.reject(error)

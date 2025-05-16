@@ -542,7 +542,7 @@ export const generateConfigTalk = question => {
     messages: [
       {
         role: 'system',
-        content: '简单回答，给一点代码示例，c语言有关',
+        content: '简单回答，100字以内，给一点代码示例，c语言有关',
       },
       {
         role: 'user',

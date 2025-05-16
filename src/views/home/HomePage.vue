@@ -79,7 +79,7 @@ const handleTest = () => {
 const studentStatus = ref({})
 // 1.获取学生学习情况
 const getStudyStatus = async () => {
-  const res = await apiGetStudyStatus(userInfo.value.stuNum)
+  const res = await apiGetStudyStatus()
   studentStatus.value = res.data
 }
 

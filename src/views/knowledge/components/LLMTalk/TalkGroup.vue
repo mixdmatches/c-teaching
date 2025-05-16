@@ -7,19 +7,33 @@ const { handleCopy } = useCopy()
 const props = defineProps({
   talkGroupArr: {
     type: Array,
-    requeired: true,
+    required: true,
   },
   dialogVisible: {
     type: Boolean,
   },
 })
 
-const emit = defineEmits(['send-question', 'update:dialog-visible'])
+const emit = defineEmits([
+  'update:talk-group-arr',
+  'send-question',
+  'update:dialog-visible',
+])
 
 const editingIndex = ref(-1) // 当前正在编辑的消息索引
 
+const originQuestion = ref('')
+const inputQuestion = ref('')
+
 const handleEdit = index => {
   editingIndex.value = index
+  originQuestion.value = props.talkGroupArr[index].question
+  inputQuestion.value = props.talkGroupArr[index].question
+}
+
+const handleCancel = () => {
+  editingIndex.value = -1
+  inputQuestion.value = originQuestion.value
 }
 
 const refreshTalk = index => {
@@ -27,28 +41,29 @@ const refreshTalk = index => {
   if (!props.talkGroupArr[index].question) {
     return
   }
-  const newQuestion = props.talkGroupArr[index].question
-  props.talkGroupArr.splice(index, 1) // 删除指定索引的元素
+
+  let newTalkGroupArr = [...props.talkGroupArr]
+  newTalkGroupArr.splice(index, 1)
+  emit('update:talk-group-arr', newTalkGroupArr)
+  localStorage.setItem('talkGroupArr', JSON.stringify(newTalkGroupArr))
+  const newQuestion = inputQuestion.value
   emit('send-question', newQuestion)
 }
 
 const handleShare = index => {
   emit('update:dialog-visible', index)
 }
+
+const handleDelete = index => {
+  let newTalkGroupArr = [...props.talkGroupArr]
+  newTalkGroupArr.splice(index, 1)
+  emit('update:talk-group-arr', newTalkGroupArr)
+  localStorage.setItem('talkGroupArr', JSON.stringify(newTalkGroupArr))
+}
 </script>
 
 <template>
-  <!-- <div id="conversation-container">
-    <div v-for="(item, index) in talkGroupArr" :key="index">
-      <div class="user-message">
-        {{ item.question }}
-      </div>
-      <div class="ai-message">
-        {{ item.answer }}
-      </div>
-    </div>
-  </div> -->
-
+  <el-backtop :right="50" :bottom="100" />
   <div v-for="(item, index) in talkGroupArr" :key="item" class="talk-group">
     <div class="right-box">
       <div v-if="editingIndex !== index">
@@ -62,18 +77,21 @@ const handleShare = index => {
           <el-icon class="icon" size="16" @click="handleEdit(index)"
             ><Edit
           /></el-icon>
+          <el-icon class="icon" size="16" @click="handleDelete(index)">
+            <Delete />
+          </el-icon>
         </span>
       </div>
       <div v-else>
         <el-input
-          v-model="item.question"
+          v-model="inputQuestion"
           size="large"
           :autosize="{ minRows: 2, maxRows: 4 }"
           type="textarea"
           @keyup.enter="refreshTalk(index)"
         ></el-input>
         <span class="works">
-          <el-button size="small" @click="editingIndex = -1">取消</el-button>
+          <el-button size="small" @click="handleCancel">取消</el-button>
           <el-button size="small" type="primary" @click="refreshTalk(index)"
             >确定</el-button
           >

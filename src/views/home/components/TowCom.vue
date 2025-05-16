@@ -122,7 +122,9 @@ watch(points, () => {
 
 onUnmounted(() => {
   window.removeEventListener('resize', function () {}) // 移除事件监听器
-  myChart.dispose() // 销毁图表实例
+  if (myChart) {
+    myChart.dispose() // 销毁图表实例
+  }
 })
 </script>
 
