@@ -48,7 +48,7 @@ const routes = [
     path: '/my',
     name: 'my',
     meta: { title: '我的', show: 'dropdown', icon: 'User' },
-    component: () => import('@/views/my/myPage.vue'),
+    component: () => import('@/views/my/MyPage.vue'),
   },
   {
     path: '/notes',
